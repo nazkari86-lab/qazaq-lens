@@ -32,6 +32,7 @@ const fmt = (date: Date) => date.toLocaleDateString("en-GB", { year: "numeric", 
         </div>
         <div class="source-content">
           <a class="source-title" href={source.url} target="_blank" rel="noopener noreferrer">{source.title}<span aria-hidden="true"> ↗</span></a>
+          <button class="citation-copy" type="button" data-citation={source.title + ". " + source.publisher + (source.publishedAt ? " (" + source.publishedAt + ")." : ".") + " " + source.url}>Copy citation</button>
           <div class="source-meta">
             {source.author && <span>{source.author} · </span>}<span>{source.publisher}</span>
             {source.publishedAt && <span> · {source.publishedAt}</span>}<span> · accessed {fmt(source.accessedAt)}</span>
@@ -42,3 +43,11 @@ const fmt = (date: Date) => date.toLocaleDateString("en-GB", { year: "numeric", 
     ))}
   </ol>
 </section>
+<script is:inline>
+  document.querySelectorAll("[data-citation]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      try { await navigator.clipboard.writeText(button.dataset.citation || ""); button.textContent = "Copied"; setTimeout(() => button.textContent = "Copy citation", 1400); }
+      catch { button.textContent = "Copy failed"; }
+    });
+  });
+</script>

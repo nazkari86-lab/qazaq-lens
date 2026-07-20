@@ -1,0 +1,18 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getVisibleMyths } from "../lib/content";
+const myths = await getVisibleMyths();
+const entries = myths.flatMap((entry) => entry.data.changelog.map((change) => ({ ...change, title: entry.data.title, slug: entry.data.slug }))).sort((a,b) => b.date.valueOf() - a.date.valueOf());
+const fmt = (date: Date) => date.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+---
+<BaseLayout title="Corrections and change history" description="A public record of corrections, updates and editorial changes made to Qazaq Lens articles.">
+  <section class="wrap page-hero">
+    <p class="eyebrow">Editorial record</p>
+    <h1>Corrections and change history</h1>
+    <p class="lead">This log records substantive changes to published explainers. A source-review date changes only when the article has actually been checked again.</p>
+  </section>
+  <section class="wrap correction-log" aria-label="Public correction and change history">
+    {entries.map((entry) => <article class="correction-entry"><time datetime={entry.date.toISOString().slice(0,10)}>{fmt(entry.date)}</time><div><p class="eyebrow">{entry.title}</p><h2><a href={`/myths/${entry.slug}/`}>{entry.summary}</a></h2><p class="correction-note">Editorial change recorded in the article changelog.</p></div></article>)}
+  </section>
+  <section class="wrap closing-note"><p>Have a correction, stronger source or missing context? <a href="/report-error">Report it publicly through the correction form</a>.</p></section>
+</BaseLayout>

@@ -70,3 +70,5 @@ html:not([data-theme="dark"]) .astro-code span{color:var(--shiki-light)!importan
 .timeline-year{font-family:var(--font-mono);font-size:.78rem;font-weight:800;color:var(--brand);padding-top:.1rem;line-height:1.3}
 .timeline-content{font-size:.96rem;color:var(--ink);line-height:1.55}
 .timeline-content p{margin:0}
+.citation-copy{display:inline-block;margin-top:.45rem;border:1px solid var(--line);border-radius:999px;padding:.3rem .55rem;background:transparent;color:var(--muted);font-family:var(--font-mono);font-size:.65rem;cursor:pointer}.citation-copy:hover{border-color:var(--brand);color:var(--brand)}
+.correction-log{display:grid;gap:0}.correction-entry{display:grid;grid-template-columns:170px 1fr;gap:2rem;padding:1.5rem 0;border-top:1px solid var(--line)}.correction-entry time{font-family:var(--font-mono);font-size:.75rem;color:var(--muted);padding-top:.3rem}.correction-entry h2{font-size:1.35rem;margin:.2rem 0}.correction-entry h2 a{color:var(--ink);text-decoration:none}.correction-entry h2 a:hover{color:var(--brand)}.correction-note{color:var(--muted);font-size:.85rem;margin:0}@media(max-width:600px){.correction-entry{grid-template-columns:1fr;gap:.45rem}}
