@@ -45,3 +45,28 @@ html:not([data-theme="dark"]) .astro-code span{color:var(--shiki-light)!importan
 @media(max-width:600px){.fact-grid--wide{grid-template-columns:1fr}}
 /* Language tag */
 .tag--lang{background:color-mix(in srgb,var(--gold) 12%,transparent);color:var(--gold);border-color:color-mix(in srgb,var(--gold) 40%,transparent)}
+
+/* Hero banner */
+.article-banner{position:relative;width:100%;max-height:520px;overflow:hidden;background:var(--surface-2)}
+.article-banner::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 55%,rgba(0,0,0,.42) 100%);pointer-events:none}
+.article-banner-img{width:100%;height:520px;object-fit:cover;display:block}
+.article-banner-credit{position:absolute;bottom:.6rem;right:.85rem;font-family:var(--font-mono);font-size:.62rem;color:rgba(255,255,255,.8);margin:0;background:rgba(0,0,0,.45);padding:.2rem .5rem;border-radius:4px;z-index:1}
+.article-banner-credit a{color:inherit;text-decoration:none}
+.article-banner-credit a:hover{text-decoration:underline}
+@media(max-width:720px){.article-banner,.article-banner-img{max-height:320px;height:320px}}
+
+/* Stat box */
+.stat-box{display:inline-flex;flex-direction:column;gap:.25rem;margin:0;padding:1.25rem 1.5rem;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);box-shadow:var(--shadow-soft);text-align:left;min-width:140px}
+.stat-value{font-family:var(--font-display);font-size:clamp(2rem,5vw,3rem);line-height:1;color:var(--brand);font-weight:700}
+.stat-label{font-family:var(--font-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);line-height:1.4}
+.stat-source{font-family:var(--font-mono);font-size:.62rem;color:color-mix(in srgb,var(--muted) 70%,transparent);margin-top:.15rem;font-style:normal}
+.stat-grid{display:flex;gap:1rem;flex-wrap:wrap;margin:1.75rem 0}
+
+/* Timeline */
+.timeline-block{margin:2rem 0}
+.timeline-list{list-style:none;padding:0;margin:.8rem 0 0;border-left:2px solid var(--line)}
+.timeline-item{display:grid;grid-template-columns:60px 1fr;gap:.9rem;padding:.65rem 0 .65rem 1.2rem;position:relative}
+.timeline-item::before{content:'';position:absolute;left:-5px;top:1.05rem;width:8px;height:8px;border-radius:50%;background:var(--brand)}
+.timeline-year{font-family:var(--font-mono);font-size:.78rem;font-weight:800;color:var(--brand);padding-top:.1rem;line-height:1.3}
+.timeline-content{font-size:.96rem;color:var(--ink);line-height:1.55}
+.timeline-content p{margin:0}

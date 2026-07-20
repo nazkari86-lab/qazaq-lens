@@ -1,0 +1,9 @@
+---
+interface Props { value: string; label: string; source?: string; }
+const { value, label, source } = Astro.props;
+---
+<figure class="stat-box">
+  <span class="stat-value">{value}</span>
+  <figcaption class="stat-label">{label}</figcaption>
+  {source && <cite class="stat-source">{source}</cite>}
+</figure>

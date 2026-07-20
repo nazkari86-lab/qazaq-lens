@@ -1,0 +1,10 @@
+---
+interface Props { title?: string; }
+const { title } = Astro.props;
+---
+<div class="timeline-block">
+  {title && <p class="eyebrow" style="margin-bottom:1rem">{title}</p>}
+  <ol class="timeline-list">
+    <slot />
+  </ol>
+</div>

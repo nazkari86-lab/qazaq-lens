@@ -2,6 +2,9 @@
 import { render } from "astro:content";
 import ArticleLayout from "../../layouts/ArticleLayout.astro";
 import { estimateReadingMinutes, getRelatedMyths, getVisibleMyths } from "../../lib/content";
+import StatBox from "../../components/StatBox.astro";
+import Timeline from "../../components/Timeline.astro";
+import TimelineItem from "../../components/TimelineItem.astro";
 
 export async function getStaticPaths() {
   const myths = await getVisibleMyths();
@@ -32,7 +35,11 @@ const readingMinutes = estimateReadingMinutes(entry.body ?? "");
   readingMinutes={readingMinutes}
   related={related}
   ogImage={entry.data.ogImage}
+  heroImage={entry.data.heroImage}
+  heroImageAlt={entry.data.heroImageAlt}
+  heroImageCredit={entry.data.heroImageCredit}
+  heroImageCreditUrl={entry.data.heroImageCreditUrl}
   draft={entry.data.draft}
 >
-  <Content />
+  <Content components={{ StatBox, Timeline, TimelineItem }} />
 </ArticleLayout>

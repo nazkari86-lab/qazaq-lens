@@ -22,6 +22,7 @@ interface Props {
   publicationStatus: "beta" | "reviewed"; publishedAt: Date; lastReviewedAt: Date; author: string; reviewStatus: string;
   reviewedBy: string[]; sources: Source[]; claims: Claim[]; changelog: Change[]; keyTakeaways: string[]; topics: string[];
   headings: Heading[]; readingMinutes: number; related: MythEntry[]; ogImage?: string; draft?: boolean;
+  heroImage?: string; heroImageAlt?: string; heroImageCredit?: string; heroImageCreditUrl?: string;
 }
 const props = Astro.props;
 const site = Astro.site ?? new URL("https://qazaq-lens.pages.dev");
@@ -47,6 +48,18 @@ const jsonLd = [
 <BaseLayout title={props.title} description={props.summary} ogImage={props.ogImage} type="article" noindex={props.draft} jsonLd={jsonLd}>
   <ReadingProgress />
   <article class="article-shell">
+    {props.heroImage && (
+      <div class="article-banner">
+        <img src={props.heroImage} alt={props.heroImageAlt ?? props.title} class="article-banner-img" loading="eager" />
+        {props.heroImageCredit && (
+          <p class="article-banner-credit">
+            {props.heroImageCreditUrl
+              ? <a href={props.heroImageCreditUrl} target="_blank" rel="noopener noreferrer">{props.heroImageCredit}</a>
+              : props.heroImageCredit}
+          </p>
+        )}
+      </div>
+    )}
     <header class="article-hero wrap-wide">
       <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/myths">Evidence library</a></nav>
       <div class="article-hero-grid">
