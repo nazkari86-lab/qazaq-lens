@@ -1,0 +1,47 @@
+---
+interface Props { slug: string; }
+const { slug } = Astro.props;
+const labels: Record<string, string> = {
+  "part-of-russia": "Sovereignty is a relationship, not a border colour",
+  "kazakh-and-russian": "Same conversation, different language systems",
+  "nuclear-weapons": "From inherited arsenal to non-nuclear status",
+  "economy-oil": "A mixed economy with a real resource dependency",
+  "baikonur": "One place, two roles: Kazakhstan's territory, Russia's lease",
+  "ethnic-diversity": "Citizenship and ethnicity are not the same category",
+  "borat": "A fictional setting is not a country profile",
+  "capital-astana": "Capital moves, names change, geography remains",
+  "yurts": "Living heritage in a predominantly urban country",
+  "only-steppe": "Several landscapes, one country",
+  "silk-roads": "A network of routes, not an empty gap",
+};
+---
+---
+<figure class={`evidence-visual evidence-visual--${slug}`} aria-labelledby={`visual-${slug}`}>
+  <figcaption id={`visual-${slug}`}><span class="eyebrow">Visual evidence</span><strong>{labels[slug] ?? "Read the evidence in context"}</strong></figcaption>
+
+  {slug === "part-of-russia" && <div class="ev-map"><div class="ev-land ev-land--kz"><span>KAZAKHSTAN</span></div><div class="ev-land ev-land--ru"><span>RUSSIA</span></div><i class="ev-dot ev-dot--west">1991 independence</i><i class="ev-dot ev-dot--east">separate state</i></div>}
+
+  {slug === "kazakh-and-russian" && <div class="ev-language"><div><b>Kazakh</b><code>Мен Қазақстанда тұрамын</code><small>Turkic · agglutinative · vowel harmony</small></div><div><b>Russian</b><code>Я живу в Казахстане</code><small>Indo-European · Slavic · inflectional</small></div></div>}
+
+  {slug === "nuclear-weapons" && <div class="ev-timeline"><span><b>1949–1989</b> Soviet testing at Semipalatinsk</span><span><b>1991</b> independence + inherited arsenal</span><span><b>1994–95</b> NPT and final warhead transfer</span><span><b>Today</b> non-nuclear weapons state</span></div>}
+
+  {slug === "economy-oil" && <div class="ev-bars"><div><span>Oil & gas: dominant exports</span><i style="width:88%"></i></div><div><span>Uranium & metals: major commodities</span><i style="width:64%"></i></div><div><span>Services, trade & finance: urban economy</span><i style="width:58%"></i></div><div><span>Agriculture & logistics: connected sectors</span><i style="width:45%"></i></div><small>Illustrative evidence map — not a GDP percentage chart. See the claim ledger for measured sources.</small></div>}
+
+  {slug === "baikonur" && <div class="ev-split"><div><b>Geography</b><strong>Kazakhstan</strong><small>territory, city and sovereignty</small></div><div><b>Operation</b><strong>Russia</strong><small>lease and launch administration through 2050</small></div></div>}
+
+  {slug === "ethnic-diversity" && <div class="ev-pop"><div><strong>~71.5%</strong><span>ethnic Kazakhs</span></div><div><strong>~14.4%</strong><span>ethnic Russians</span></div><div><strong>~14.1%</strong><span>other communities</span></div><small>Approximate 2026 composition; percentages are rounded and change with the statistical reference date.</small></div>}
+
+  {slug === "borat" && <div class="ev-compare"><div><b>IN THE FILM</b><span>invented village, customs, language and institutions</span></div><div><b>IN REALITY</b><span>a sovereign country with real cities, communities and history</span></div></div>}
+
+  {slug === "capital-astana" && <div class="ev-timeline ev-timeline--compact"><span><b>1997</b> institutions move from Almaty</span><span><b>1998</b> Akmola becomes Astana</span><span><b>2019–22</b> Nur-Sultan, then Astana again</span></div>}
+
+  {slug === "yurts" && <div class="ev-dual"><div><strong>64%</strong><span>urban population<br /><small>1 June 2026</small></span></div><div><strong>Living</strong><span>heritage<br /><small>ceremonies · tourism · pastoral life</small></span></div></div>}
+
+  {slug === "only-steppe" && <div class="ev-landscape"><span>TIEN SHAN<br /><small>mountains</small></span><span>STEPPE<br /><small>grasslands</small></span><span>CASPIAN<br /><small>shoreline</small></span><span>ALTAl<br /><small>forests</small></span></div>}
+
+  {slug === "silk-roads" && <div class="ev-route"><span>China</span><i></i><span>Almaty / Zhetysu</span><i></i><span>Taraz / Akyrtas</span><i></i><span>Central Asia</span><small>connected corridors · changing routes · shared heritage</small></div>}
+</figure>
+
+<style>
+  .evidence-visual{margin:2.4rem 0;padding:1.25rem;border:1px solid var(--line);background:linear-gradient(135deg,var(--surface),color-mix(in srgb,var(--accent) 5%,var(--surface)));border-radius:1rem;overflow:hidden}.evidence-visual figcaption{display:flex;gap:.65rem;align-items:baseline;justify-content:space-between;margin-bottom:1.25rem}.evidence-visual figcaption strong{font:1.05rem var(--font-serif);text-align:right}.evidence-visual .eyebrow{margin:0;color:var(--accent);font-size:.68rem}.ev-map{height:180px;position:relative;background:radial-gradient(circle at 52% 55%,color-mix(in srgb,var(--accent) 10%,transparent),transparent 48%),var(--surface-strong);border-radius:.7rem}.ev-land{position:absolute;display:flex;align-items:center;justify-content:center;color:var(--ink);font:700 .7rem var(--font-sans);letter-spacing:.16em}.ev-land--kz{left:23%;top:48%;width:52%;height:25%;background:var(--accent);clip-path:polygon(3% 35%,19% 5%,54% 14%,82% 0,100% 43%,84% 80%,49% 100%,18% 79%)}.ev-land--ru{left:10%;top:8%;width:75%;height:42%;background:color-mix(in srgb,var(--muted) 42%,var(--surface));clip-path:polygon(5% 42%,25% 10%,67% 8%,97% 34%,79% 74%,44% 86%,17% 70%)}.ev-dot{position:absolute;font-style:normal;font-size:.68rem;background:var(--surface);padding:.35rem .55rem;border-radius:999px;box-shadow:0 3px 14px #0002}.ev-dot--west{left:9%;bottom:13%}.ev-dot--east{right:8%;bottom:13%}.ev-language,.ev-compare,.ev-split,.ev-dual{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}.ev-language>div,.ev-compare>div,.ev-split>div,.ev-dual>div{padding:1rem;background:var(--surface-strong);border-radius:.7rem}.ev-language b,.ev-compare b,.ev-split b{display:block;color:var(--accent);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase}.ev-language code{display:block;margin:.7rem 0;font:1.1rem var(--font-serif);color:var(--ink)}.ev-language small,.ev-compare span,.ev-split small,.ev-dual span{display:block;color:var(--muted);line-height:1.45}.ev-timeline{display:grid;grid-template-columns:repeat(4,1fr);gap:.35rem}.ev-timeline span{position:relative;padding:1rem .7rem .7rem;border-top:3px solid var(--accent);font-size:.78rem;color:var(--muted)}.ev-timeline b{display:block;color:var(--ink);font-size:.82rem;margin-bottom:.35rem}.ev-timeline--compact{grid-template-columns:repeat(3,1fr)}.ev-bars>div{margin:.75rem 0}.ev-bars span{display:block;font-size:.78rem;color:var(--muted);margin-bottom:.25rem}.ev-bars i{display:block;height:9px;background:linear-gradient(90deg,var(--accent),var(--gold));border-radius:99px}.ev-bars small,.ev-pop small{display:block;color:var(--muted);font-size:.7rem;margin-top:1rem}.ev-split strong{display:block;font:1.4rem var(--font-serif);margin:.4rem 0}.ev-pop{display:flex;gap:.35rem;align-items:stretch}.ev-pop>div{flex:1;padding:1.1rem .7rem;background:var(--surface-strong);border-bottom:5px solid var(--accent);border-radius:.6rem}.ev-pop>div:nth-child(2){border-color:var(--gold)}.ev-pop>div:nth-child(3){border-color:var(--muted)}.ev-pop strong{display:block;font:1.45rem var(--font-serif)}.ev-pop span{display:block;font-size:.7rem;color:var(--muted)}.ev-compare b{display:block;font-size:.68rem;color:var(--accent);letter-spacing:.1em}.ev-compare span{margin-top:.5rem}.ev-dual strong{display:block;font:2rem var(--font-serif);color:var(--accent)}.ev-landscape{display:grid;grid-template-columns:repeat(4,1fr);gap:.35rem;min-height:130px;align-items:end}.ev-landscape span{display:flex;align-items:end;justify-content:center;text-align:center;padding:.7rem .2rem;color:var(--surface);background:var(--accent);min-height:70px;font-size:.65rem;letter-spacing:.08em}.ev-landscape span:nth-child(2){min-height:115px;background:var(--gold)}.ev-landscape span:nth-child(3){min-height:88px;background:var(--muted)}.ev-landscape span:nth-child(4){min-height:105px;background:var(--ink)}.ev-landscape small{display:block;font-size:.58rem;letter-spacing:0}.ev-route{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;justify-content:center;padding:1rem}.ev-route span{padding:.65rem .7rem;border:1px solid var(--accent);border-radius:999px;font-size:.72rem}.ev-route i{width:35px;border-top:2px dashed var(--gold)}.ev-route small{width:100%;text-align:center;color:var(--muted);margin-top:.7rem}@media(max-width:600px){.evidence-visual figcaption{display:block}.evidence-visual figcaption strong{display:block;text-align:left;margin-top:.35rem}.ev-timeline,.ev-timeline--compact{grid-template-columns:1fr 1fr}.ev-language,.ev-compare,.ev-split,.ev-dual{grid-template-columns:1fr}.ev-pop{display:grid;grid-template-columns:1fr 1fr}.ev-pop small{grid-column:1/-1}.ev-map{height:150px}.ev-route i{width:18px}}
+</style>

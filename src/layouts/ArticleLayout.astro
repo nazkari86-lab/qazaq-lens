@@ -12,6 +12,7 @@ import ReadingProgress from "../components/ReadingProgress.astro";
 import KeyTakeaways from "../components/KeyTakeaways.astro";
 import RelatedMyths from "../components/RelatedMyths.astro";
 import WhyThisMatters from "../components/WhyThisMatters.astro";
+import EvidenceVisual from "../components/EvidenceVisual.astro";
 import type { MythEntry } from "../lib/content";
 
 interface Source { id: string; title: string; publisher: string; author?: string; publishedAt?: string; accessedAt: Date; url: string; archivedUrl?: string; language: string; type: "primary" | "academic" | "official" | "journalistic" | "background"; }
@@ -20,6 +21,7 @@ interface Change { date: Date; summary: string }
 interface Heading { depth: number; slug: string; text: string }
 interface Props {
   title: string; mythStatement: string; summary: string; verdict: "false" | "misleading" | "partly-true" | "disputed";
+  slug?: string;
   publicationStatus: "beta" | "reviewed"; publishedAt: Date; lastReviewedAt: Date; author: string; reviewStatus: string;
   reviewedBy: string[]; sources: Source[]; claims: Claim[]; changelog: Change[]; keyTakeaways: string[]; topics: string[];
   headings: Heading[]; readingMinutes: number; related: MythEntry[]; ogImage?: string; draft?: boolean;
@@ -92,7 +94,8 @@ const jsonLd = [
       <aside class="article-sidebar"><TableOfContents headings={props.headings} /></aside>
       <div class="article-main">
         <KeyTakeaways items={props.keyTakeaways} />
-        <WhyThisMatters text={whyThisMatters[Astro.params.slug ?? ""] ?? "The wording matters because a memorable shortcut can shape how a real country and its people are understood."} />
+        <WhyThisMatters text={whyThisMatters[props.slug ?? Astro.params.slug ?? ""] ?? "The wording matters because a memorable shortcut can shape how a real country and its people are understood."} />
+        <EvidenceVisual slug={props.slug ?? Astro.params.slug ?? ""} />
         <div class="article-body"><slot /></div>
         <ClaimLedger claims={props.claims} />
         <SourceList sources={props.sources} />

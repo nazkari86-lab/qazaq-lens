@@ -17,6 +17,7 @@ const readingMinutes = estimateReadingMinutes(entry.body ?? "");
 ---
 <ArticleLayout
   title={entry.data.title}
+  slug={entry.data.slug}
   mythStatement={entry.data.mythStatement}
   summary={entry.data.summary}
   verdict={entry.data.verdict}
