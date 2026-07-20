@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Added two evidence-led explainers: Baikonur and the Silk Roads, with real Wikimedia Commons photography and official/UNESCO sources.
 - Expanded the evidence library from five to nine public-beta explainers.
 - Added the `/story/` scrollytelling route for the nine-myth visual narrative.
 - Switched deployment documentation to the current manual Cloudflare Workers/Wrangler flow.

@@ -6,6 +6,7 @@ const myths = await getVisibleMyths();
 const order = [
   "borat","capital-astana","economy-oil","ethnic-diversity",
   "kazakh-and-russian","nuclear-weapons","only-steppe","part-of-russia","yurts",
+  "baikonur","silk-roads",
 ];
 const storyMyths = order
   .map(slug => myths.find(e => e.data.slug === slug))
@@ -66,6 +67,18 @@ const mythMeta: Record<string, { stat: string; statLabel: string; lead: string; 
     lead: "The yurt is UNESCO-recognised cultural heritage. It is not standard housing. Almaty has a skyline of high-rise towers. Astana was built largely in the 2000s. Most residents live in apartments.",
     arc: "The symbol",
   },
+  "baikonur": {
+    stat: "2050",
+    statLabel: "Year the current lease agreement is scheduled to end",
+    lead: "Baikonur is in Kazakhstan. Russia operates the complex under a lease, which explains the association without changing the geography.",
+    arc: "The boundary",
+  },
+  "silk-roads": {
+    stat: "3",
+    statLabel: "Countries represented in UNESCO's Chang'an–Tianshan corridor",
+    lead: "The Silk Roads were a network, not a single line. Kazakhstan's valleys and settlements were part of the exchange system connecting Central and East Asia.",
+    arc: "The route",
+  },
 };
 
 const storyData = storyMyths.map(entry => ({
@@ -82,8 +95,8 @@ const storyData = storyMyths.map(entry => ({
 ---
 
 <BaseLayout
-  title="One country. Nine shortcuts. · Qazaq Lens"
-  description="Nine statements about Kazakhstan have spread far enough to feel like facts. Scroll through each one."
+  title="One country. Eleven shortcuts. · Qazaq Lens"
+  description="Eleven statements about Kazakhstan have spread far enough to feel like facts. Scroll through each one."
 >
   <div class="sw">
 
@@ -91,8 +104,8 @@ const storyData = storyMyths.map(entry => ({
     <section class="sw-title">
       <div class="sw-title-inner">
         <p class="sw-eyebrow">Qazaq Lens · Visual story</p>
-        <h1 class="sw-headline">One country.<br>Nine shortcuts.</h1>
-        <p class="sw-sub">Nine statements about Kazakhstan have spread far enough to feel like facts. Scroll through each one. The evidence follows each claim.</p>
+        <h1 class="sw-headline">One country.<br>Eleven shortcuts.</h1>
+        <p class="sw-sub">Eleven statements about Kazakhstan have spread far enough to feel like facts. Scroll through each one. The evidence follows each claim.</p>
         <div class="sw-scroll-hint" aria-hidden="true">
           <svg width="20" height="28" viewBox="0 0 20 28" fill="none">
             <rect x="1" y="1" width="18" height="22" rx="9" stroke="currentColor" stroke-width="1.5"/>
@@ -109,7 +122,7 @@ const storyData = storyMyths.map(entry => ({
     </section>
 
     <!-- SCROLL SHELL -->
-    <section class="sw-shell" aria-label="Nine myth evidence checks">
+    <section class="sw-shell" aria-label="Eleven myth evidence checks">
       <div class="sw-progress" aria-hidden="true">
         <span class="sw-progress-fill" data-story-progress></span>
       </div>
@@ -119,7 +132,7 @@ const storyData = storyMyths.map(entry => ({
         {storyData.map((myth, i) => (
           <article class="sw-step" data-step={i} data-slug={myth.slug} aria-labelledby={`story-step-${i}`}>
             <div class="sw-step-meta">
-              <span class="sw-counter">{String(i + 1).padStart(2, "0")} / 09</span>
+              <span class="sw-counter">{String(i + 1).padStart(2, "0")} / {storyData.length}</span>
               <span class="sw-tag">{myth.arc} · common claim</span>
             </div>
             <blockquote class="sw-myth" id={`story-step-${i}`}>
@@ -141,10 +154,10 @@ const storyData = storyMyths.map(entry => ({
         <!-- PATTERN STEP -->
         <article class="sw-step sw-step--pattern" data-step="pattern">
           <div class="sw-step-meta">
-            <span class="sw-counter">— / 09</span>
+            <span class="sw-counter">— / {storyData.length}</span>
             <span class="sw-tag">The pattern</span>
           </div>
-          <h2 class="sw-pattern-head">Nine myths.<br>Three origins.</h2>
+          <h2 class="sw-pattern-head">Eleven myths.<br>Four origins.</h2>
           <p class="sw-lead">These shortcuts are not random. Almost every one traces to the same three sources — and understanding that is the beginning of seeing the actual country.</p>
           <div class="sw-pattern-grid">
             <div class="sw-pattern-card">
@@ -191,7 +204,7 @@ const storyData = storyMyths.map(entry => ({
 
           <!-- HUD top -->
           <div class="sw-hud sw-hud--top">
-            <span class="sw-hud-counter" data-hud-counter>01 / 09</span>
+            <span class="sw-hud-counter" data-hud-counter>01 / {storyData.length}</span>
             <span class="sw-hud-label" data-hud-label>{storyData[0].title.split(":")[0]}</span>
           </div>
 
@@ -213,7 +226,7 @@ const storyData = storyMyths.map(entry => ({
         <p class="sw-eyebrow">The point is not a new stereotype</p>
         <h2 class="sw-ending-head">Context makes the picture larger.</h2>
         <p class="sw-ending-body">
-          These nine checks are a starting point, not a summary of a country. Follow the evidence, keep the uncertainty visible, and let Kazakhstan stay bigger than the shortcut assigned to it.
+          These eleven checks are a starting point, not a summary of a country. Follow the evidence, keep the uncertainty visible, and let Kazakhstan stay bigger than the shortcut assigned to it.
         </p>
         <a class="sw-cta" href="/myths">Open the full evidence library</a>
         <p class="sw-credits">
@@ -878,7 +891,7 @@ const storyData = storyMyths.map(entry => ({
         });
       }
     }
-    if (hudCounter) hudCounter.textContent = `${String(index + 1).padStart(2, "0")} / 09`;
+    if (hudCounter) hudCounter.textContent = `${String(index + 1).padStart(2, "0")} / ${data.length}`;
     if (hudLabel)   hudLabel.textContent   = m.title.replace(/^Kazakhstan[' s]*/i, "");
     if (hudVerdict) {
       hudVerdict.textContent = m.verdict === "false" ? "FALSE" : "MISLEADING";

@@ -6,8 +6,8 @@ Version: 1.0.0
 ## Product improvements
 
 - Expanded the single-page prototype into a 22-route mobile-first product.
-- Added nine evidence-led explainers, a searchable library, onboarding, evidence dashboard, accessibility, privacy and offline pages.
-- Added a Pudding-style scrollytelling story route that turns the nine claims into a visual pattern.
+- Added eleven evidence-led explainers, a searchable library, onboarding, evidence dashboard, accessibility, privacy and offline pages.
+- Added a Pudding-style scrollytelling story route that turns the eleven claims into a visual pattern.
 - Added article reading progress, table of contents, key takeaways, share/copy/print controls, related reading and visible review metadata.
 - Added installable PWA behaviour, generated 192/512 icons, offline fallback and cached core content.
 - Added RSS, dynamic robots.txt, filtered sitemap, canonical URLs, social previews, Article/Breadcrumb JSON-LD and security headers.

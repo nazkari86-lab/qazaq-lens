@@ -11,8 +11,8 @@ Will Kazakhstanis voluntarily share a Qazaq Lens explainer, and will internation
 ## Current v1 scope
 
 - English mobile-first static site
-- Nine public-beta explainers
-- Pudding-style visual story for the nine-myth pattern
+- Eleven public-beta explainers
+- Pudding-style visual story for the eleven-myth pattern
 - public claim and source ledgers
 - evidence dashboard and methodology
 - search and topic filtering
