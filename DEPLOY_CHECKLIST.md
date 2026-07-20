@@ -5,23 +5,23 @@
 - [ ] `npm ci` completes from a clean checkout.
 - [ ] `npm run qa` passes.
 - [ ] `npm run audit:links` is run from a machine with normal internet access.
-- [ ] Repository contains no `wrangler.toml`, `.dev.vars`, database state or private correction exports.
-- [ ] Final Pages project name and hostname are chosen.
+- [ ] Repository contains no `.dev.vars`, database state, tokens or private correction exports.
+- [ ] Final Workers project name and hostname are chosen.
 
-## Cloudflare Pages
+## Cloudflare Workers
 
-- [ ] Git repository connected.
-- [ ] Build command is `npm run build`.
-- [ ] Output directory is `dist`.
-- [ ] Node version is 22.
+- [ ] `npx wrangler login` has been completed on the deployment machine, or `CLOUDFLARE_API_TOKEN` is available.
+- [ ] `npm run build` creates `dist`.
+- [ ] `wrangler.toml` points assets to `dist`.
 - [ ] `PUBLIC_SITE_URL` equals the final public origin.
-- [ ] First deployment completes and every main route opens.
+- [ ] `npx wrangler deploy` completes successfully.
+- [ ] Every main route opens, including `/story/`.
 
 ## Correction database
 
 - [ ] D1 database `qazaq-lens-feedback` created.
 - [ ] `migrations/0001_feedback.sql` applied remotely.
-- [ ] Pages binding named exactly `QAZAQ_LENS_DB` added.
+- [ ] Workers binding named exactly `QAZAQ_LENS_DB` added.
 - [ ] Site redeployed after adding the binding.
 - [ ] Production correction submitted and visible in D1.
 - [ ] Test record removed or marked resolved.

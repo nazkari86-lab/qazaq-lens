@@ -98,17 +98,20 @@ const storyData = storyMyths.map(entry => ({
     </section>
 
     <!-- SCROLL SHELL -->
-    <section class="sw-shell">
+    <section class="sw-shell" aria-label="Nine myth evidence checks">
+      <div class="sw-progress" aria-hidden="true">
+        <span class="sw-progress-fill" data-story-progress></span>
+      </div>
 
       <!-- TEXT COLUMN -->
       <div class="sw-steps" id="sw-steps">
         {storyData.map((myth, i) => (
-          <article class="sw-step" data-step={i} data-slug={myth.slug}>
+          <article class="sw-step" data-step={i} data-slug={myth.slug} aria-labelledby={`story-step-${i}`}>
             <div class="sw-step-meta">
               <span class="sw-counter">{String(i + 1).padStart(2, "0")} / 09</span>
               <span class="sw-tag">Common claim</span>
             </div>
-            <blockquote class="sw-myth">
+            <blockquote class="sw-myth" id={`story-step-${i}`}>
               <span class="sw-myth-mark">"</span>{myth.statement}<span class="sw-myth-mark">"</span>
             </blockquote>
             <hr class="sw-rule" />
@@ -168,6 +171,9 @@ const storyData = storyMyths.map(entry => ({
             </div>
           ))}
 
+          <!-- Per-myth color tint -->
+          <div class="sw-photo-tint" data-photo-tint></div>
+
           <!-- Gradient overlays -->
           <div class="sw-photo-overlay sw-photo-overlay--top"></div>
           <div class="sw-photo-overlay sw-photo-overlay--bottom"></div>
@@ -213,10 +219,22 @@ const storyData = storyMyths.map(entry => ({
 
   </div>
 
-  <script type="application/json" id="sw-data" set:html={JSON.stringify(storyData)}></script>
+  <script is:inline type="application/json" id="sw-data" set:html={JSON.stringify(storyData)}></script>
 </BaseLayout>
 
 <style>
+/* ─── REGISTERED COLOR PROPERTIES (enables smooth transitions) ─── */
+@property --sw-accent {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #c5973e;
+}
+@property --sw-tint {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
 /* ─── RESET & TOKENS ─────────────────────────────────────── */
 .sw {
   --sw-bg:    #080807;
@@ -226,11 +244,14 @@ const storyData = storyMyths.map(entry => ({
   --sw-gold:  #c5973e;
   --sw-red:   #d94f35;
   --sw-amber: #d4823a;
+  --sw-accent: #c5973e;
+  --sw-tint:   transparent;
   --sw-font-display: Georgia, 'Times New Roman', serif;
   --sw-font-ui:      ui-monospace, 'Menlo', monospace;
   background: var(--sw-bg);
   color: var(--sw-ink);
   margin: 0 calc(-1 * var(--page-pad, 0px));
+  transition: --sw-accent .65s ease, --sw-tint .65s ease;
 }
 
 /* ─── TITLE SCREEN ───────────────────────────────────────── */
@@ -252,7 +273,7 @@ const storyData = storyMyths.map(entry => ({
   font-size: .68rem;
   text-transform: uppercase;
   letter-spacing: .12em;
-  color: var(--sw-gold);
+  color: var(--sw-accent);
   margin: 0 0 1.8rem;
 }
 .sw-headline {
@@ -310,9 +331,26 @@ const storyData = storyMyths.map(entry => ({
 
 /* ─── SCROLL SHELL ───────────────────────────────────────── */
 .sw-shell {
+  position: relative;
   display: grid;
   grid-template-columns: 1fr 1fr;
   min-height: 100vh;
+}
+.sw-progress {
+  position: fixed;
+  z-index: 20;
+  inset: 0 0 auto;
+  height: 3px;
+  background: rgba(255,255,255,.12);
+  pointer-events: none;
+}
+.sw-progress-fill {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: var(--sw-accent);
+  box-shadow: 0 0 14px var(--sw-accent);
+  transition: width .35s ease, background .35s ease;
 }
 @media (max-width: 860px) {
   .sw-shell { grid-template-columns: 1fr; }
@@ -348,7 +386,7 @@ const storyData = storyMyths.map(entry => ({
   font-family: var(--sw-font-ui);
   font-size: .65rem;
   letter-spacing: .1em;
-  color: var(--sw-gold);
+  color: var(--sw-accent);
   text-transform: uppercase;
 }
 .sw-tag {
@@ -369,7 +407,7 @@ const storyData = storyMyths.map(entry => ({
   padding: 0;
   border: 0;
 }
-.sw-myth-mark { color: var(--sw-gold); }
+.sw-myth-mark { color: var(--sw-accent); }
 .sw-rule {
   border: 0;
   border-top: 1px solid var(--sw-line);
@@ -397,7 +435,7 @@ const storyData = storyMyths.map(entry => ({
   font-weight: 400;
   font-size: clamp(2rem, 4vw, 3rem);
   letter-spacing: -.04em;
-  color: var(--sw-ink);
+  color: var(--sw-accent);
   line-height: 1;
 }
 .sw-stat-label {
@@ -427,7 +465,7 @@ const storyData = storyMyths.map(entry => ({
   font-size: .72rem;
   letter-spacing: .06em;
   text-transform: uppercase;
-  color: var(--sw-gold);
+  color: var(--sw-accent);
   text-decoration: none;
   transition: opacity .2s;
   align-self: flex-start;
@@ -458,7 +496,7 @@ const storyData = storyMyths.map(entry => ({
   font-family: var(--sw-font-ui);
   font-size: .6rem;
   letter-spacing: .1em;
-  color: var(--sw-gold);
+  color: var(--sw-accent);
   text-transform: uppercase;
   display: block;
   margin-bottom: .5rem;
@@ -502,7 +540,16 @@ const storyData = storyMyths.map(entry => ({
   object-fit: cover;
   object-position: center;
 }
-/* Gradient overlays */
+/* Per-myth color tint layer */
+.sw-photo-tint {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: var(--sw-tint);
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+/* Gradient overlays — lightened so photos are visible */
 .sw-photo-overlay {
   position: absolute;
   left: 0;
@@ -512,13 +559,13 @@ const storyData = storyMyths.map(entry => ({
 }
 .sw-photo-overlay--top {
   top: 0;
-  height: 45%;
-  background: linear-gradient(to bottom, rgba(8,8,7,.85) 0%, transparent 100%);
+  height: 40%;
+  background: linear-gradient(to bottom, rgba(8,8,7,.6) 0%, transparent 100%);
 }
 .sw-photo-overlay--bottom {
   bottom: 0;
-  height: 55%;
-  background: linear-gradient(to top, rgba(8,8,7,.92) 0%, rgba(8,8,7,.5) 60%, transparent 100%);
+  height: 50%;
+  background: linear-gradient(to top, rgba(8,8,7,.72) 0%, rgba(8,8,7,.3) 55%, transparent 100%);
 }
 /* Myth text on photo */
 .sw-photo-myth {
@@ -563,7 +610,7 @@ const storyData = storyMyths.map(entry => ({
   color: rgba(240,237,229,.45);
   transition: color .3s;
 }
-.sw-hud-counter { color: rgba(240,237,229,.7); }
+.sw-hud-counter { color: var(--sw-accent); }
 .sw-hud-verdict {
   font-family: var(--sw-font-ui);
   font-size: .68rem;
@@ -607,7 +654,7 @@ const storyData = storyMyths.map(entry => ({
   padding: .85rem 1.8rem;
   border: 1px solid color-mix(in srgb, var(--sw-gold) 35%, transparent);
   border-radius: 3px;
-  transition: background .2s, color .2s;
+  transition: background .2s, color .2s, border-color .2s;
 }
 .sw-cta:hover {
   background: var(--sw-gold);
@@ -662,6 +709,7 @@ const storyData = storyMyths.map(entry => ({
 @media (prefers-reduced-motion: reduce) {
   .sw-step, .sw-photo, .sw-photo-myth-text,
   .sw-hud-counter, .sw-hud-verdict, .sw-cta { transition: none; }
+  .sw-progress-fill { transition: none; }
   .sw-scroll-hint { animation: none; }
 }
 </style>
@@ -679,14 +727,44 @@ const storyData = storyMyths.map(entry => ({
   };
   const data: MythEntry[] = JSON.parse(dataEl.textContent || "[]");
 
+  // Per-myth accent colors — each myth has its own visual identity
+  const accentColors: Record<string, string> = {
+    "borat":              "#d4924a",  // warm amber — film/entertainment
+    "capital-astana":     "#5899d4",  // sky blue   — institutional capital
+    "economy-oil":        "#3fb5a0",  // teal       — minerals/resources
+    "ethnic-diversity":   "#c8607a",  // rose       — people, warmth
+    "kazakh-and-russian": "#8f86d8",  // lavender   — language, scripts
+    "nuclear-weapons":    "#d44a25",  // red-orange — danger, nuclear history
+    "only-steppe":        "#52a868",  // forest     — nature, landscapes
+    "part-of-russia":     "#4872b5",  // steel blue — sovereignty, statehood
+    "yurts":              "#c47a50",  // terracotta — heritage, felt
+  };
+
+  // Tint overlays: accent at ~18% opacity (hex 2e ≈ 18%)
+  const tintColors: Record<string, string> = {
+    "borat":              "#d4924a2e",
+    "capital-astana":     "#5899d42e",
+    "economy-oil":        "#3fb5a02e",
+    "ethnic-diversity":   "#c8607a2e",
+    "kazakh-and-russian": "#8f86d82e",
+    "nuclear-weapons":    "#d44a252e",
+    "only-steppe":        "#52a8682e",
+    "part-of-russia":     "#4872b52e",
+    "yurts":              "#c47a502e",
+  };
+
   const photos     = [...document.querySelectorAll<HTMLElement>("[data-photo]")];
+  const photoTint  = document.querySelector<HTMLElement>("[data-photo-tint]");
   const mythText   = document.querySelector<HTMLElement>("[data-photo-myth-text]");
   const hudCounter = document.querySelector<HTMLElement>("[data-hud-counter]");
   const hudLabel   = document.querySelector<HTMLElement>("[data-hud-label]");
   const hudVerdict = document.querySelector<HTMLElement>("[data-hud-verdict]");
   const hudScroll  = document.querySelector<HTMLElement>("[data-hud-scroll]");
   const visual     = document.querySelector<HTMLElement>("[data-visual]");
+  const swRoot     = document.querySelector<HTMLElement>(".sw");
   const steps      = [...document.querySelectorAll<HTMLElement>(".sw-step")];
+  const progress   = document.querySelector<HTMLElement>("[data-story-progress]");
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const isMobile = () => window.innerWidth <= 860;
 
@@ -695,7 +773,7 @@ const storyData = storyMyths.map(entry => ({
     photos.forEach((p, i) => p.classList.toggle("is-active", i === index));
 
     // steps: only fade in active on desktop; always show on mobile
-    steps.forEach((s, i) => {
+    steps.forEach((s) => {
       const stepIdx = s.dataset.step;
       const match = stepIdx === "pattern"
         ? index === null
@@ -704,23 +782,44 @@ const storyData = storyMyths.map(entry => ({
     });
 
     if (index === null) {
+      if (progress) progress.style.width = "100%";
       if (hudScroll) hudScroll.textContent = "";
+      // reset accent to gold when at pattern step
+      if (swRoot) {
+        swRoot.style.setProperty("--sw-accent", "#c5973e");
+        swRoot.style.setProperty("--sw-tint", "transparent");
+      }
       return;
     }
 
     const m = data[index];
     if (!m) return;
+    if (progress) progress.style.width = `${((index + 1) / data.length) * 100}%`;
+
+    // Apply per-myth color identity
+    const accent = accentColors[m.slug] ?? "#c5973e";
+    const tint   = tintColors[m.slug]   ?? "transparent";
+    if (swRoot) {
+      swRoot.style.setProperty("--sw-accent", accent);
+      swRoot.style.setProperty("--sw-tint", tint);
+    }
+    // Also update tint overlay directly (fallback for browsers without @property)
+    if (photoTint) photoTint.style.background = tint;
 
     if (mythText) {
-      mythText.style.opacity = "0";
-      mythText.style.transform = "translateY(8px)";
-      requestAnimationFrame(() => {
-        setTimeout(() => {
-          mythText.textContent = `"${m.statement}"`;
-          mythText.style.opacity = "";
-          mythText.style.transform = "";
-        }, 180);
-      });
+      if (reducedMotion) {
+        mythText.textContent = `"${m.statement}"`;
+      } else {
+        mythText.style.opacity = "0";
+        mythText.style.transform = "translateY(8px)";
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            mythText.textContent = `"${m.statement}"`;
+            mythText.style.opacity = "";
+            mythText.style.transform = "";
+          }, 180);
+        });
+      }
     }
     if (hudCounter) hudCounter.textContent = `${String(index + 1).padStart(2, "0")} / 09`;
     if (hudLabel)   hudLabel.textContent   = m.title.replace(/^Kazakhstan[' s]*/i, "");
@@ -750,7 +849,7 @@ const storyData = storyMyths.map(entry => ({
 
   const scroller = scrollama();
   scroller
-    .setup({ step: ".sw-step", offset: isMobile() ? 0.35 : 0.5, progress: false })
+    .setup({ step: ".sw-step", offset: isMobile() ? 0.4 : 0.5, progress: false })
     .onStepEnter(({ element }) => {
       const step = element.dataset.step;
       if (step === "pattern") {

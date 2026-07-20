@@ -4,7 +4,8 @@ Qazaq Lens is a free, mobile-first evidence library that explains recurring misc
 
 ## Current product
 
-- Five public-beta explainers with claim-by-claim citations
+- Nine public-beta explainers with claim-by-claim citations
+- Pudding-style visual story route at `/story/`
 - Searchable evidence library with topic filters
 - Public evidence dashboard showing article, claim, source and publisher counts
 - “Kazakhstan in 60 seconds” onboarding page
@@ -12,7 +13,7 @@ Qazaq Lens is a free, mobile-first evidence library that explains recurring misc
 - Responsive light/dark interface and accessibility support
 - Installable PWA with offline fallback and cached core explainers
 - RSS feed, sitemap, dynamic robots.txt, canonical URLs, Open Graph cards and Article JSON-LD
-- First-party correction form backed by Cloudflare Pages Functions + free D1
+- First-party correction form backed by a Cloudflare Worker route + D1
 - GitHub Actions CI, content-schema validation, function-SQL audit and built-HTML integrity audit
 
 ## Requirements
@@ -50,14 +51,14 @@ External source links are intentionally a separate, network-dependent check:
 npm run audit:links
 ```
 
-## Deploy to Cloudflare Pages
+## Deploy to Cloudflare Workers
 
-Connect the repository and use:
+The project deploys as a static Workers assets site. Deploys are manual:
 
-```text
-Build command: npm run build
-Output directory: dist
-Node version: 22
+```bash
+npm run qa
+npm run build
+npx wrangler deploy
 ```
 
 Set this environment variable:
@@ -66,7 +67,7 @@ Set this environment variable:
 PUBLIC_SITE_URL=https://qazaq-lens.nazkari86.workers.dev
 ```
 
-Pages Functions must be deployed through Git integration or Wrangler. Dashboard Direct Upload does not deploy the `functions/` directory.
+Run `npx wrangler login` once on the deployment machine, or provide `CLOUDFLARE_API_TOKEN` for non-interactive deploys.
 
 ## Activate correction storage
 
@@ -76,7 +77,7 @@ npx wrangler d1 create qazaq-lens-feedback
 npx wrangler d1 execute qazaq-lens-feedback --remote --file=migrations/0001_feedback.sql
 ```
 
-Then add a Pages D1 binding:
+Then add a Workers D1 binding:
 
 ```text
 Binding name: QAZAQ_LENS_DB
@@ -88,12 +89,12 @@ Redeploy and submit a real test correction. Before D1 is connected, the page sti
 For local Function testing:
 
 ```bash
-cp wrangler.example.toml wrangler.toml
-# replace the example database ID
+cp wrangler.example.toml wrangler.local.toml
+# replace the example database ID, then pass the file explicitly if needed
 npm run pages:dev
 ```
 
-`wrangler.toml` is ignored and must never contain committed private configuration.
+The committed `wrangler.toml` contains only public Worker/assets configuration. Private database IDs, tokens and local overrides must never be committed.
 
 ## Editorial workflow
 

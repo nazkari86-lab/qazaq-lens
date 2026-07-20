@@ -59,7 +59,7 @@ const mythSchema = z
     heroImage: z.string().optional(),
     heroImageAlt: z.string().optional(),
     heroImageCredit: z.string().optional(),
-    heroImageCreditUrl: z.string().url().optional(),
+    heroImageCreditUrl: z.url().optional(),
     sources: z.array(sourceSchema).min(2),
     claims: z.array(claimSchema).min(1),
     changelog: z.array(changelogEntry).min(1),

@@ -1,6 +1,10 @@
 name = "qazaq-lens"
-pages_build_output_dir = "./dist"
 compatibility_date = "2026-07-20"
+main = "worker/index.ts"
+
+[assets]
+directory = "dist"
+binding = "ASSETS"
 
 # After `npx wrangler d1 create qazaq-lens-feedback`, copy this file to
 # wrangler.toml and replace the ID below. Never commit secrets.

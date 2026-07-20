@@ -4,5 +4,5 @@
     "types": ["astro/client"]
   },
   "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist", "functions"]
+  "exclude": ["dist", "functions", "worker"]
 }

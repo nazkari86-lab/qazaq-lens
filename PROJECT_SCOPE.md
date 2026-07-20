@@ -11,12 +11,14 @@ Will Kazakhstanis voluntarily share a Qazaq Lens explainer, and will internation
 ## Current v1 scope
 
 - English mobile-first static site
-- Five public-beta explainers
+- Nine public-beta explainers
+- Pudding-style visual story for the nine-myth pattern
 - public claim and source ledgers
 - evidence dashboard and methodology
 - search and topic filtering
 - installable offline-capable PWA
 - correction form stored in Cloudflare D1 when configured
+- static Cloudflare Workers deployment through Wrangler
 - RSS, sitemap, social previews and structured data
 - automated content, function, build and internal-link QA
 

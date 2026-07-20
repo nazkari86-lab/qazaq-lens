@@ -1,3 +1,13 @@
 name = "qazaq-lens"
 compatibility_date = "2026-07-20"
-assets = { directory = "dist" }
+main = "worker/index.ts"
+
+[assets]
+directory = "dist"
+binding = "ASSETS"
+
+[[d1_databases]]
+binding = "QAZAQ_LENS_DB"
+database_name = "qazaq-lens-feedback"
+database_id = "4b2e27a9-f720-4f02-b551-8ee7e5d9c515"
+migrations_dir = "migrations"
