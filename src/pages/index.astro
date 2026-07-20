@@ -2,7 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import MythCard from "../components/MythCard.astro";
 import InstallApp from "../components/InstallApp.astro";
-import { getVisibleMyths } from "../lib/content";
+import { estimateReadingMinutes, getVisibleMyths } from "../lib/content";
 const myths = (await getVisibleMyths()).sort((a,b)=>b.data.publishedAt.valueOf()-a.data.publishedAt.valueOf());
 const featured = myths.find((entry)=>entry.data.featured) ?? myths[0];
 const recent = myths.filter((entry)=>entry.id!==featured?.id).slice(0,4);
@@ -36,7 +36,7 @@ const sourceCount = myths.reduce((sum,entry)=>sum+entry.data.sources.length,0);
 
   <section class="trust-strip"><div class="wrap-wide trust-grid"><span>Claims linked to evidence</span><span>Uncertainty shown openly</span><span>Corrections accepted publicly</span><span>No ads or tracking profiles</span></div></section>
 
-  {featured && <section class="wrap-wide section-block"><div class="section-heading-row"><div><p class="eyebrow">Flagship explainer</p><h2>Start with the most common reference</h2></div><a href="/myths">View all →</a></div><MythCard href={`/myths/${featured.data.slug}`} title={featured.data.title} mythStatement={featured.data.mythStatement} summary={featured.data.summary} verdict={featured.data.verdict} publicationStatus={featured.data.publicationStatus} lastReviewedAt={featured.data.lastReviewedAt} topics={featured.data.topics} /></section>}
+  {featured && <section class="wrap-wide section-block"><div class="section-heading-row"><div><p class="eyebrow">Flagship explainer</p><h2>Start with the most common reference</h2></div><a href="/myths">View all →</a></div><MythCard href={`/myths/${featured.data.slug}`} title={featured.data.title} mythStatement={featured.data.mythStatement} summary={featured.data.summary} verdict={featured.data.verdict} publicationStatus={featured.data.publicationStatus} lastReviewedAt={featured.data.lastReviewedAt} topics={featured.data.topics} sourceCount={featured.data.sources.length} readingMinutes={estimateReadingMinutes(featured.body ?? "")} /></section>}
 
   <section class="wrap-wide section-block principles-grid">
     <div class="principle-card"><span class="principle-number">01</span><p class="eyebrow">Traceable</p><h2>Every important claim has an evidence path.</h2><p>Claim IDs connect the article text to independent publishers in a public ledger.</p></div>
@@ -44,7 +44,7 @@ const sourceCount = myths.reduce((sum,entry)=>sum+entry.data.sources.length,0);
     <div class="principle-card"><span class="principle-number">03</span><p class="eyebrow">Correctable</p><h2>Readers can challenge the work.</h2><p>Anyone can submit a stronger source, missing context or a wording problem without creating an account.</p></div>
   </section>
 
-  {recent.length>0 && <section class="wrap-wide section-block"><div class="section-heading-row"><div><p class="eyebrow">Evidence library</p><h2>More claims worth checking</h2></div><a href="/myths">Explore all →</a></div><div class="myth-grid">{recent.map((entry)=><MythCard compact href={`/myths/${entry.data.slug}`} title={entry.data.title} mythStatement={entry.data.mythStatement} summary={entry.data.summary} verdict={entry.data.verdict} publicationStatus={entry.data.publicationStatus} lastReviewedAt={entry.data.lastReviewedAt} topics={entry.data.topics} />)}</div></section>}
+  {recent.length>0 && <section class="wrap-wide section-block"><div class="section-heading-row"><div><p class="eyebrow">Evidence library</p><h2>More claims worth checking</h2></div><a href="/myths">Explore all →</a></div><div class="myth-grid">{recent.map((entry)=><MythCard compact href={`/myths/${entry.data.slug}`} title={entry.data.title} mythStatement={entry.data.mythStatement} summary={entry.data.summary} verdict={entry.data.verdict} publicationStatus={entry.data.publicationStatus} lastReviewedAt={entry.data.lastReviewedAt} topics={entry.data.topics} sourceCount={entry.data.sources.length} readingMinutes={estimateReadingMinutes(entry.body ?? "")} />)}</div></section>}
 
   <section class="wrap-wide section-block"><InstallApp /></section>
 

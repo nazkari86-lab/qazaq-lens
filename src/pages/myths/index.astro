@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import MythCard from "../../components/MythCard.astro";
-import { getVisibleMyths } from "../../lib/content";
+import { estimateReadingMinutes, getVisibleMyths } from "../../lib/content";
 const myths = (await getVisibleMyths()).sort((a,b)=>b.data.publishedAt.valueOf()-a.data.publishedAt.valueOf());
 const topics = [...new Set(myths.flatMap((entry)=>entry.data.topics))].sort();
 ---
@@ -16,7 +16,7 @@ const topics = [...new Set(myths.flatMap((entry)=>entry.data.topics))].sort();
     <div class="library-actions"><button class="btn" type="button" data-random-myth>Open a random myth <span aria-hidden="true">↗</span></button></div>
     <p class="library-count" data-library-count>{myths.length} explainers</p>
   </section>
-  <section class="wrap-wide section-block"><div class="myth-grid" data-library-grid>{myths.map((entry)=><MythCard compact href={`/myths/${entry.data.slug}`} title={entry.data.title} mythStatement={entry.data.mythStatement} summary={entry.data.summary} verdict={entry.data.verdict} publicationStatus={entry.data.publicationStatus} lastReviewedAt={entry.data.lastReviewedAt} topics={entry.data.topics} heroImage={entry.data.heroImage} heroImageAlt={entry.data.heroImageAlt} />)}</div><div class="empty-state" data-empty-state hidden><h2>No matching explainer</h2><p>Try a broader word or reset the topic filter.</p></div></section>
+  <section class="wrap-wide section-block"><div class="myth-grid" data-library-grid>{myths.map((entry)=><MythCard compact href={`/myths/${entry.data.slug}`} title={entry.data.title} mythStatement={entry.data.mythStatement} summary={entry.data.summary} verdict={entry.data.verdict} publicationStatus={entry.data.publicationStatus} lastReviewedAt={entry.data.lastReviewedAt} topics={entry.data.topics} heroImage={entry.data.heroImage} heroImageAlt={entry.data.heroImageAlt} sourceCount={entry.data.sources.length} readingMinutes={estimateReadingMinutes(entry.body ?? "")} />)}</div><div class="empty-state" data-empty-state hidden><h2>No matching explainer</h2><p>Try a broader word or reset the topic filter.</p></div></section>
   <style>
     .library-filter-groups { display: grid; gap: .65rem; }
     .library-actions { display: flex; justify-content: flex-end; margin-top: 1rem; }

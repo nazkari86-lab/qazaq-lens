@@ -1,5 +1,6 @@
 ---
 import MythCard from "./MythCard.astro";
+import { estimateReadingMinutes } from "../lib/content";
 import type { MythEntry } from "../lib/content";
 interface Props { entries: MythEntry[] }
 const { entries } = Astro.props;
@@ -9,7 +10,7 @@ const { entries } = Astro.props;
     <p class="eyebrow">Continue exploring</p>
     <h2 id="related-title">Related explainers</h2>
     <div class="myth-grid">
-      {entries.map((entry) => <MythCard href={`/myths/${entry.data.slug}`} title={entry.data.title} mythStatement={entry.data.mythStatement} summary={entry.data.summary} verdict={entry.data.verdict} publicationStatus={entry.data.publicationStatus} lastReviewedAt={entry.data.lastReviewedAt} topics={entry.data.topics} compact />)}
+      {entries.map((entry) => <MythCard href={`/myths/${entry.data.slug}`} title={entry.data.title} mythStatement={entry.data.mythStatement} summary={entry.data.summary} verdict={entry.data.verdict} publicationStatus={entry.data.publicationStatus} lastReviewedAt={entry.data.lastReviewedAt} topics={entry.data.topics} sourceCount={entry.data.sources.length} readingMinutes={estimateReadingMinutes(entry.body ?? "")} compact />)}
     </div>
   </section>
 )}

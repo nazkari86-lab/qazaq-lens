@@ -10,9 +10,11 @@ interface Props {
   topics?: string[];
   heroImage?: string;
   heroImageAlt?: string;
+  sourceCount?: number;
+  readingMinutes?: number;
   compact?: boolean;
 }
-const { href, title, mythStatement, summary, verdict, publicationStatus, lastReviewedAt, topics = [], heroImage, heroImageAlt, compact = false } = Astro.props;
+const { href, title, mythStatement, summary, verdict, publicationStatus, lastReviewedAt, topics = [], heroImage, heroImageAlt, sourceCount, readingMinutes, compact = false } = Astro.props;
 const labels = { false: "False", misleading: "Misleading", "partly-true": "Partly true", disputed: "Disputed" };
 const reviewed = lastReviewedAt.toLocaleDateString("en-GB", { year: "numeric", month: "short", day: "numeric" });
 ---
@@ -28,5 +30,5 @@ const reviewed = lastReviewedAt.toLocaleDateString("en-GB", { year: "numeric", m
   <h3>{title}</h3>
   <p>{summary}</p>
   {topics.length > 0 && <div class="topic-row">{topics.slice(0, 3).map((topic) => <span class="topic-chip">{topic}</span>)}</div>}
-  <span class="card-meta">Sources checked {reviewed}<span aria-hidden="true"> →</span></span>
+  <span class="card-meta">{readingMinutes ? `${readingMinutes} min` : "Explainer"}{sourceCount ? ` · ${sourceCount} sources` : ""} · Checked {reviewed}<span aria-hidden="true"> →</span></span>
 </a>

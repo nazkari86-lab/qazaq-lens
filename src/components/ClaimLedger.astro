@@ -12,11 +12,11 @@ interface Props { claims: Claim[] }
 const { claims } = Astro.props;
 const labels = { fact: "Fact", interpretation: "Interpretation", "reported-view": "Reported views", disputed: "Disputed" };
 ---
-<section id="claim-ledger" aria-labelledby="claim-ledger-title" class="evidence-section">
-  <div class="section-heading-row">
+<details id="claim-ledger" class="evidence-section evidence-section--collapsible">
+  <summary class="section-heading-row">
     <div><p class="eyebrow">Evidence map</p><h2 id="claim-ledger-title">Claim ledger</h2></div>
     <span class="section-count">{claims.length} claims</span>
-  </div>
+  </summary>
   <p class="section-note">Every substantial claim is listed with its evidence, confidence level and source IDs.</p>
   <ol class="claim-ledger">
     {claims.map((claim) => (
@@ -33,4 +33,4 @@ const labels = { fact: "Fact", interpretation: "Interpretation", "reported-view"
       </li>
     ))}
   </ol>
-</section>
+</details>
