@@ -8,13 +8,16 @@ interface Props {
   publicationStatus: "beta" | "reviewed";
   lastReviewedAt: Date;
   topics?: string[];
+  heroImage?: string;
+  heroImageAlt?: string;
   compact?: boolean;
 }
-const { href, title, mythStatement, summary, verdict, publicationStatus, lastReviewedAt, topics = [], compact = false } = Astro.props;
+const { href, title, mythStatement, summary, verdict, publicationStatus, lastReviewedAt, topics = [], heroImage, heroImageAlt, compact = false } = Astro.props;
 const labels = { false: "False", misleading: "Misleading", "partly-true": "Partly true", disputed: "Disputed" };
 const reviewed = lastReviewedAt.toLocaleDateString("en-GB", { year: "numeric", month: "short", day: "numeric" });
 ---
-<a href={href} class:list={["myth-card", "card", compact && "myth-card--compact"]} data-search-card data-search-text={`${title} ${mythStatement} ${summary} ${topics.join(" ")}`.toLowerCase()}>
+<a href={href} class:list={["myth-card", "card", compact && "myth-card--compact"]} data-search-card data-verdict={verdict} data-search-text={`${title} ${mythStatement} ${summary} ${topics.join(" ")}`.toLowerCase()}>
+  {heroImage && <div class="myth-card-media"><img src={heroImage} alt={heroImageAlt ?? ""} loading="lazy" decoding="async" /></div>}
   <div class="verdict-row">
     <span class={`stamp stamp--${verdict}`}>{labels[verdict]}</span>
     <span class={`status-pill status-pill--${publicationStatus}`}>

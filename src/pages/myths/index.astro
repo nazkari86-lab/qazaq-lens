@@ -9,32 +9,54 @@ const topics = [...new Set(myths.flatMap((entry)=>entry.data.topics))].sort();
   <section class="wrap-wide page-hero"><p class="eyebrow">Evidence library</p><h1>Check the claim, not the confidence.</h1><p class="lead">Search concise explainers about Kazakhstan. Every page shows its verdict, evidence ledger, sources and review status.</p></section>
   <section class="wrap-wide library-tools" aria-label="Filter evidence library">
     <label class="search-field"><span class="visually-hidden">Search explainers</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg><input type="search" placeholder="Search Borat, language, Russia, yurts…" data-library-search /></label>
-    <div class="filter-row" data-topic-filters><button class="filter-chip is-active" data-topic="all" type="button">All</button>{topics.map((topic)=><button class="filter-chip" data-topic={topic.toLowerCase()} type="button">{topic}</button>)}</div>
+    <div class="library-filter-groups">
+      <div class="filter-row" data-topic-filters aria-label="Filter by topic"><button class="filter-chip is-active" data-topic="all" type="button">All topics</button>{topics.map((topic)=><button class="filter-chip" data-topic={topic.toLowerCase()} type="button">{topic}</button>)}</div>
+      <div class="filter-row" data-verdict-filters aria-label="Filter by verdict"><button class="filter-chip is-active" data-verdict="all" type="button">All verdicts</button><button class="filter-chip" data-verdict="false" type="button">False</button><button class="filter-chip" data-verdict="misleading" type="button">Misleading</button><button class="filter-chip" data-verdict="partly-true" type="button">Partly true</button><button class="filter-chip" data-verdict="disputed" type="button">Disputed</button></div>
+    </div>
+    <div class="library-actions"><button class="btn" type="button" data-random-myth>Open a random myth <span aria-hidden="true">↗</span></button></div>
     <p class="library-count" data-library-count>{myths.length} explainers</p>
   </section>
-  <section class="wrap-wide section-block"><div class="myth-grid" data-library-grid>{myths.map((entry)=><MythCard compact href={`/myths/${entry.data.slug}`} title={entry.data.title} mythStatement={entry.data.mythStatement} summary={entry.data.summary} verdict={entry.data.verdict} publicationStatus={entry.data.publicationStatus} lastReviewedAt={entry.data.lastReviewedAt} topics={entry.data.topics} />)}</div><div class="empty-state" data-empty-state hidden><h2>No matching explainer</h2><p>Try a broader word or reset the topic filter.</p></div></section>
+  <section class="wrap-wide section-block"><div class="myth-grid" data-library-grid>{myths.map((entry)=><MythCard compact href={`/myths/${entry.data.slug}`} title={entry.data.title} mythStatement={entry.data.mythStatement} summary={entry.data.summary} verdict={entry.data.verdict} publicationStatus={entry.data.publicationStatus} lastReviewedAt={entry.data.lastReviewedAt} topics={entry.data.topics} heroImage={entry.data.heroImage} heroImageAlt={entry.data.heroImageAlt} />)}</div><div class="empty-state" data-empty-state hidden><h2>No matching explainer</h2><p>Try a broader word or reset the topic filter.</p></div></section>
+  <style>
+    .library-filter-groups { display: grid; gap: .65rem; }
+    .library-actions { display: flex; justify-content: flex-end; margin-top: 1rem; }
+    .myth-card-media { aspect-ratio: 16 / 8; margin: -1.4rem -1.4rem 1.2rem; overflow: hidden; background: var(--surface-2); }
+    .myth-card-media img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.82); transition: transform .55s ease, filter .55s ease; }
+    .myth-card:hover .myth-card-media img, .myth-card:focus-visible .myth-card-media img { transform: scale(1.045); filter: saturate(1); }
+    @media (max-width: 680px) { .library-actions { justify-content: stretch; } .library-actions .btn { width: 100%; } }
+  </style>
   <script>
     const search = document.querySelector<HTMLInputElement>("[data-library-search]");
     const cards = [...document.querySelectorAll<HTMLElement>("[data-search-card]")];
     const count = document.querySelector<HTMLElement>("[data-library-count]");
     const empty = document.querySelector<HTMLElement>("[data-empty-state]");
     const filters = [...document.querySelectorAll<HTMLButtonElement>("[data-topic]")];
+    const verdictFilters = [...document.querySelectorAll<HTMLButtonElement>("[data-verdict]")];
+    const randomButton = document.querySelector<HTMLButtonElement>("[data-random-myth]");
     let activeTopic = "all";
+    let activeVerdict = "all";
     const apply = () => {
       const query = search?.value.trim().toLowerCase() ?? "";
       let visible = 0;
       cards.forEach((card) => {
         const text = card.dataset.searchText ?? "";
         const topicMatch = activeTopic === "all" || text.includes(activeTopic);
-        const show = topicMatch && (!query || text.includes(query));
+        const verdictMatch = activeVerdict === "all" || card.dataset.verdict === activeVerdict;
+        const show = topicMatch && verdictMatch && (!query || text.includes(query));
         card.hidden = !show; if (show) visible++;
       });
       if (count) count.textContent = `${visible} explainer${visible===1?"":"s"}`;
       if (empty) empty.hidden = visible !== 0;
-      const url = new URL(location.href); query ? url.searchParams.set("q",query) : url.searchParams.delete("q"); history.replaceState({},"",url);
+      const url = new URL(location.href); query ? url.searchParams.set("q",query) : url.searchParams.delete("q"); activeTopic !== "all" ? url.searchParams.set("topic",activeTopic) : url.searchParams.delete("topic"); activeVerdict !== "all" ? url.searchParams.set("verdict",activeVerdict) : url.searchParams.delete("verdict"); history.replaceState({},"",url);
     };
     const initial = new URL(location.href).searchParams.get("q") ?? ""; if(search){search.value=initial;search.addEventListener("input",apply);}
     filters.forEach((button)=>button.addEventListener("click",()=>{filters.forEach((item)=>item.classList.remove("is-active"));button.classList.add("is-active");activeTopic=button.dataset.topic??"all";apply();}));
+    verdictFilters.forEach((button)=>button.addEventListener("click",()=>{verdictFilters.forEach((item)=>item.classList.remove("is-active"));button.classList.add("is-active");activeVerdict=button.dataset.verdict??"all";apply();}));
+    randomButton?.addEventListener("click",()=>{ const visible=cards.filter((card)=>!card.hidden); const picked=visible[Math.floor(Math.random()*visible.length)] ?? cards[0]; const link=picked?.getAttribute("href"); if(link) location.href=link; });
+    const params = new URL(location.href).searchParams;
+    const initialTopic = params.get("topic"); const initialVerdict = params.get("verdict");
+    if (initialTopic) { activeTopic = initialTopic; filters.forEach((button)=>button.classList.toggle("is-active", button.dataset.topic === activeTopic)); }
+    if (initialVerdict) { activeVerdict = initialVerdict; verdictFilters.forEach((button)=>button.classList.toggle("is-active", button.dataset.verdict === activeVerdict)); }
     apply();
   </script>
 </BaseLayout>
