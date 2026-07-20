@@ -75,6 +75,8 @@ const storyData = storyMyths.map(entry => ({
   verdict: entry.data.verdict,
   heroImage: entry.data.heroImage ?? "",
   heroAlt: entry.data.heroImageAlt ?? "",
+  sourceCount: entry.data.sources.length,
+  reviewedAt: entry.data.lastReviewedAt.toLocaleDateString("en-GB", { year: "numeric", month: "short" }),
   ...mythMeta[entry.data.slug],
 }));
 ---
@@ -198,6 +200,7 @@ const storyData = storyMyths.map(entry => ({
             <span class="sw-hud-verdict" data-hud-verdict data-verdict={storyData[0].verdict}>
               {storyData[0].verdict === "false" ? "FALSE" : "MISLEADING"}
             </span>
+            <span class="sw-hud-sources" data-hud-sources>{storyData[0].sourceCount} sources · {storyData[0].reviewedAt}</span>
             <span class="sw-hud-scroll" data-hud-scroll>Scroll to continue</span>
           </div>
         </div>
@@ -635,6 +638,7 @@ const storyData = storyMyths.map(entry => ({
 .sw-hud--bottom { bottom: 1.5rem; }
 .sw-hud-counter,
 .sw-hud-label,
+.sw-hud-sources,
 .sw-hud-scroll {
   font-family: var(--sw-font-ui);
   font-size: .64rem;
@@ -643,6 +647,7 @@ const storyData = storyMyths.map(entry => ({
   color: rgba(240,237,229,.45);
   transition: color .3s;
 }
+.sw-hud-sources { color: rgba(240,237,229,.62); }
 .sw-hud-counter { color: var(--sw-accent); }
 .sw-hud-verdict {
   font-family: var(--sw-font-ui);
@@ -759,6 +764,7 @@ const storyData = storyMyths.map(entry => ({
     slug: string; title: string; statement: string;
     verdict: "false" | "misleading"; heroImage: string;
     stat: string; statLabel: string; lead: string;
+    sourceCount: number; reviewedAt: string;
   };
   const data: MythEntry[] = JSON.parse(dataEl.textContent || "[]");
 
@@ -796,6 +802,7 @@ const storyData = storyMyths.map(entry => ({
   const hudCounter = document.querySelector<HTMLElement>("[data-hud-counter]");
   const hudLabel   = document.querySelector<HTMLElement>("[data-hud-label]");
   const hudVerdict = document.querySelector<HTMLElement>("[data-hud-verdict]");
+  const hudSources = document.querySelector<HTMLElement>("[data-hud-sources]");
   const hudScroll  = document.querySelector<HTMLElement>("[data-hud-scroll]");
   const visual     = document.querySelector<HTMLElement>("[data-visual]");
   const swRoot     = document.querySelector<HTMLElement>(".sw");
@@ -877,6 +884,7 @@ const storyData = storyMyths.map(entry => ({
       hudVerdict.textContent = m.verdict === "false" ? "FALSE" : "MISLEADING";
       hudVerdict.dataset.verdict = m.verdict;
     }
+    if (hudSources) hudSources.textContent = `${m.sourceCount} sources · ${m.reviewedAt}`;
     if (hudScroll)  hudScroll.textContent  = index < data.length - 1 ? "Scroll to continue" : "End of myths";
 
     // mobile: show visual panel
