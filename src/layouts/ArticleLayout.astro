@@ -1,0 +1,78 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import VerdictBox from "../components/VerdictBox.astro";
+import SourceList from "../components/SourceList.astro";
+import ClaimLedger from "../components/ClaimLedger.astro";
+import Changelog from "../components/Changelog.astro";
+import LastReviewed from "../components/LastReviewed.astro";
+import ReportError from "../components/ReportError.astro";
+import ShareTools from "../components/ShareTools.astro";
+import TableOfContents from "../components/TableOfContents.astro";
+import ReadingProgress from "../components/ReadingProgress.astro";
+import KeyTakeaways from "../components/KeyTakeaways.astro";
+import RelatedMyths from "../components/RelatedMyths.astro";
+import type { MythEntry } from "../lib/content";
+
+interface Source { id: string; title: string; publisher: string; author?: string; publishedAt?: string; accessedAt: Date; url: string; archivedUrl?: string; language: string; type: "primary" | "academic" | "official" | "journalistic" | "background"; }
+interface Claim { id: string; statement: string; kind: "fact" | "interpretation" | "reported-view" | "disputed"; significance: "critical" | "supporting"; confidence: "high" | "medium" | "low"; sourceIds: string[]; note?: string; }
+interface Change { date: Date; summary: string }
+interface Heading { depth: number; slug: string; text: string }
+interface Props {
+  title: string; mythStatement: string; summary: string; verdict: "false" | "misleading" | "partly-true" | "disputed";
+  publicationStatus: "beta" | "reviewed"; publishedAt: Date; lastReviewedAt: Date; author: string; reviewStatus: string;
+  reviewedBy: string[]; sources: Source[]; claims: Claim[]; changelog: Change[]; keyTakeaways: string[]; topics: string[];
+  headings: Heading[]; readingMinutes: number; related: MythEntry[]; ogImage?: string; draft?: boolean;
+}
+const props = Astro.props;
+const site = Astro.site ?? new URL("https://qazaq-lens.pages.dev");
+const articleUrl = new URL(Astro.url.pathname, site).toString();
+const image = new URL(props.ogImage ?? "/og/default.png", site).toString();
+const jsonLd = [
+  {
+    "@context": "https://schema.org", "@type": "Article", headline: props.title, description: props.summary,
+    image: [image], datePublished: props.publishedAt.toISOString(), dateModified: props.lastReviewedAt.toISOString(),
+    author: { "@type": "Organization", name: props.author }, publisher: { "@type": "Organization", name: "Qazaq Lens", url: site.toString() },
+    mainEntityOfPage: articleUrl, about: { "@type": "Country", name: "Kazakhstan" }, keywords: props.topics.join(", "),
+    citation: props.sources.map((source) => source.url),
+  },
+  {
+    "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: site.toString() },
+      { "@type": "ListItem", position: 2, name: "Evidence library", item: new URL("/myths", site).toString() },
+      { "@type": "ListItem", position: 3, name: props.title, item: articleUrl },
+    ],
+  },
+];
+---
+<BaseLayout title={props.title} description={props.summary} ogImage={props.ogImage} type="article" noindex={props.draft} jsonLd={jsonLd}>
+  <ReadingProgress />
+  <article class="article-shell">
+    <header class="article-hero wrap-wide">
+      <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/myths">Evidence library</a></nav>
+      <div class="article-hero-grid">
+        <div>
+          <p class="eyebrow">Myth vs. reality</p>
+          <p class="myth-quote">“{props.mythStatement}”</p>
+          <h1>{props.title}</h1>
+          <ShareTools title={props.title} summary={props.summary} />
+        </div>
+        <VerdictBox verdict={props.verdict} summary={props.summary} publicationStatus={props.publicationStatus} />
+      </div>
+      {props.publicationStatus === "beta" && <aside class="notice notice--beta" aria-label="Review status"><strong>Public beta:</strong> claim-by-claim source audit completed; independent human review is still pending.</aside>}
+    </header>
+
+    <div class="article-layout wrap-wide">
+      <aside class="article-sidebar"><TableOfContents headings={props.headings} /></aside>
+      <div class="article-main">
+        <KeyTakeaways items={props.keyTakeaways} />
+        <div class="article-body"><slot /></div>
+        <ClaimLedger claims={props.claims} />
+        <SourceList sources={props.sources} />
+        <LastReviewed publishedAt={props.publishedAt} lastReviewedAt={props.lastReviewedAt} author={props.author} reviewStatus={props.reviewStatus} reviewedBy={props.reviewedBy} readingMinutes={props.readingMinutes} />
+        <Changelog entries={props.changelog} />
+        <ReportError pageUrl={Astro.url.pathname} />
+        <RelatedMyths entries={props.related} />
+      </div>
+    </div>
+  </article>
+</BaseLayout>

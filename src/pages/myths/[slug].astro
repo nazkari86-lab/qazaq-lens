@@ -1,0 +1,38 @@
+---
+import { render } from "astro:content";
+import ArticleLayout from "../../layouts/ArticleLayout.astro";
+import { estimateReadingMinutes, getRelatedMyths, getVisibleMyths } from "../../lib/content";
+
+export async function getStaticPaths() {
+  const myths = await getVisibleMyths();
+  return myths.map((entry) => ({ params: { slug: entry.data.slug }, props: { entry, myths } }));
+}
+const { entry, myths } = Astro.props;
+const { Content, headings } = await render(entry);
+const related = getRelatedMyths(entry, myths);
+const readingMinutes = estimateReadingMinutes(entry.body ?? "");
+---
+<ArticleLayout
+  title={entry.data.title}
+  mythStatement={entry.data.mythStatement}
+  summary={entry.data.summary}
+  verdict={entry.data.verdict}
+  publicationStatus={entry.data.publicationStatus}
+  publishedAt={entry.data.publishedAt}
+  lastReviewedAt={entry.data.lastReviewedAt}
+  author={entry.data.author}
+  reviewStatus={entry.data.reviewStatus}
+  reviewedBy={entry.data.reviewedBy}
+  sources={entry.data.sources}
+  claims={entry.data.claims}
+  changelog={entry.data.changelog}
+  keyTakeaways={entry.data.keyTakeaways}
+  topics={entry.data.topics}
+  headings={headings}
+  readingMinutes={readingMinutes}
+  related={related}
+  ogImage={entry.data.ogImage}
+  draft={entry.data.draft}
+>
+  <Content />
+</ArticleLayout>

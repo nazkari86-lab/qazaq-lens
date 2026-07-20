@@ -1,0 +1,39 @@
+<div class="install-card card" data-install-card>
+  <div>
+    <p class="eyebrow">Use on your phone</p>
+    <h2>Keep Qazaq Lens one tap away.</h2>
+    <p data-install-copy>Core explainers can be saved to your home screen and remain available when the connection drops.</p>
+    <details class="install-help">
+      <summary>Manual installation instructions</summary>
+      <p><strong>Android / Chrome:</strong> open the browser menu and choose <em>Install app</em> or <em>Add to Home screen</em>.</p>
+      <p><strong>iPhone / Safari:</strong> tap Share, then choose <em>Add to Home Screen</em>.</p>
+    </details>
+  </div>
+  <button class="btn btn--primary" type="button" data-install-button hidden>Install app</button>
+</div>
+<script>
+  interface BeforeInstallPromptEvent extends Event {
+    prompt(): Promise<void>;
+    userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
+  }
+  let deferredPrompt: BeforeInstallPromptEvent | null = null;
+  const card = document.querySelector<HTMLElement>("[data-install-card]");
+  const button = document.querySelector<HTMLButtonElement>("[data-install-button]");
+  const copy = document.querySelector<HTMLElement>("[data-install-copy]");
+  const standalone = window.matchMedia("(display-mode: standalone)").matches || (navigator as Navigator & { standalone?: boolean }).standalone === true;
+  if (standalone && card) card.hidden = true;
+  window.addEventListener("beforeinstallprompt", (event) => {
+    event.preventDefault();
+    deferredPrompt = event as BeforeInstallPromptEvent;
+    if (button) button.hidden = false;
+    if (copy) copy.textContent = "Install the evidence library as a lightweight app with offline access to core pages.";
+  });
+  button?.addEventListener("click", async () => {
+    if (!deferredPrompt) return;
+    await deferredPrompt.prompt();
+    const choice = await deferredPrompt.userChoice;
+    if (choice.outcome === "accepted" && card) card.hidden = true;
+    deferredPrompt = null;
+  });
+  window.addEventListener("appinstalled", () => { if (card) card.hidden = true; });
+</script>

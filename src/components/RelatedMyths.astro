@@ -1,0 +1,15 @@
+---
+import MythCard from "./MythCard.astro";
+import type { MythEntry } from "../lib/content";
+interface Props { entries: MythEntry[] }
+const { entries } = Astro.props;
+---
+{entries.length > 0 && (
+  <section class="related-section" aria-labelledby="related-title">
+    <p class="eyebrow">Continue exploring</p>
+    <h2 id="related-title">Related explainers</h2>
+    <div class="myth-grid">
+      {entries.map((entry) => <MythCard href={`/myths/${entry.data.slug}`} title={entry.data.title} mythStatement={entry.data.mythStatement} summary={entry.data.summary} verdict={entry.data.verdict} publicationStatus={entry.data.publicationStatus} lastReviewedAt={entry.data.lastReviewedAt} topics={entry.data.topics} compact />)}
+    </div>
+  </section>
+)}

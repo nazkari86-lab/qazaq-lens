@@ -1,0 +1,9 @@
+---
+interface Props { items: string[] }
+const { items } = Astro.props;
+---
+<section class="takeaways" aria-labelledby="takeaways-title">
+  <p class="eyebrow">Key takeaways</p>
+  <h2 id="takeaways-title" class="visually-hidden">Key takeaways</h2>
+  <ul>{items.map((item) => <li>{item}</li>)}</ul>
+</section>

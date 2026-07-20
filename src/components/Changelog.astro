@@ -1,0 +1,15 @@
+---
+interface Entry { date: Date; summary: string }
+interface Props { entries: Entry[] }
+const { entries } = Astro.props;
+const fmt = (date: Date) => date.toLocaleDateString("en-GB", { year: "numeric", month: "long", day: "numeric" });
+---
+<details class="changelog">
+  <summary>Article change history</summary>
+  <ol>
+    {entries
+      .slice()
+      .sort((a, b) => b.date.valueOf() - a.date.valueOf())
+      .map((entry) => <li><time datetime={entry.date.toISOString()}>{fmt(entry.date)}</time> — {entry.summary}</li>)}
+  </ol>
+</details>

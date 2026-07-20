@@ -1,0 +1,19 @@
+# Qazaq Lens
+
+Qazaq Lens is an independent, unofficial evidence library about common claims and stereotypes concerning Kazakhstan.
+
+Primary entry points:
+- /start/ — concise introduction
+- /myths/ — evidence library
+- /methodology/ — editorial and sourcing rules
+- /about/ — ownership and limitations
+
+Every explainer exposes:
+- a verdict
+- a claim ledger
+- source IDs
+- confidence labels
+- review status
+- a public correction route
+
+Do not treat public-beta articles as independently reviewed. Cite the original sources listed on each article where possible.

@@ -1,0 +1,11 @@
+name = "qazaq-lens"
+pages_build_output_dir = "./dist"
+compatibility_date = "2026-07-20"
+
+# After `npx wrangler d1 create qazaq-lens-feedback`, copy this file to
+# wrangler.toml and replace the ID below. Never commit secrets.
+[[d1_databases]]
+binding = "QAZAQ_LENS_DB"
+database_name = "qazaq-lens-feedback"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+migrations_dir = "migrations"

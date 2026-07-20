@@ -1,0 +1,81 @@
+---
+import Logo from "./Logo.astro";
+const pathname = Astro.url.pathname;
+const nav = [
+  { href: "/start", label: "Start here" },
+  { href: "/myths", label: "Evidence library" },
+  { href: "/sources", label: "Sources" },
+  { href: "/methodology", label: "Methodology" },
+  { href: "/about", label: "About" },
+];
+const isCurrent = (href: string) => pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
+---
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="site-header" data-header>
+  <div class="wrap-wide header-inner">
+    <a href="/" class="logo" aria-label="Qazaq Lens home"><Logo /></a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" data-nav-toggle>
+      <span class="nav-toggle-label">Menu</span>
+      <span class="nav-toggle-icon" aria-hidden="true"></span>
+    </button>
+    <nav id="primary-nav" class="primary-nav" aria-label="Primary navigation" data-nav>
+      {nav.map((item) => (
+        <a href={item.href} aria-current={isCurrent(item.href) ? "page" : undefined}>{item.label}</a>
+      ))}
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme">
+        <span class="theme-icon" aria-hidden="true" data-theme-icon>◐</span><span class="theme-label" data-theme-label>Theme</span>
+      </button>
+    </nav>
+  </div>
+</header>
+<script>
+  const header = document.querySelector<HTMLElement>("[data-header]");
+  const toggle = document.querySelector<HTMLButtonElement>("[data-nav-toggle]");
+  const nav = document.querySelector<HTMLElement>("[data-nav]");
+  const themeToggle = document.querySelector<HTMLButtonElement>("[data-theme-toggle]");
+
+  toggle?.addEventListener("click", () => {
+    const open = toggle.getAttribute("aria-expanded") === "true";
+    toggle.setAttribute("aria-expanded", String(!open));
+    nav?.classList.toggle("is-open", !open);
+  });
+  nav?.querySelectorAll("a").forEach((link) => link.addEventListener("click", () => {
+    toggle?.setAttribute("aria-expanded", "false");
+    nav.classList.remove("is-open");
+  }));
+
+  const CYCLE: Record<string, string> = { system: "light", light: "dark", dark: "system" };
+  const ICONS: Record<string, string> = { system: "◐", light: "○", dark: "●" };
+  const LABELS: Record<string, string> = { system: "Auto", light: "Light", dark: "Dark" };
+  const icon = document.querySelector<HTMLElement>("[data-theme-icon]");
+  const label = document.querySelector<HTMLElement>("[data-theme-label]");
+
+  const applyTheme = (theme: string) => {
+    if (theme === "system") {
+      delete document.documentElement.dataset.theme;
+      localStorage.removeItem("qazaq-lens-theme");
+    } else {
+      document.documentElement.dataset.theme = theme;
+      localStorage.setItem("qazaq-lens-theme", theme);
+    }
+    if (icon) icon.textContent = ICONS[theme] ?? "◐";
+    if (label) label.textContent = LABELS[theme] ?? "Theme";
+  };
+
+  const getTheme = () => {
+    const saved = localStorage.getItem("qazaq-lens-theme");
+    if (saved === "light" || saved === "dark") return saved;
+    return "system";
+  };
+
+  applyTheme(getTheme());
+
+  themeToggle?.addEventListener("click", () => {
+    const current = getTheme();
+    applyTheme(CYCLE[current] ?? "system");
+  });
+
+  const onScroll = () => header?.classList.toggle("is-scrolled", window.scrollY > 8);
+  onScroll();
+  window.addEventListener("scroll", onScroll, { passive: true });
+</script>

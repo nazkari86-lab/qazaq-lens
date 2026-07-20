@@ -1,0 +1,71 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+const page = Astro.url.searchParams.get("page") ?? "";
+---
+<BaseLayout title="Report an error" description="Submit a correction, stronger source or missing context to Qazaq Lens." noindex={true}>
+  <article class="wrap article-shell">
+    <p class="eyebrow">Corrections</p><h1>Report an error</h1>
+    <p class="lead">No account is required. Do not include sensitive personal information.</p>
+    <noscript><div class="notice">JavaScript is required to submit this form. You can still copy the report fields manually.</div></noscript>
+    <form id="correction-form" class="correction-form" novalidate>
+      <input type="hidden" name="startedAt" value={Date.now()} />
+      <div class="honeypot" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off" /></label></div>
+      <label>Page URL <input type="url" name="pageUrl" required value={page ? new URL(page, Astro.site).toString() : Astro.site?.toString()} /></label>
+      <label>What appears to be incorrect or incomplete? <textarea name="issue" required minlength="20" maxlength="2000" rows="5"></textarea></label>
+      <label>Why should it be changed? <textarea name="reason" required minlength="20" maxlength="3000" rows="5"></textarea></label>
+      <div class="form-grid"><label>Supporting source URL <input type="url" name="sourceUrl" required /></label><label>Source title <input type="text" name="sourceTitle" maxlength="250" /></label></div>
+      <label>Suggested correction <textarea name="suggestion" maxlength="3000" rows="4"></textarea></label>
+      <div class="form-grid"><label>Name or pseudonym <input type="text" name="name" maxlength="120" /></label><label>Email <input type="email" name="email" maxlength="200" /></label></div>
+      <label class="checkbox-row"><input type="checkbox" name="mayCredit" /> Qazaq Lens may credit me publicly if this correction is used.</label>
+      <div class="button-row"><button class="btn btn--primary" type="submit">Submit correction</button><button class="btn" type="button" id="copy-report">Copy report instead</button></div>
+      <p id="form-status" class="form-status" role="status" aria-live="polite"></p>
+    </form>
+  </article>
+  <script>
+    interface CorrectionDraft {
+      pageUrl: string; pageTitle: string; issue: string; reason: string; sourceUrl: string; sourceTitle: string;
+      suggestion: string; name: string; email: string; mayCredit: boolean;
+      website: string; startedAt: number; locale: string;
+    }
+    const form = document.querySelector<HTMLFormElement>('#correction-form');
+    const statusEl = document.querySelector<HTMLElement>('#form-status');
+    const copyButton = document.querySelector<HTMLButtonElement>('#copy-report');
+    if (form && statusEl) {
+      const serialize = (): CorrectionDraft => {
+        const data = new FormData(form);
+        return {
+          pageUrl: String(data.get('pageUrl') || ''), pageTitle: document.title, issue: String(data.get('issue') || ''),
+          reason: String(data.get('reason') || ''), sourceUrl: String(data.get('sourceUrl') || ''), sourceTitle: String(data.get('sourceTitle') || ''),
+          suggestion: String(data.get('suggestion') || ''), name: String(data.get('name') || ''),
+          email: String(data.get('email') || ''), mayCredit: data.get('mayCredit') === 'on',
+          website: String(data.get('website') || ''), startedAt: Number(data.get('startedAt') || 0), locale: navigator.language,
+        };
+      };
+      const asText = (draft: CorrectionDraft) => `Qazaq Lens correction report\n\nPage: ${draft.pageUrl}\nIssue: ${draft.issue}\nReason: ${draft.reason}\nSource: ${draft.sourceTitle || "Untitled source"} — ${draft.sourceUrl}\nSuggested correction: ${draft.suggestion || '—'}\nName: ${draft.name || 'Anonymous'}\nEmail: ${draft.email || 'Not provided'}\nMay credit: ${draft.mayCredit ? 'Yes' : 'No'}`;
+      copyButton?.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(asText(serialize()));
+          statusEl.textContent = 'Report copied to your clipboard.';
+        } catch {
+          statusEl.textContent = 'Clipboard access failed. Select and copy the fields manually.';
+        }
+      });
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        if (!form.reportValidity()) return;
+        statusEl.textContent = 'Submitting…';
+        try {
+          const response = await fetch('/api/report-error', {
+            method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(serialize()),
+          });
+          const result: { id?: string; message?: string } = await response.json().catch(() => ({}));
+          if (!response.ok) throw new Error(result.message || 'Submission service is not configured yet.');
+          form.reset();
+          statusEl.textContent = `Thank you. Your report ID is ${result.id ?? 'recorded'}.`;
+        } catch (error) {
+          statusEl.textContent = `${error instanceof Error ? error.message : 'Submission failed.'} Use “Copy report instead” so your work is not lost.`;
+        }
+      });
+    }
+  </script>
+</BaseLayout>

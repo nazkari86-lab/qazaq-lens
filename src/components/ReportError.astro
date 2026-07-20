@@ -1,0 +1,14 @@
+---
+interface Props { pageUrl?: string }
+const { pageUrl = Astro.url.pathname } = Astro.props;
+---
+<section class="report-card card" aria-labelledby="report-card-title">
+  <h2 id="report-card-title">Found a problem?</h2>
+  <p>
+    Report an inaccurate statement, a weak source, missing context, or wording
+    that unfairly generalizes a group. Reports can be submitted without an account.
+  </p>
+  <a class="btn btn--primary" href={`/report-error?page=${encodeURIComponent(pageUrl)}`}>
+    Report an error
+  </a>
+</section>

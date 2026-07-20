@@ -1,0 +1,36 @@
+---
+interface Claim {
+  id: string;
+  statement: string;
+  kind: "fact" | "interpretation" | "reported-view" | "disputed";
+  significance: "critical" | "supporting";
+  confidence: "high" | "medium" | "low";
+  sourceIds: string[];
+  note?: string;
+}
+interface Props { claims: Claim[] }
+const { claims } = Astro.props;
+const labels = { fact: "Fact", interpretation: "Interpretation", "reported-view": "Reported views", disputed: "Disputed" };
+---
+<section id="claim-ledger" aria-labelledby="claim-ledger-title" class="evidence-section">
+  <div class="section-heading-row">
+    <div><p class="eyebrow">Evidence map</p><h2 id="claim-ledger-title">Claim ledger</h2></div>
+    <span class="section-count">{claims.length} claims</span>
+  </div>
+  <p class="section-note">Every substantial claim is listed with its evidence, confidence level and source IDs.</p>
+  <ol class="claim-ledger">
+    {claims.map((claim) => (
+      <li id={`claim-${claim.id}`}>
+        <div class="claim-header">
+          <span class="source-id">{claim.id}</span>
+          <span class={`significance significance--${claim.significance}`}>{claim.significance}</span>
+          <span class="tag">{labels[claim.kind]}</span>
+          <span class={`confidence confidence--${claim.confidence}`}>{claim.confidence} confidence</span>
+        </div>
+        <p class="claim-statement">{claim.statement}</p>
+        <p class="claim-sources">Evidence: {claim.sourceIds.map((id, index) => <><a href={`#source-${id}`}>{id}</a>{index < claim.sourceIds.length - 1 ? ", " : ""}</>)}</p>
+        {claim.note && <p class="section-note">{claim.note}</p>}
+      </li>
+    ))}
+  </ol>
+</section>

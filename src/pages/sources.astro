@@ -1,0 +1,87 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getVisibleMyths } from "../lib/content";
+const myths = await getVisibleMyths();
+const allSources = myths.flatMap((entry) => entry.data.sources.map((source) => ({ ...source, article: entry.data.title, slug: entry.data.slug })));
+const allClaims = myths.flatMap((entry) => entry.data.claims);
+const uniquePublishers = new Set(allSources.map((source) => source.publisher));
+const sourceTypes = Object.entries(allSources.reduce<Record<string, number>>((acc, source) => { acc[source.type] = (acc[source.type] ?? 0) + 1; return acc; }, {})).sort((a,b)=>b[1]-a[1]);
+const confidence = Object.entries(allClaims.reduce<Record<string, number>>((acc, claim) => { acc[claim.confidence] = (acc[claim.confidence] ?? 0) + 1; return acc; }, {}));
+const publisherCounts = [...allSources.reduce<Map<string, number>>((acc, source) => acc.set(source.publisher, (acc.get(source.publisher) ?? 0) + 1), new Map()).entries()].sort((a,b)=>b[1]-a[1]);
+const articles = [...myths].sort((a,b)=>a.data.title.localeCompare(b.data.title));
+---
+<BaseLayout title="Evidence dashboard" description="A transparent overview of Qazaq Lens articles, claims, source types, publishers and review status.">
+  <section class="wrap-wide page-hero">
+    <p class="eyebrow">Evidence dashboard</p>
+    <h1>See the library behind the conclusions.</h1>
+    <p class="lead">Counts do not prove that an article is correct. They make the editorial structure visible so readers can inspect where evidence comes from and where review is still incomplete.</p>
+  </section>
+
+  <section class="wrap-wide dashboard-stats" aria-label="Evidence totals">
+    <article><strong>{myths.length}</strong><span>published explainers</span></article>
+    <article><strong>{allClaims.length}</strong><span>registered claims</span></article>
+    <article><strong>{allSources.length}</strong><span>source records</span></article>
+    <article><strong>{uniquePublishers.size}</strong><span>named publishers</span></article>
+  </section>
+
+  <section class="wrap-wide dashboard-grid section-block">
+    <article class="card dashboard-panel">
+      <p class="eyebrow">Source mix</p><h2>What kinds of evidence are used?</h2>
+      <dl class="metric-list">
+        {sourceTypes.map(([type,count])=>{
+          const pct = Math.round((count / allSources.length) * 100);
+          return (
+            <div>
+              <dt style="text-transform:capitalize">{type}</dt>
+              <dd>
+                <div class="source-bar-wrap">
+                  <div class="source-bar"><div class="source-bar-fill" style={`width:${pct}%`}></div></div>
+                  <span class="source-bar-label">{count}</span>
+                </div>
+              </dd>
+            </div>
+          );
+        })}
+      </dl>
+    </article>
+    <article class="card dashboard-panel">
+      <p class="eyebrow">Confidence labels</p><h2>How certain are registered claims?</h2>
+      <dl class="metric-list">
+        {confidence.map(([level,count])=>{
+          const total = allClaims.length;
+          const pct = Math.round((count / total) * 100);
+          return (
+            <div>
+              <dt style="text-transform:capitalize">{level}</dt>
+              <dd>
+                <div class="source-bar-wrap">
+                  <div class="source-bar"><div class="source-bar-fill" style={`width:${pct}%`}></div></div>
+                  <span class="source-bar-label">{count}</span>
+                </div>
+              </dd>
+            </div>
+          );
+        })}
+      </dl>
+      <p class="fine-print">Confidence describes the current evidence assessment, not mathematical probability.</p>
+    </article>
+  </section>
+
+  <section class="wrap-wide section-block">
+    <div class="section-heading-row"><div><p class="eyebrow">Article health</p><h2>Review status by explainer</h2></div><a href="/methodology">Read the standard →</a></div>
+    <div class="table-scroll"><table class="evidence-table"><thead><tr><th>Explainer</th><th>Claims</th><th>Sources</th><th>Status</th><th>Last checked</th></tr></thead><tbody>{articles.map((entry)=><tr><th scope="row"><a href={`/myths/${entry.data.slug}`}>{entry.data.title}</a></th><td>{entry.data.claims.length}</td><td>{entry.data.sources.length}</td><td>{entry.data.publicationStatus === "reviewed" ? "Independent review" : "Public beta"}</td><td>{entry.data.lastReviewedAt.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"})}</td></tr>)}</tbody></table></div>
+  </section>
+
+  <section class="wrap-wide dashboard-grid section-block">
+    <article class="card dashboard-panel">
+      <p class="eyebrow">Publisher concentration</p><h2>Most-used publishers</h2>
+      <ol class="publisher-list">{publisherCounts.slice(0,12).map(([publisher,count])=><li><span>{publisher}</span><strong>{count}</strong></li>)}</ol>
+    </article>
+    <article class="card dashboard-panel">
+      <p class="eyebrow">Important limitation</p><h2>Different publisher names are not enough.</h2>
+      <p>Two publishers can repeat the same underlying report. The build verifies that claim citations use different publisher labels; a human editor must still check whether the evidence is genuinely independent, current and relevant.</p>
+      <p>All current articles remain public beta until an external human reviewer is recorded.</p>
+      <a class="btn" href="/report-error">Challenge an article</a>
+    </article>
+  </section>
+</BaseLayout>

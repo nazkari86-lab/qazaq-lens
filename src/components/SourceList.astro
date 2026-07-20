@@ -1,0 +1,44 @@
+---
+interface Source {
+  id: string;
+  title: string;
+  publisher: string;
+  author?: string;
+  publishedAt?: string;
+  accessedAt: Date;
+  url: string;
+  archivedUrl?: string;
+  language: string;
+  type: "primary" | "academic" | "official" | "journalistic" | "background";
+}
+interface Props { sources: Source[] }
+const { sources } = Astro.props;
+const labels = { primary: "Primary", academic: "Academic", official: "Official", journalistic: "Journalistic", background: "Background" };
+const fmt = (date: Date) => date.toLocaleDateString("en-GB", { year: "numeric", month: "short", day: "numeric" });
+---
+<section id="sources" aria-labelledby="sources-title" class="evidence-section">
+  <div class="section-heading-row">
+    <div><p class="eyebrow">Trace the evidence</p><h2 id="sources-title">Sources</h2></div>
+    <span class="section-count">{sources.length} sources</span>
+  </div>
+  <p class="section-note">Source type describes how the item is used, not whether every statement in it is endorsed.</p>
+  <ol class="source-list">
+    {sources.map((source) => (
+      <li id={`source-${source.id}`}>
+        <div class="source-topline">
+          <span class="source-id">{source.id}</span>
+          <span class="tag">{labels[source.type]}</span>
+          {source.language.toLowerCase() !== "english" && <span class="tag tag--lang" title={`Source language: ${source.language}`}>{source.language}</span>}
+        </div>
+        <div class="source-content">
+          <a class="source-title" href={source.url} target="_blank" rel="noopener noreferrer">{source.title}<span aria-hidden="true"> ↗</span></a>
+          <div class="source-meta">
+            {source.author && <span>{source.author} · </span>}<span>{source.publisher}</span>
+            {source.publishedAt && <span> · {source.publishedAt}</span>}<span> · accessed {fmt(source.accessedAt)}</span>
+          </div>
+          {source.archivedUrl && <a class="archive-link" href={source.archivedUrl} target="_blank" rel="noopener noreferrer">Archived copy ↗</a>}
+        </div>
+      </li>
+    ))}
+  </ol>
+</section>

@@ -1,0 +1,23 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+<BaseLayout title="Accessibility" description="How Qazaq Lens supports keyboard, screen-reader, mobile and reduced-motion access, and how to report barriers.">
+  <article class="wrap article-shell">
+    <p class="eyebrow">Accessibility</p><h1>Context should be usable, not merely available.</h1>
+    <div class="article-body">
+      <h2>Current support</h2>
+      <ul>
+        <li>Semantic headings, landmarks and a skip-to-content link.</li>
+        <li>Keyboard-visible focus states and keyboard-operable navigation.</li>
+        <li>Responsive layouts tested by automated build checks for internal integrity.</li>
+        <li>Light and dark themes, system-color support and reduced-motion handling.</li>
+        <li>Text-first social images and meaningful alternative text where images convey information.</li>
+        <li>Printable articles with evidence and source URLs preserved.</li>
+      </ul>
+      <h2>Known limitations</h2>
+      <p>The project does not yet have a completed audit with multiple assistive technologies or disabled users. Automated checks cannot establish that a site is fully accessible.</p>
+      <h2>Report a barrier</h2>
+      <p>Use the <a href="/report-error">correction form</a> and describe the device, browser, assistive technology and step that failed. Accessibility reports are treated as product defects, not optional suggestions.</p>
+    </div>
+  </article>
+</BaseLayout>

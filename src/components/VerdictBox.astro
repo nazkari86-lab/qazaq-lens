@@ -1,0 +1,18 @@
+---
+interface Props {
+  verdict: "false" | "misleading" | "partly-true" | "disputed";
+  summary: string;
+  publicationStatus: "beta" | "reviewed";
+}
+const { verdict, summary, publicationStatus } = Astro.props;
+const labels = { false: "False", misleading: "Misleading", "partly-true": "Partly true", disputed: "Disputed" };
+---
+<div class={`verdict-box verdict-box--${verdict}`}>
+  <div class="verdict-row">
+    <span class={`stamp stamp--${verdict}`}>{labels[verdict]}</span>
+    <span class={`status-pill status-pill--${publicationStatus}`}>
+      {publicationStatus === "reviewed" ? "Independently reviewed" : "Public beta"}
+    </span>
+  </div>
+  <p>{summary}</p>
+</div>

@@ -1,0 +1,6 @@
+export function GET({ site }: { site?: URL }) {
+  const origin = (site ?? new URL("https://qazaq-lens.pages.dev")).origin;
+  return new Response(`User-agent: *\nAllow: /\nDisallow: /report-error\nDisallow: /offline\n\nSitemap: ${origin}/sitemap-index.xml\n`, {
+    headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "public, max-age=3600" },
+  });
+}

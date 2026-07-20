@@ -1,0 +1,40 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import MythCard from "../../components/MythCard.astro";
+import { getVisibleMyths } from "../../lib/content";
+const myths = (await getVisibleMyths()).sort((a,b)=>b.data.publishedAt.valueOf()-a.data.publishedAt.valueOf());
+const topics = [...new Set(myths.flatMap((entry)=>entry.data.topics))].sort();
+---
+<BaseLayout title="Evidence library" description="Stereotypes and common claims about Kazakhstan examined with public evidence and review dates.">
+  <section class="wrap-wide page-hero"><p class="eyebrow">Evidence library</p><h1>Check the claim, not the confidence.</h1><p class="lead">Search concise explainers about Kazakhstan. Every page shows its verdict, evidence ledger, sources and review status.</p></section>
+  <section class="wrap-wide library-tools" aria-label="Filter evidence library">
+    <label class="search-field"><span class="visually-hidden">Search explainers</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg><input type="search" placeholder="Search Borat, language, Russia, yurts…" data-library-search /></label>
+    <div class="filter-row" data-topic-filters><button class="filter-chip is-active" data-topic="all" type="button">All</button>{topics.map((topic)=><button class="filter-chip" data-topic={topic.toLowerCase()} type="button">{topic}</button>)}</div>
+    <p class="library-count" data-library-count>{myths.length} explainers</p>
+  </section>
+  <section class="wrap-wide section-block"><div class="myth-grid" data-library-grid>{myths.map((entry)=><MythCard compact href={`/myths/${entry.data.slug}`} title={entry.data.title} mythStatement={entry.data.mythStatement} summary={entry.data.summary} verdict={entry.data.verdict} publicationStatus={entry.data.publicationStatus} lastReviewedAt={entry.data.lastReviewedAt} topics={entry.data.topics} />)}</div><div class="empty-state" data-empty-state hidden><h2>No matching explainer</h2><p>Try a broader word or reset the topic filter.</p></div></section>
+  <script>
+    const search = document.querySelector<HTMLInputElement>("[data-library-search]");
+    const cards = [...document.querySelectorAll<HTMLElement>("[data-search-card]")];
+    const count = document.querySelector<HTMLElement>("[data-library-count]");
+    const empty = document.querySelector<HTMLElement>("[data-empty-state]");
+    const filters = [...document.querySelectorAll<HTMLButtonElement>("[data-topic]")];
+    let activeTopic = "all";
+    const apply = () => {
+      const query = search?.value.trim().toLowerCase() ?? "";
+      let visible = 0;
+      cards.forEach((card) => {
+        const text = card.dataset.searchText ?? "";
+        const topicMatch = activeTopic === "all" || text.includes(activeTopic);
+        const show = topicMatch && (!query || text.includes(query));
+        card.hidden = !show; if (show) visible++;
+      });
+      if (count) count.textContent = `${visible} explainer${visible===1?"":"s"}`;
+      if (empty) empty.hidden = visible !== 0;
+      const url = new URL(location.href); query ? url.searchParams.set("q",query) : url.searchParams.delete("q"); history.replaceState({},"",url);
+    };
+    const initial = new URL(location.href).searchParams.get("q") ?? ""; if(search){search.value=initial;search.addEventListener("input",apply);}
+    filters.forEach((button)=>button.addEventListener("click",()=>{filters.forEach((item)=>item.classList.remove("is-active"));button.classList.add("is-active");activeTopic=button.dataset.topic??"all";apply();}));
+    apply();
+  </script>
+</BaseLayout>

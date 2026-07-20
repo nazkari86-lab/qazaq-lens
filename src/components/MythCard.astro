@@ -1,0 +1,29 @@
+---
+interface Props {
+  href: string;
+  title: string;
+  mythStatement: string;
+  summary: string;
+  verdict: "false" | "misleading" | "partly-true" | "disputed";
+  publicationStatus: "beta" | "reviewed";
+  lastReviewedAt: Date;
+  topics?: string[];
+  compact?: boolean;
+}
+const { href, title, mythStatement, summary, verdict, publicationStatus, lastReviewedAt, topics = [], compact = false } = Astro.props;
+const labels = { false: "False", misleading: "Misleading", "partly-true": "Partly true", disputed: "Disputed" };
+const reviewed = lastReviewedAt.toLocaleDateString("en-GB", { year: "numeric", month: "short", day: "numeric" });
+---
+<a href={href} class:list={["myth-card", "card", compact && "myth-card--compact"]} data-search-card data-search-text={`${title} ${mythStatement} ${summary} ${topics.join(" ")}`.toLowerCase()}>
+  <div class="verdict-row">
+    <span class={`stamp stamp--${verdict}`}>{labels[verdict]}</span>
+    <span class={`status-pill status-pill--${publicationStatus}`}>
+      {publicationStatus === "reviewed" ? "Reviewed" : "Public beta"}
+    </span>
+  </div>
+  <p class="myth-statement">“{mythStatement}”</p>
+  <h3>{title}</h3>
+  <p>{summary}</p>
+  {topics.length > 0 && <div class="topic-row">{topics.slice(0, 3).map((topic) => <span class="topic-chip">{topic}</span>)}</div>}
+  <span class="card-meta">Reviewed {reviewed}<span aria-hidden="true"> →</span></span>
+</a>

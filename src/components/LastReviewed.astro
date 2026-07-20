@@ -1,0 +1,16 @@
+---
+interface Props { publishedAt: Date; lastReviewedAt: Date; author: string; reviewStatus: string; reviewedBy: string[]; readingMinutes?: number }
+const { publishedAt, lastReviewedAt, author, reviewStatus, reviewedBy, readingMinutes } = Astro.props;
+const fmt = (date: Date) => date.toLocaleDateString("en-GB", { year: "numeric", month: "long", day: "numeric" });
+---
+<section class="review-meta" aria-labelledby="review-heading">
+  <div class="section-heading-row"><div><p class="eyebrow">Publication record</p><h2 id="review-heading">Review details</h2></div></div>
+  <dl>
+    <div><dt>Published</dt><dd>{fmt(publishedAt)}</dd></div>
+    <div><dt>Last source review</dt><dd>{fmt(lastReviewedAt)}</dd></div>
+    <div><dt>Author</dt><dd>{author}</dd></div>
+    {readingMinutes && <div><dt>Reading time</dt><dd>{readingMinutes} min</dd></div>}
+    <div><dt>Review status</dt><dd>{reviewStatus}</dd></div>
+    {reviewedBy.length > 0 && <div><dt>Reviewed by</dt><dd>{reviewedBy.join(", ")}</dd></div>}
+  </dl>
+</section>

@@ -1,0 +1,4 @@
+Qazaq Lens
+Independent educational project about Kazakhstan.
+Built with Astro and deployed as a privacy-conscious static site.
+Editorial status and limitations: /methodology/
