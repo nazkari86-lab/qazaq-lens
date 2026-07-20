@@ -12,7 +12,7 @@ interface Props {
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 }
 const { title, description, ogImage = "/og/default.png", type = "website", noindex = false, jsonLd } = Astro.props;
-const site = Astro.site ?? new URL("https://qazaq-lens.pages.dev");
+const site = Astro.site ?? new URL("https://qazaq-lens.nazkari86.workers.dev");
 const canonicalURL = new URL(Astro.url.pathname, site);
 const ogImageURL = new URL(ogImage, site);
 const fullTitle = title === "Qazaq Lens" ? title : `${title} · Qazaq Lens`;

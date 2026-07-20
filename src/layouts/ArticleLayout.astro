@@ -25,7 +25,7 @@ interface Props {
   heroImage?: string; heroImageAlt?: string; heroImageCredit?: string; heroImageCreditUrl?: string;
 }
 const props = Astro.props;
-const site = Astro.site ?? new URL("https://qazaq-lens.pages.dev");
+const site = Astro.site ?? new URL("https://qazaq-lens.nazkari86.workers.dev");
 const articleUrl = new URL(Astro.url.pathname, site).toString();
 const image = new URL(props.ogImage ?? "/og/default.png", site).toString();
 const jsonLd = [

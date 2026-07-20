@@ -63,7 +63,7 @@ Node version: 22
 Set this environment variable:
 
 ```text
-PUBLIC_SITE_URL=https://your-project.pages.dev
+PUBLIC_SITE_URL=https://qazaq-lens.nazkari86.workers.dev
 ```
 
 Pages Functions must be deployed through Git integration or Wrangler. Dashboard Direct Upload does not deploy the `functions/` directory.

@@ -1,0 +1,148 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getVisibleMyths } from "../lib/content";
+
+const myths = await getVisibleMyths();
+const order = ["borat", "capital-astana", "economy-oil", "ethnic-diversity", "kazakh-and-russian", "nuclear-weapons", "only-steppe", "part-of-russia", "yurts"];
+const storyMyths = order.map((slug) => myths.find((entry) => entry.data.slug === slug)).filter((entry): entry is NonNullable<typeof entry> => Boolean(entry));
+const focusSlugs = ["borat", "capital-astana", "economy-oil"];
+const focus = focusSlugs.map((slug) => storyMyths.find((entry) => entry.data.slug === slug)).filter((entry): entry is NonNullable<typeof entry> => Boolean(entry));
+const stats: Record<string, { value: string; label: string }> = {
+  borat: { value: "Fiction", label: "a satirical character, not a country profile" },
+  "capital-astana": { value: "1997", label: "the year Kazakhstan moved its capital north" },
+  "economy-oil": { value: "Upper-middle", label: "World Bank income classification" },
+};
+const positions = [
+  [17, 24], [49, 13], [78, 24], [31, 45], [64, 42], [87, 52], [12, 70], [45, 76], [73, 75],
+];
+const storyData = storyMyths.map((entry, index) => ({
+  slug: entry.data.slug,
+  title: entry.data.title,
+  statement: entry.data.mythStatement,
+  verdict: entry.data.verdict,
+  heroImage: entry.data.heroImage,
+  heroAlt: entry.data.heroImageAlt,
+  summary: entry.data.summary,
+  source: entry.data.sources[0]?.publisher ?? "Source ledger",
+  position: positions[index],
+}));
+---
+
+<BaseLayout title="See the pattern · Qazaq Lens" description="A visual introduction to nine common myths about Kazakhstan.">
+  <section class="story-intro wrap-wide">
+    <p class="eyebrow">A visual introduction</p>
+    <h1>One country. Nine shortcuts.</h1>
+    <p class="lead">Scroll through the myths people use to describe Kazakhstan. The bubbles stay the same; the lens changes.</p>
+    <p class="story-note"><span class="story-note-dot"></span> Each bubble is one checked claim from the Qazaq Lens evidence library.</p>
+  </section>
+
+  <section class="story-shell" data-story>
+    <div class="story-steps wrap">
+      <article class="story-step is-active" data-step="0">
+        <span class="story-step-number">00 / 04</span>
+        <h2>Start with the shortcuts.</h2>
+        <p>Nine familiar ideas can flatten a large, diverse country into a punchline, a landscape or a single export. Every bubble is a claim worth checking.</p>
+      </article>
+      {focus.map((entry, index) => {
+        const meta = stats[entry.data.slug];
+        return (
+          <article class="story-step" data-step={index + 1}>
+            <span class="story-step-number">0{index + 1} / 04</span>
+            <p class="story-kicker">{entry.data.topics[0]}</p>
+            <h2>{entry.data.mythStatement}</h2>
+            <p>{entry.data.summary}</p>
+            <div class="story-stat"><strong>{meta.value}</strong><span>{meta.label}</span></div>
+            <a class="story-read-link" href={`/myths/${entry.data.slug}`}>Read the full evidence check <span aria-hidden="true">→</span></a>
+          </article>
+        );
+      })}
+    </div>
+
+    <div class="story-visual-wrap">
+      <div class="story-visual" data-story-visual aria-live="polite">
+        <div class="story-visual-header"><span>THE MYTH MAP</span><span data-scene-label>All nine claims</span></div>
+        <div class="story-bubbles" data-bubbles>
+          {storyData.map((myth) => (
+            <a class:list={["story-bubble", `story-bubble--${myth.verdict}`]} href={`/myths/${myth.slug}`} style={`--x:${myth.position[0]}%;--y:${myth.position[1]}%;`} data-slug={myth.slug} aria-label={`Read: ${myth.title}`}>
+              <span class="story-bubble-dot"></span><span class="story-bubble-label">{myth.slug === "capital-astana" ? "Astana" : myth.slug === "economy-oil" ? "Oil" : myth.slug === "kazakh-and-russian" ? "Language" : myth.slug === "ethnic-diversity" ? "Diversity" : myth.slug === "nuclear-weapons" ? "Nuclear" : myth.slug === "only-steppe" ? "Landscape" : myth.slug === "part-of-russia" ? "Russia" : myth.slug === "yurts" ? "Yurts" : "Borat"}</span>
+            </a>
+          ))}
+        </div>
+        <div class="story-focus-card" data-focus-card hidden>
+          <img data-focus-image src={storyData[0].heroImage} alt="" />
+          <div class="story-focus-copy">
+            <span class="story-focus-verdict" data-focus-verdict>False</span>
+            <h3 data-focus-title>{storyData[0].title}</h3>
+            <p data-focus-summary>{storyData[0].summary}</p>
+            <span class="story-focus-source" data-focus-source>Source ledger</span>
+          </div>
+        </div>
+        <div class="story-visual-footer"><span>FALSE / MISLEADING</span><span>Scroll to focus</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="story-ending wrap">
+    <p class="eyebrow">The point is not a new stereotype</p>
+    <h2>Context makes the picture larger.</h2>
+    <p>These nine checks are a starting point, not a replacement for listening to people who live in Kazakhstan. Follow the evidence, keep the uncertainty visible, and let the country stay bigger than the shortcut.</p>
+    <a class="btn btn--primary" href="/myths">Open the evidence library</a>
+  </section>
+
+  <script is:inline type="application/json" id="story-data" set:html={JSON.stringify(storyData)}></script>
+</BaseLayout>
+
+<style>
+  .story-intro{padding-top:clamp(4rem,10vw,8rem);padding-bottom:clamp(3rem,8vw,6rem);max-width:850px}.story-intro h1{max-width:760px;font-size:clamp(3.3rem,8vw,7rem);line-height:.94;letter-spacing:-.055em}.story-intro .lead{max-width:620px;font-size:clamp(1.15rem,2vw,1.45rem)}.story-note{display:flex;align-items:center;gap:.6rem;margin-top:2rem;color:var(--muted);font-family:var(--font-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.07em}.story-note-dot{width:9px;height:9px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 5px color-mix(in srgb,var(--gold) 18%,transparent)}
+  .story-shell{position:relative;display:grid;grid-template-columns:minmax(280px, .85fr) minmax(420px,1.15fr);gap:clamp(2rem,7vw,8rem);max-width:1500px;margin:0 auto;padding:0 clamp(18px,5vw,6rem)}.story-steps{padding:0;max-width:620px}.story-step{min-height:75vh;display:flex;flex-direction:column;justify-content:center;padding:5rem 0;border-top:1px solid var(--line);opacity:.34;transition:opacity .35s ease}.story-step:first-child{border-top:0}.story-step.is-active{opacity:1}.story-step-number,.story-kicker{font-family:var(--font-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}.story-step h2{font-size:clamp(2rem,4vw,4.2rem);line-height:1.02;letter-spacing:-.035em;margin:.8rem 0 1rem}.story-step p:not(.story-kicker){max-width:48ch;color:var(--muted);font-size:1.05rem}.story-kicker{color:var(--gold);margin:1rem 0 0}.story-stat{display:flex;align-items:baseline;gap:.8rem;margin:1.5rem 0 1.2rem;padding-top:1rem;border-top:1px solid var(--line);max-width:30rem}.story-stat strong{font-family:var(--font-display);font-size:2rem;color:var(--brand)}.story-stat span{font-family:var(--font-mono);font-size:.7rem;text-transform:uppercase;color:var(--muted);line-height:1.4}.story-read-link{color:var(--brand);font-weight:700;text-decoration:none}.story-read-link:hover{text-decoration:underline}
+  .story-visual-wrap{position:relative}.story-visual{position:sticky;top:6rem;height:min(72vh,700px);min-height:500px;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);overflow:hidden;box-shadow:var(--shadow-soft)}.story-visual::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 48%,color-mix(in srgb,var(--gold) 10%,transparent),transparent 48%),linear-gradient(135deg,color-mix(in srgb,var(--brand) 5%,transparent),transparent 55%);pointer-events:none}.story-visual-header,.story-visual-footer{position:absolute;left:1.2rem;right:1.2rem;display:flex;justify-content:space-between;gap:1rem;font-family:var(--font-mono);font-size:.64rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);z-index:2}.story-visual-header{top:1.1rem}.story-visual-footer{bottom:1.1rem}.story-bubbles{position:absolute;inset:4rem 1rem 3.5rem}.story-bubble{position:absolute;left:var(--x);top:var(--y);display:grid;justify-items:center;gap:.4rem;transform:translate(-50%,-50%);color:var(--ink);text-decoration:none;transition:transform .35s ease,opacity .35s ease,filter .35s ease}.story-bubble:hover{transform:translate(-50%,-50%) scale(1.15)}.story-bubble-dot{display:block;width:clamp(24px,4vw,42px);aspect-ratio:1;border-radius:50%;background:var(--gold);box-shadow:0 0 0 7px color-mix(in srgb,var(--gold) 14%,transparent),0 8px 20px color-mix(in srgb,var(--ink) 12%,transparent);transition:width .35s ease,box-shadow .35s ease}.story-bubble--misleading .story-bubble-dot{background:var(--brand)}.story-bubble-label{font-family:var(--font-mono);font-size:.62rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);white-space:nowrap}.story-bubble.is-dim{opacity:.22;filter:grayscale(1)}.story-bubble.is-active{z-index:3;transform:translate(-50%,-50%) scale(1.35)}.story-bubble.is-active .story-bubble-dot{width:clamp(42px,7vw,78px);box-shadow:0 0 0 12px color-mix(in srgb,var(--gold) 17%,transparent),0 12px 34px color-mix(in srgb,var(--ink) 18%,transparent)}.story-bubble.is-active .story-bubble-label{color:var(--ink);font-weight:800}.story-focus-card{position:absolute;left:1.2rem;right:1.2rem;bottom:3rem;display:grid;grid-template-columns:130px 1fr;gap:1rem;padding:.7rem;border:1px solid color-mix(in srgb,var(--line) 80%,transparent);background:color-mix(in srgb,var(--surface) 90%,transparent);backdrop-filter:blur(12px);border-radius:var(--radius-sm);z-index:4}.story-focus-card img{width:130px;height:110px;object-fit:cover;border-radius:calc(var(--radius-sm) - 3px)}.story-focus-copy{min-width:0}.story-focus-verdict{font-family:var(--font-mono);font-size:.62rem;color:var(--gold);text-transform:uppercase;letter-spacing:.08em}.story-focus-copy h3{font-size:1.15rem;line-height:1.05;margin:.25rem 0 .35rem}.story-focus-copy p{font-size:.76rem;line-height:1.35;margin:0;color:var(--muted);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.story-focus-source{display:block;margin-top:.45rem;font-family:var(--font-mono);font-size:.6rem;color:var(--muted)}.story-ending{max-width:700px;padding-top:clamp(4rem,10vw,9rem);padding-bottom:clamp(5rem,12vw,11rem)}.story-ending h2{font-size:clamp(2.2rem,5vw,4.5rem);line-height:1;margin:.5rem 0 1rem}.story-ending p:not(.eyebrow){color:var(--muted);font-size:1.1rem;max-width:54ch;margin-bottom:1.5rem}
+  @media(max-width:900px){.story-shell{grid-template-columns:1fr;gap:0}.story-steps{max-width:none}.story-step{min-height:72vh;padding-block:4rem}.story-visual-wrap{grid-row:1;min-height:0}.story-visual{position:sticky;top:1rem;height:62vh;min-height:420px;margin-bottom:-28vh}.story-step{position:relative;z-index:1}.story-step:first-child{padding-top:5rem}.story-visual-wrap{z-index:2;pointer-events:none}.story-visual{pointer-events:auto}.story-steps{position:relative;z-index:3;pointer-events:none}.story-step>*{pointer-events:auto}.story-step{background:linear-gradient(to bottom,transparent 0%,var(--paper) 18%,var(--paper) 82%,transparent 100%)}}
+  @media(max-width:600px){.story-intro{padding-top:3rem}.story-intro h1{font-size:3.4rem}.story-shell{padding-inline:18px}.story-visual{height:52vh;min-height:360px}.story-bubbles{inset:3.5rem .3rem 3rem}.story-bubble-label{font-size:.52rem}.story-focus-card{grid-template-columns:86px 1fr;left:.75rem;right:.75rem;bottom:2.6rem}.story-focus-card img{width:86px;height:88px}.story-focus-copy h3{font-size:.95rem}.story-focus-copy p{-webkit-line-clamp:2}.story-visual-header,.story-visual-footer{left:.75rem;right:.75rem;font-size:.54rem}.story-step{min-height:68vh}}
+  @media(prefers-reduced-motion:reduce){.story-step,.story-bubble,.story-bubble-dot{transition:none}}
+</style>
+
+<script>
+  import scrollama from "scrollama";
+
+  const dataElement = document.querySelector("#story-data");
+  const visual = document.querySelector("[data-story-visual]");
+  if (dataElement && visual) {
+    const data = JSON.parse(dataElement.textContent || "[]");
+    const bubbles = [...document.querySelectorAll<HTMLAnchorElement>("[data-slug]")];
+    const steps = [...document.querySelectorAll<HTMLElement>("[data-step]")];
+    const sceneLabel = document.querySelector<HTMLElement>("[data-scene-label]");
+    const focusCard = document.querySelector<HTMLElement>("[data-focus-card]");
+    const focusImage = document.querySelector<HTMLImageElement>("[data-focus-image]");
+    const focusTitle = document.querySelector<HTMLElement>("[data-focus-title]");
+    const focusSummary = document.querySelector<HTMLElement>("[data-focus-summary]");
+    const focusSource = document.querySelector<HTMLElement>("[data-focus-source]");
+    const focusVerdict = document.querySelector<HTMLElement>("[data-focus-verdict]");
+    const labelFor = (myth: (typeof data)[number] | null) => myth ? myth.title.replace(/^Kazakhstan's |^Kazakhstan /, "").split(" ").slice(0, 3).join(" ") : "All nine claims";
+
+    const render = (stepIndex: number) => {
+      const active = stepIndex > 0 ? data[stepIndex - 1] : null;
+      steps.forEach((step) => step.classList.toggle("is-active", step.dataset.step === String(stepIndex)));
+      bubbles.forEach((bubble) => {
+        bubble.classList.toggle("is-active", active?.slug === bubble.dataset.slug);
+        bubble.classList.toggle("is-dim", Boolean(active && active.slug !== bubble.dataset.slug));
+      });
+      if (sceneLabel) sceneLabel.textContent = active ? labelFor(active) : "All nine claims";
+      if (focusCard && focusImage && focusTitle && focusSummary && focusSource && focusVerdict) {
+        focusCard.toggleAttribute("hidden", !active);
+        if (active) {
+          focusImage.src = active.heroImage;
+          focusImage.alt = active.heroAlt;
+          focusTitle.textContent = active.title;
+          focusSummary.textContent = active.summary;
+          focusSource.textContent = active.source;
+          focusVerdict.textContent = active.verdict === "false" ? "False" : "Misleading";
+        }
+      }
+    };
+
+    const scroller = scrollama();
+    scroller.setup({ step: "[data-step]", offset: 0.5, progress: false }).onStepEnter((response) => render(Number(response.element.dataset.step)));
+    window.addEventListener("resize", () => scroller.resize(), { passive: true });
+    render(0);
+  }
+</script>
