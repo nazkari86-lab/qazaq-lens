@@ -11,51 +11,60 @@ const storyMyths = order
   .map(slug => myths.find(e => e.data.slug === slug))
   .filter((e): e is NonNullable<typeof e> => Boolean(e));
 
-const mythMeta: Record<string, { stat: string; statLabel: string; lead: string }> = {
+const mythMeta: Record<string, { stat: string; statLabel: string; lead: string; arc: string }> = {
   "borat": {
     stat: "2006",
     statLabel: "A comedy film has shaped global perception more than two decades of real reporting",
     lead: "Sacha Baron Cohen filmed in Romania and Moldova. The Kazakhstan in the film is invention. The country it depicts does not exist — and never did.",
+    arc: "The image",
   },
   "capital-astana": {
     stat: "1997",
     statLabel: "The government moved its capital north — nearly three decades ago",
     lead: "Almaty lost capital status when institutions relocated 1,000 km north. Astana has been the seat of government longer than many readers have followed the news.",
+    arc: "The snapshot",
   },
   "economy-oil": {
     stat: "#1",
     statLabel: "Global uranium producer — oil is one sector in a diversifying economy",
     lead: "Kazakhstan produces more uranium than any other country. It is also a major grain exporter. Sectors in manufacturing, logistics, and fintech are growing rapidly.",
+    arc: "The shortcut",
   },
   "ethnic-diversity": {
     stat: "130+",
     statLabel: "Nationalities recorded by the national census",
     lead: "Kazakhs form roughly 70 percent. Russians, Uzbeks, Ukrainians, Uyghurs, Germans, Tatars, Koreans and dozens more make up the rest. Diversity is constitutional policy.",
+    arc: "The people",
   },
   "kazakh-and-russian": {
     stat: "Turkic",
     statLabel: "The language family of Kazakh — sharing no ancestor with Russian",
     lead: "Kazakh and Russian diverged thousands of years ago. Kazakhstan is actively transitioning Kazakh from Cyrillic to a new Latin script — a deliberate marker of distinct identity.",
+    arc: "The assumption",
   },
   "nuclear-weapons": {
     stat: "1,400",
     statLabel: "Warheads inherited from the USSR — and voluntarily surrendered",
     lead: "The Soviets detonated 456 nuclear devices on Kazakh soil. After independence, Kazakhstan transferred or dismantled all warheads. It is now among the world's strongest non-proliferation advocates.",
+    arc: "The aftermath",
   },
   "only-steppe": {
     stat: "9th",
     statLabel: "Largest country on Earth — no single landscape can describe it",
     lead: "The Tian Shan range rises directly behind Almaty. Khan Tengri reaches nearly 7,000 metres. Lake Balkhash spans 600 km. Altai forests cover the east. Steppe is one chapter.",
+    arc: "The landscape",
   },
   "part-of-russia": {
     stat: "1991",
     statLabel: "Year of independence — the same month the Soviet Union dissolved",
     lead: "Kazakhstan was a Soviet republic, not a Russian territory. Both were distinct units in the same federation. When that federation dissolved, fifteen sovereign states emerged. Kazakhstan was among them.",
+    arc: "The history",
   },
   "yurts": {
     stat: "57%",
     statLabel: "Of Kazakhstanis live in cities, not in nomadic dwellings",
     lead: "The yurt is UNESCO-recognised cultural heritage. It is not standard housing. Almaty has a skyline of high-rise towers. Astana was built largely in the 2000s. Most residents live in apartments.",
+    arc: "The symbol",
   },
 };
 
@@ -109,7 +118,7 @@ const storyData = storyMyths.map(entry => ({
           <article class="sw-step" data-step={i} data-slug={myth.slug} aria-labelledby={`story-step-${i}`}>
             <div class="sw-step-meta">
               <span class="sw-counter">{String(i + 1).padStart(2, "0")} / 09</span>
-              <span class="sw-tag">Common claim</span>
+              <span class="sw-tag">{myth.arc} · common claim</span>
             </div>
             <blockquote class="sw-myth" id={`story-step-${i}`}>
               <span class="sw-myth-mark">"</span>{myth.statement}<span class="sw-myth-mark">"</span>
@@ -526,6 +535,24 @@ const storyData = storyMyths.map(entry => ({
   overflow: hidden;
   background: #111;
 }
+.sw-visual::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  opacity: .14;
+  mix-blend-mode: screen;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.38'/%3E%3C/svg%3E");
+  animation: sw-grain .28s steps(2) infinite;
+}
+@keyframes sw-grain {
+  0% { transform: translate(0,0); }
+  25% { transform: translate(1%, -1%); }
+  50% { transform: translate(-1%, 1%); }
+  75% { transform: translate(1%, 1%); }
+  100% { transform: translate(-1%, -1%); }
+}
 /* Photos */
 .sw-photo {
   position: absolute;
@@ -539,7 +566,11 @@ const storyData = storyMyths.map(entry => ({
   height: 100%;
   object-fit: cover;
   object-position: center;
+  transform: scale(1.06);
+  filter: saturate(.82) contrast(1.06);
+  transition: transform 1.8s cubic-bezier(.2,.7,.2,1), filter 1.1s ease;
 }
+.sw-photo.is-active img { transform: scale(1); filter: saturate(1) contrast(1.04); }
 /* Per-myth color tint layer */
 .sw-photo-tint {
   position: absolute;
@@ -711,6 +742,8 @@ const storyData = storyMyths.map(entry => ({
   .sw-hud-counter, .sw-hud-verdict, .sw-cta { transition: none; }
   .sw-progress-fill { transition: none; }
   .sw-scroll-hint { animation: none; }
+  .sw-visual::after { animation: none; }
+  .sw-photo img { transition: none; }
 }
 </style>
 
