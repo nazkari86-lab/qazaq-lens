@@ -1,0 +1,25 @@
+---
+interface Video { id: string; title: string; description: string; source: string; }
+const featured: Video = { id: "8t5ZkVdXjrE", title: "Kazakhstan beyond the shortcut", description: "Cities, landscapes, traditions and people that cannot be reduced to a single stereotype.", source: "CoolVision · external travel documentary" };
+const videos: Video[] = [
+  { id: "-2BAhZdlDIo", title: "Baikonur: a cosmic place", description: "Visual context for the city and launch complex in Kazakhstan.", source: "European Space Agency" },
+  { id: "1w17U5rUaJk", title: "Saryarka: steppe and lakes", description: "Wetlands, grasslands and migratory wildlife beyond the desert shortcut.", source: "UNESCO / NHK" },
+  { id: "f4AAkHMNBhw", title: "The art of dombra kuy", description: "A living musical tradition and a different way into Kazakh culture.", source: "UNESCO" },
+];
+---
+<section class="video-showcase wrap-wide section-block" aria-labelledby="video-showcase-title">
+  <div class="section-heading-row"><div><p class="eyebrow">Visual context</p><h2 id="video-showcase-title">See the country beyond the shortcut</h2></div><span class="section-note">External videos · selected, not endorsed</span></div>
+  <article class="featured-video card" data-video data-video-id={featured.id} data-video-title={featured.title}>
+    <div class="video-frame video-frame--featured"><img src={`https://i.ytimg.com/vi/${featured.id}/maxresdefault.jpg`} alt="Video thumbnail: Kazakhstan beyond the shortcut" loading="lazy" /><button class="video-play" type="button" aria-label={`Play ${featured.title}`}><span>▶</span></button></div>
+    <div class="video-copy"><p class="eyebrow">Featured video</p><h3>{featured.title}</h3><p>{featured.description}</p><p class="video-source">{featured.source}</p></div>
+  </article>
+  <div class="video-grid">{videos.map((video) => <article class="video-card card" data-video data-video-id={video.id} data-video-title={video.title}><div class="video-frame"><img src={`https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`} alt={`Video thumbnail: ${video.title}`} loading="lazy" /><button class="video-play" type="button" aria-label={`Play ${video.title}`}><span>▶</span></button></div><h3>{video.title}</h3><p>{video.description}</p><p class="video-source">{video.source}</p></article>)}</div>
+  <p class="video-disclaimer"><strong>Editorial note:</strong> these videos are selected for visual context. Qazaq Lens does not automatically endorse every statement in an external video. Check factual claims against the linked evidence reviews.</p>
+</section>
+<script is:inline>
+  document.querySelectorAll("[data-video]").forEach((card) => card.querySelector(".video-play")?.addEventListener("click", () => {
+    const id = card.getAttribute("data-video-id"); const title = card.getAttribute("data-video-title") || "External video"; if (!id) return;
+    const frame = document.createElement("iframe"); frame.src = `https://www.youtube-nocookie.com/embed/${id}?rel=0&modestbranding=1`; frame.title = title; frame.loading = "lazy"; frame.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"; frame.allowFullscreen = true;
+    card.querySelector(".video-frame")?.replaceChildren(frame);
+  }));
+</script>
