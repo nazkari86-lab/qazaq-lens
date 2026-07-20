@@ -28,5 +28,5 @@ const reviewed = lastReviewedAt.toLocaleDateString("en-GB", { year: "numeric", m
   <h3>{title}</h3>
   <p>{summary}</p>
   {topics.length > 0 && <div class="topic-row">{topics.slice(0, 3).map((topic) => <span class="topic-chip">{topic}</span>)}</div>}
-  <span class="card-meta">Reviewed {reviewed}<span aria-hidden="true"> →</span></span>
+  <span class="card-meta">Sources checked {reviewed}<span aria-hidden="true"> →</span></span>
 </a>
