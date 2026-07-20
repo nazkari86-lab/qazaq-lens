@@ -11,6 +11,7 @@ import TableOfContents from "../components/TableOfContents.astro";
 import ReadingProgress from "../components/ReadingProgress.astro";
 import KeyTakeaways from "../components/KeyTakeaways.astro";
 import RelatedMyths from "../components/RelatedMyths.astro";
+import WhyThisMatters from "../components/WhyThisMatters.astro";
 import type { MythEntry } from "../lib/content";
 
 interface Source { id: string; title: string; publisher: string; author?: string; publishedAt?: string; accessedAt: Date; url: string; archivedUrl?: string; language: string; type: "primary" | "academic" | "official" | "journalistic" | "background"; }
@@ -25,6 +26,19 @@ interface Props {
   heroImage?: string; heroImageAlt?: string; heroImageCredit?: string; heroImageCreditUrl?: string;
 }
 const props = Astro.props;
+const whyThisMatters: Record<string, string> = {
+  "part-of-russia": "This is a question of sovereignty and geography, not just historical vocabulary. Confusing a UN member state with a neighbouring country erases Kazakhstan's independent institutions and political agency.",
+  "kazakh-and-russian": "Language classification shapes how readers understand identity, bilingualism and language policy. Shared public space or Cyrillic script does not make two different language families one language.",
+  "nuclear-weapons": "The distinction between a former nuclear arsenal and a current nuclear-armed state changes how Kazakhstan's security history and non-proliferation record are understood.",
+  "economy-oil": "A fair description must hold two facts together: extractive industries remain structurally important, while manufacturing, agriculture, logistics, services and finance also shape the economy.",
+  "baikonur": "Baikonur is a useful case where geography, sovereignty, leasing and day-to-day operation point in different directions. A Russian launch does not make the cosmodrome Russian territory.",
+  "ethnic-diversity": "Citizenship, ethnicity, language and national identity are not interchangeable categories. Careful wording avoids turning a majority population into a claim that everyone shares one background.",
+  "borat": "Borat is a gateway into the subject, but a film character is not evidence about a country's people, institutions or culture. The distinction matters because entertainment can become a country's default international reference.",
+  "capital-astana": "This is a practical, high-search confusion created by a capital move and several name changes. Getting it right is a basic test of present-day geographic literacy.",
+  "yurts": "The yurt remains living heritage and is still used in cultural, festive and practical settings. The correction is not that yurts disappeared; it is that they are not the majority's everyday housing.",
+  "only-steppe": "Landscape shorthand hides the country's ecological range and its urban life. Mountains, forests, lakes, canyons, Caspian shorelines, deserts and cities all belong in the picture.",
+  "silk-roads": "The stronger historical question is whether Kazakhstan was connected to cities, trade and cultural exchange. Archaeology and the UNESCO corridor show a network crossing the region, not an empty gap.",
+};
 const site = Astro.site ?? new URL("https://qazaq-lens.nazkari86.workers.dev");
 const articleUrl = new URL(Astro.url.pathname, site).toString();
 const image = new URL(props.ogImage ?? "/og/default.png", site).toString();
@@ -78,6 +92,7 @@ const jsonLd = [
       <aside class="article-sidebar"><TableOfContents headings={props.headings} /></aside>
       <div class="article-main">
         <KeyTakeaways items={props.keyTakeaways} />
+        <WhyThisMatters text={whyThisMatters[Astro.params.slug ?? ""] ?? "The wording matters because a memorable shortcut can shape how a real country and its people are understood."} />
         <div class="article-body"><slot /></div>
         <ClaimLedger claims={props.claims} />
         <SourceList sources={props.sources} />

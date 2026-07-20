@@ -4,9 +4,9 @@ import { getVisibleMyths } from "../lib/content";
 
 const myths = await getVisibleMyths();
 const order = [
-  "borat","capital-astana","economy-oil","ethnic-diversity",
-  "kazakh-and-russian","nuclear-weapons","only-steppe","part-of-russia","yurts",
-  "baikonur","silk-roads",
+  "part-of-russia","kazakh-and-russian","nuclear-weapons","economy-oil",
+  "baikonur","ethnic-diversity","borat","capital-astana","yurts",
+  "only-steppe","silk-roads",
 ];
 const storyMyths = order
   .map(slug => myths.find(e => e.data.slug === slug))

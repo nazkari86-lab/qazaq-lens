@@ -1,0 +1,7 @@
+---
+interface Props { text: string; }
+const { text } = Astro.props;
+---
+<aside class="notice notice--matters" aria-label="Why this claim matters">
+  <strong>Why this matters:</strong> {text}
+</aside>
