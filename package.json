@@ -13,9 +13,10 @@
     "check": "astro check && tsc -p tsconfig.functions.json --noEmit",
     "pages:dev": "npm run build && wrangler pages dev dist",
     "og": "python3 scripts/make_og_images.py",
-    "qa": "npm run check && npm run audit:function && npm run build && node scripts/audit-build.mjs",
+    "qa": "npm run check && npm run audit:function && npm run audit:content && npm run build && node scripts/audit-build.mjs",
     "audit:build": "node scripts/audit-build.mjs",
     "audit:links": "node scripts/check-external-links.mjs",
+    "audit:content": "node scripts/audit-content-length.mjs",
     "audit:function": "NODE_NO_WARNINGS=1 node scripts/audit-function.mjs"
   },
   "dependencies": {
