@@ -3,6 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import MythCard from "../components/MythCard.astro";
 import InstallApp from "../components/InstallApp.astro";
 import VideoShowcase from "../components/VideoShowcase.astro";
+import QazaqLensBanner from "../components/QazaqLensBanner.astro";
 import { estimateReadingMinutes, getVisibleMyths } from "../lib/content";
 const myths = (await getVisibleMyths()).sort((a,b)=>b.data.publishedAt.valueOf()-a.data.publishedAt.valueOf());
 const featured = myths.find((entry)=>entry.data.featured) ?? myths[0];
@@ -27,11 +28,7 @@ const sourceCount = myths.reduce((sum,entry)=>sum+entry.data.sources.length,0);
           <div><dt>{reviewedCount}</dt><dd>independently reviewed</dd></div>
         </dl>
       </div>
-      <div class="lens-visual" aria-hidden="true">
-        <div class="lens-orbit lens-orbit--one"></div><div class="lens-orbit lens-orbit--two"></div>
-        <div class="lens-center"><span>Context</span><strong>before certainty</strong></div>
-        <span class="visual-label visual-label--one">History</span><span class="visual-label visual-label--two">Language</span><span class="visual-label visual-label--three">Culture</span><span class="visual-label visual-label--four">Evidence</span>
-      </div>
+      <QazaqLensBanner />
     </div>
   </section>
 
