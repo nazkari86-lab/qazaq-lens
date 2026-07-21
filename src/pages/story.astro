@@ -125,6 +125,7 @@ const storyData = storyMyths.map(entry => ({
     <section class="sw-shell" aria-label="Eleven myth evidence checks">
       <div class="sw-progress" aria-hidden="true">
         <span class="sw-progress-fill" data-story-progress></span>
+        <span class="sw-progress-label" data-story-progress-label>01 / {storyData.length} · {storyData.length - 1} left</span>
       </div>
 
       <!-- TEXT COLUMN -->
@@ -229,6 +230,7 @@ const storyData = storyMyths.map(entry => ({
           These eleven checks are a starting point, not a summary of a country. Follow the evidence, keep the uncertainty visible, and let Kazakhstan stay bigger than the shortcut assigned to it.
         </p>
         <a class="sw-cta" href="/myths">Open the full evidence library</a>
+        <a class="sw-secondary-cta" href="/sources">See the source map first →</a>
         <p class="sw-credits">
           Sources: United Nations, CIA World Factbook, UNESCO, World Bank, Bureau of National Statistics of Kazakhstan, Nuclear Threat Initiative, Encyclopedia Britannica.
         </p>
@@ -369,6 +371,16 @@ const storyData = storyMyths.map(entry => ({
   background: var(--sw-accent);
   box-shadow: 0 0 14px var(--sw-accent);
   transition: width .35s ease, background .35s ease;
+}
+.sw-progress-label {
+  position: absolute;
+  right: clamp(1rem, 3vw, 2.5rem);
+  top: .7rem;
+  color: rgba(240,237,229,.55);
+  font: .58rem var(--sw-font-ui);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  transition: color .3s ease;
 }
 @media (max-width: 860px) {
   .sw-shell { grid-template-columns: 1fr; }
@@ -711,6 +723,16 @@ const storyData = storyMyths.map(entry => ({
   background: var(--sw-gold);
   color: var(--sw-bg);
 }
+.sw-secondary-cta {
+  display: inline-block;
+  margin-left: 1rem;
+  color: var(--sw-muted);
+  font: .7rem var(--sw-font-ui);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+.sw-secondary-cta:hover { color: var(--sw-gold); }
 .sw-credits {
   margin-top: 2.5rem;
   font-family: var(--sw-font-ui);
@@ -775,7 +797,7 @@ const storyData = storyMyths.map(entry => ({
 
   type MythEntry = {
     slug: string; title: string; statement: string;
-    verdict: "false" | "misleading"; heroImage: string;
+    verdict: "false" | "misleading"; heroImage: string; heroAlt?: string;
     stat: string; statLabel: string; lead: string;
     sourceCount: number; reviewedAt: string;
   };
@@ -822,6 +844,7 @@ const storyData = storyMyths.map(entry => ({
   const swRoot     = document.querySelector<HTMLElement>(".sw");
   const steps      = [...document.querySelectorAll<HTMLElement>(".sw-step")];
   const progress   = document.querySelector<HTMLElement>("[data-story-progress]");
+  const progressLabel = document.querySelector<HTMLElement>("[data-story-progress-label]");
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   // Warm the full visual sequence in the background so a scroll never waits
@@ -842,6 +865,7 @@ const storyData = storyMyths.map(entry => ({
       const swap = () => {
         if (token !== swapToken) return;
         storyImage.src = next.heroImage;
+        storyImage.alt = next.heroAlt || `${next.title} visual evidence`;
         loadedImage = index;
         photoStage.classList.remove("is-swapping");
         photoStage.classList.add("is-active");
@@ -864,6 +888,7 @@ const storyData = storyMyths.map(entry => ({
 
     if (index === null) {
       if (progress) progress.style.width = "100%";
+      if (progressLabel) progressLabel.textContent = "Pattern · you made it through all 11 checks";
       if (hudScroll) hudScroll.textContent = "";
       // reset accent to gold when at pattern step
       if (swRoot) {
@@ -876,6 +901,10 @@ const storyData = storyMyths.map(entry => ({
     const m = data[index];
     if (!m) return;
     if (progress) progress.style.width = `${((index + 1) / data.length) * 100}%`;
+    if (progressLabel) {
+      const left = data.length - index - 1;
+      progressLabel.textContent = `${String(index + 1).padStart(2, "0")} / ${data.length} · ${left ? `${left} left` : "last check"}`;
+    }
 
     // Apply per-myth color identity
     const accent = accentColors[m.slug] ?? "#c5973e";
