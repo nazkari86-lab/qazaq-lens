@@ -1,16 +1,46 @@
-<div class="reading-mode" data-reading-mode aria-label="Reading mode">
+<div class="reading-mode" data-reading-mode aria-label="Reading mode" role="group">
   <span class="reading-mode-label">Read as</span>
   <button type="button" class="reading-mode-button is-active" data-mode="deep" aria-pressed="true">Deep evidence</button>
   <button type="button" class="reading-mode-button" data-mode="quick" aria-pressed="false">Quick summary</button>
 </div>
 <script>
-  const control = document.querySelector<HTMLElement>("[data-reading-mode]");
-  const article = document.querySelector<HTMLElement>(".article-shell");
-  if (control && article) {
+  const initReadingMode = () => {
+    const control = document.querySelector<HTMLElement>("[data-reading-mode]");
+    const article = document.querySelector<HTMLElement>(".article-shell");
+    if (!control || !article || control.dataset.ready === "true") return;
+    control.dataset.ready = "true";
     const key = "qazaq-lens-reading-mode";
     const buttons = [...control.querySelectorAll<HTMLButtonElement>("[data-mode]")];
-    const apply = (mode: string) => { const value = mode === "quick" ? "quick" : "deep"; article.classList.toggle("is-quick-reading", value === "quick"); buttons.forEach((button) => { const active = button.dataset.mode === value; button.classList.toggle("is-active", active); button.setAttribute("aria-pressed", String(active)); }); try { localStorage.setItem(key, value); } catch {} };
-    let initial = "deep"; try { initial = localStorage.getItem(key) ?? "deep"; } catch {}
-    apply(initial); buttons.forEach((button) => button.addEventListener("click", () => apply(button.dataset.mode ?? "deep")));
-  }
+    const apply = (mode: string, persist = true) => {
+      const value = mode === "quick" ? "quick" : "deep";
+      article.dataset.readingMode = value;
+      article.classList.toggle("is-quick-reading", value === "quick");
+      buttons.forEach((button) => {
+        const active = button.dataset.mode === value;
+        button.classList.toggle("is-active", active);
+        button.setAttribute("aria-pressed", String(active));
+      });
+      if (persist) { try { localStorage.setItem(key, value); } catch {} }
+    };
+    let initial = "deep";
+    try { initial = localStorage.getItem(key) ?? "deep"; } catch {}
+    apply(initial, false);
+    buttons.forEach((button) => button.addEventListener("click", () => apply(button.dataset.mode ?? "deep")));
+  };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initReadingMode, { once: true });
+  else initReadingMode();
 </script>
+<style>
+  :global(.article-shell.is-quick-reading [data-reading-detail="evidence"]),
+  :global(.article-shell.is-quick-reading .changelog),
+  :global(.article-shell.is-quick-reading .comments),
+  :global(.article-shell.is-quick-reading .report-card) { display: none; }
+  :global(.article-shell.is-quick-reading .article-body h2:nth-of-type(n+2)),
+  :global(.article-shell.is-quick-reading .article-body h3) { display: none; }
+  :global(.article-shell.is-quick-reading .article-body) { max-height: 42rem; overflow: hidden; position: relative; }
+  :global(.article-shell.is-quick-reading .article-body::after) {
+    content: "Quick summary · switch to Deep evidence to inspect every claim and source.";
+    display: block; margin-top: 2rem; padding: 1rem; border-top: 1px solid var(--line);
+    color: var(--muted); font: .72rem var(--font-mono);
+  }
+</style>

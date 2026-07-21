@@ -97,12 +97,12 @@ const jsonLd = [
     <div class="article-layout wrap-wide">
       <aside class="article-sidebar"><TableOfContents headings={props.headings} /></aside>
       <div class="article-main">
-        <div data-reveal><KeyTakeaways items={props.keyTakeaways} /></div>
-        <div data-reveal><WhyThisMatters text={whyThisMatters[props.slug ?? Astro.params.slug ?? ""] ?? "The wording matters because a memorable shortcut can shape how a real country and its people are understood."} /></div>
-        <div data-reveal><EvidenceVisual slug={props.slug ?? Astro.params.slug ?? ""} /></div>
-        <div class="article-body" data-reveal><slot /></div>
-        <div data-reveal><ClaimLedger claims={props.claims} /></div>
-        <div data-reveal><SourceList sources={props.sources} /></div>
+        <div data-reveal data-reading-detail="summary"><KeyTakeaways items={props.keyTakeaways} /></div>
+        <div data-reveal data-reading-detail="summary"><WhyThisMatters text={whyThisMatters[props.slug ?? Astro.params.slug ?? ""] ?? "The wording matters because a memorable shortcut can shape how a real country and its people are understood."} /></div>
+        <div data-reveal data-reading-detail="summary"><EvidenceVisual slug={props.slug ?? Astro.params.slug ?? ""} /></div>
+        <div class="article-body" data-reveal data-reading-detail="article"><slot /></div>
+        <div data-reveal data-reading-detail="evidence"><ClaimLedger claims={props.claims} /></div>
+        <div data-reveal data-reading-detail="evidence"><SourceList sources={props.sources} /></div>
         <LastReviewed publishedAt={props.publishedAt} lastReviewedAt={props.lastReviewedAt} author={props.author} reviewStatus={props.reviewStatus} reviewedBy={props.reviewedBy} readingMinutes={props.readingMinutes} />
         <Changelog entries={props.changelog} />
         <ReportError pageUrl={Astro.url.pathname} />
