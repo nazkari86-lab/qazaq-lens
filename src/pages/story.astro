@@ -113,6 +113,7 @@ const storyData = storyMyths.map(entry => ({
           </svg>
           <span>Scroll</span>
         </div>
+        <button class="sw-resume" type="button" data-resume hidden>Continue from check <span data-resume-number></span> →</button>
       </div>
       <div class="sw-title-grid" aria-hidden="true">
         {storyData.map((m) => (
@@ -221,6 +222,29 @@ const storyData = storyMyths.map(entry => ({
       </div>
     </section>
 
+    <!-- MEMORY CHECK: a short active-recall payoff after the visual story. -->
+    <section class="sw-quiz" aria-labelledby="sw-quiz-title">
+      <div class="sw-quiz-inner">
+        <p class="sw-eyebrow">Before you leave</p>
+        <h2 id="sw-quiz-title">Keep the context, not the shortcut.</h2>
+        <p class="sw-quiz-intro">Three quick questions. Your answer is never stored or sent anywhere.</p>
+        <div class="sw-quiz-question" data-quiz-question="0">
+          <span class="sw-quiz-count">01 / 03</span><h3>Which statement best describes Baikonur?</h3>
+          <div class="sw-quiz-options"><button type="button" data-answer="wrong">It is in Russia.</button><button type="button" data-answer="correct">It is in Kazakhstan and operated by Russia under lease.</button><button type="button" data-answer="wrong">It is an independent country.</button></div>
+        </div>
+        <div class="sw-quiz-question" data-quiz-question="1" hidden>
+          <span class="sw-quiz-count">02 / 03</span><h3>What is the problem with “Kazakhstan is only steppe”?</h3>
+          <div class="sw-quiz-options"><button type="button" data-answer="correct">It turns one landscape into a whole-country description.</button><button type="button" data-answer="wrong">There is no steppe in Kazakhstan.</button><button type="button" data-answer="wrong">The country has no mountains.</button></div>
+        </div>
+        <div class="sw-quiz-question" data-quiz-question="2" hidden>
+          <span class="sw-quiz-count">03 / 03</span><h3>What does Qazaq Lens separate?</h3>
+          <div class="sw-quiz-options"><button type="button" data-answer="wrong">Kazakhstan from every neighbouring country.</button><button type="button" data-answer="correct">Checkable context from fiction and overconfident generalisation.</button><button type="button" data-answer="wrong">Facts from all interpretation.</button></div>
+        </div>
+        <p class="sw-quiz-feedback" data-quiz-feedback role="status" aria-live="polite"></p>
+        <div class="sw-quiz-result" data-quiz-result hidden><strong data-quiz-score></strong><span>You now have the useful version of the story.</span><a href="/myths">Keep exploring the evidence →</a></div>
+      </div>
+    </section>
+
     <!-- ENDING -->
     <section class="sw-ending">
       <div class="sw-ending-inner">
@@ -323,6 +347,7 @@ const storyData = storyMyths.map(entry => ({
   text-transform: uppercase;
   animation: sw-bob 2.4s ease-in-out infinite;
 }
+.sw-resume{display:none;margin-top:1.5rem;border:1px solid color-mix(in srgb,var(--sw-accent) 55%,transparent);background:transparent;color:var(--sw-accent);padding:.7rem 1rem;border-radius:3px;font:700 .65rem var(--sw-font-ui);letter-spacing:.08em;text-transform:uppercase;cursor:pointer}.sw-resume:hover{background:var(--sw-accent);color:var(--sw-bg)}
 @keyframes sw-bob {
   0%,100% { transform: translateY(0) }
   50%      { transform: translateY(6px) }
@@ -743,6 +768,7 @@ const storyData = storyMyths.map(entry => ({
   max-width: 60ch;
   opacity: .6;
 }
+.sw-quiz{padding:clamp(5rem,10vw,9rem) clamp(1.5rem,6vw,6rem);background:#11100e;border-top:1px solid var(--sw-line)}.sw-quiz-inner{max-width:760px}.sw-quiz h2{font:400 clamp(2.4rem,6vw,5rem)/.98 var(--sw-font-display);letter-spacing:-.045em;margin:.5rem 0 1rem}.sw-quiz-intro{color:var(--sw-muted);font-size:1.05rem}.sw-quiz-question{margin-top:2.8rem}.sw-quiz-count{font:700 .62rem var(--sw-font-ui);letter-spacing:.12em;color:var(--sw-accent)}.sw-quiz-question h3{font:400 clamp(1.4rem,3vw,2.2rem)/1.15 var(--sw-font-display);margin:.75rem 0 1.4rem}.sw-quiz-options{display:grid;gap:.7rem}.sw-quiz-options button{border:1px solid var(--sw-line);background:transparent;color:var(--sw-ink);padding:1rem 1.1rem;text-align:left;border-radius:3px;cursor:pointer;font-size:.95rem;transition:border-color .2s,background .2s,transform .2s}.sw-quiz-options button:hover{border-color:var(--sw-accent);transform:translateX(4px)}.sw-quiz-options button.is-correct{border-color:#68b486;background:#68b48618;color:#9ce0b4}.sw-quiz-options button.is-wrong{border-color:var(--sw-red);background:#d94f3518}.sw-quiz-feedback{min-height:1.7em;margin-top:1rem;color:var(--sw-muted);font:.72rem var(--sw-font-ui)}.sw-quiz-result{display:grid;gap:.6rem;margin-top:2rem;padding:1.5rem;border:1px solid color-mix(in srgb,var(--sw-accent) 50%,transparent);background:color-mix(in srgb,var(--sw-accent) 7%,transparent)}.sw-quiz-result strong{font:400 2.4rem var(--sw-font-display);color:var(--sw-accent)}.sw-quiz-result span{color:var(--sw-muted)}.sw-quiz-result a{color:var(--sw-accent);font:.72rem var(--sw-font-ui);text-transform:uppercase;text-decoration:none;letter-spacing:.08em}
 
 /* ─── MOBILE ─────────────────────────────────────────────── */
 @media (max-width: 860px) {
@@ -846,6 +872,30 @@ const storyData = storyMyths.map(entry => ({
   const progress   = document.querySelector<HTMLElement>("[data-story-progress]");
   const progressLabel = document.querySelector<HTMLElement>("[data-story-progress-label]");
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const resumeButton = document.querySelector<HTMLButtonElement>("[data-resume]");
+  const resumeNumber = document.querySelector<HTMLElement>("[data-resume-number]");
+  const storyKey = "qazaq-lens-story-progress";
+  const savedProgress = Number.parseInt(localStorage.getItem(storyKey) ?? "0", 10);
+  if (savedProgress > 0 && savedProgress < data.length && resumeButton && resumeNumber) {
+    resumeButton.hidden = false;
+    resumeButton.style.display = "inline-block";
+    resumeNumber.textContent = `${String(savedProgress + 1).padStart(2, "0")} / ${data.length}`;
+    resumeButton.addEventListener("click", () => document.querySelector(`[data-step="${savedProgress}"]`)?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth" }));
+  }
+  const quizQuestions = [...document.querySelectorAll<HTMLElement>("[data-quiz-question]")];
+  const quizFeedback = document.querySelector<HTMLElement>("[data-quiz-feedback]");
+  const quizResult = document.querySelector<HTMLElement>("[data-quiz-result]");
+  const quizScore = document.querySelector<HTMLElement>("[data-quiz-score]");
+  let quizIndex = 0; let quizCorrect = 0;
+  quizQuestions.forEach((question, questionIndex) => question.querySelectorAll<HTMLButtonElement>("[data-answer]").forEach((button) => button.addEventListener("click", () => {
+    if (questionIndex !== quizIndex) return;
+    const correct = button.dataset.answer === "correct";
+    if (correct) quizCorrect++;
+    question.querySelectorAll<HTMLButtonElement>("button").forEach((item) => { item.disabled = true; if (item.dataset.answer === "correct") item.classList.add("is-correct"); });
+    button.classList.add(correct ? "is-correct" : "is-wrong");
+    if (quizFeedback) quizFeedback.textContent = correct ? "Correct — the important distinction is context." : "Not quite — look for the distinction between a real fact and an overgeneralisation.";
+    window.setTimeout(() => { question.hidden = true; quizIndex++; const next = quizQuestions[quizIndex]; if (next) next.hidden = false; else if (quizResult && quizScore) { quizScore.textContent = `${quizCorrect} / 3`; quizResult.hidden = false; } }, 650);
+  })));
 
   // Warm the full visual sequence in the background so a scroll never waits
   // for the next photograph to arrive from the network.
@@ -897,6 +947,8 @@ const storyData = storyMyths.map(entry => ({
       }
       return;
     }
+
+    localStorage.setItem(storyKey, String(index));
 
     const m = data[index];
     if (!m) return;
