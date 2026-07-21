@@ -12,14 +12,16 @@ const videos: Video[] = [
   <article class="featured-video card" data-video data-video-id={featured.id} data-video-title={featured.title}>
     <div class="video-frame video-frame--featured"><img src={`https://i.ytimg.com/vi/${featured.id}/maxresdefault.jpg`} alt="Video thumbnail: Kazakhstan beyond the shortcut" loading="lazy" /><button class="video-play" type="button" aria-label={`Play ${featured.title}`}><span>▶</span></button></div>
     <div class="video-copy"><p class="eyebrow">Featured video</p><h3>{featured.title}</h3><p>{featured.description}</p><p class="video-source">{featured.source}</p></div>
+    <a class="video-open" href={`https://www.youtube.com/watch?v=${featured.id}`} target="_blank" rel="noopener noreferrer">Open original on YouTube ↗</a>
   </article>
-  <div class="video-grid">{videos.map((video) => <article class="video-card card" data-video data-video-id={video.id} data-video-title={video.title}><div class="video-frame"><img src={`https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`} alt={`Video thumbnail: ${video.title}`} loading="lazy" /><button class="video-play" type="button" aria-label={`Play ${video.title}`}><span>▶</span></button></div><h3>{video.title}</h3><p>{video.description}</p><p class="video-source">{video.source}</p></article>)}</div>
+  <div class="video-grid">{videos.map((video) => <article class="video-card card" data-video data-video-id={video.id} data-video-title={video.title}><div class="video-frame"><img src={`https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`} alt={`Video thumbnail: ${video.title}`} loading="lazy" /><button class="video-play" type="button" aria-label={`Play ${video.title}`}><span>▶</span></button></div><h3>{video.title}</h3><p>{video.description}</p><p class="video-source">{video.source}</p><a class="video-open" href={`https://www.youtube.com/watch?v=${video.id}`} target="_blank" rel="noopener noreferrer">Open original on YouTube ↗</a></article>)}</div>
   <p class="video-disclaimer"><strong>Editorial note:</strong> these videos are selected for visual context. Qazaq Lens does not automatically endorse every statement in an external video. Check factual claims against the linked evidence reviews.</p>
 </section>
 <script is:inline>
   document.querySelectorAll("[data-video]").forEach((card) => card.querySelector(".video-play")?.addEventListener("click", () => {
     const id = card.getAttribute("data-video-id"); const title = card.getAttribute("data-video-title") || "External video"; if (!id) return;
     const frame = document.createElement("iframe"); frame.src = `https://www.youtube-nocookie.com/embed/${id}?rel=0&modestbranding=1`; frame.title = title; frame.loading = "lazy"; frame.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"; frame.allowFullscreen = true;
+    frame.addEventListener("error", () => { const fallback = document.createElement("p"); fallback.className = "video-fallback"; fallback.textContent = "This video cannot be embedded here. Use the original YouTube link below."; card.querySelector(".video-frame")?.replaceChildren(fallback); });
     card.querySelector(".video-frame")?.replaceChildren(frame);
   }));
 </script>
