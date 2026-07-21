@@ -11,6 +11,12 @@ const confidence = Object.entries(allClaims.reduce<Record<string, number>>((acc,
 const publisherCounts = [...allSources.reduce<Map<string, number>>((acc, source) => acc.set(source.publisher, (acc.get(source.publisher) ?? 0) + 1), new Map()).entries()].sort((a,b)=>b[1]-a[1]);
 const articles = [...myths].sort((a,b)=>a.data.title.localeCompare(b.data.title));
 const networkClaims = myths.flatMap((entry) => entry.data.claims.filter((claim) => claim.significance === "critical").map((claim) => ({ key: `${entry.data.slug}-${claim.id}`, article: entry.data.title, slug: entry.data.slug, statement: claim.statement, confidence: claim.confidence, sources: claim.sourceIds.map((id) => { const source = entry.data.sources.find((item) => item.id === id); return { id, title: source?.title ?? id, publisher: source?.publisher ?? "Unknown publisher", type: source?.type ?? "background" }; }) })));
+const today = new Date();
+const sourceAge = (date: Date) => Math.max(0, Math.floor((today.valueOf() - date.valueOf()) / 86_400_000));
+const freshness = (date: Date) => sourceAge(date) > 730 ? "stale" : sourceAge(date) > 365 ? "aging" : "fresh";
+const staleSources = allSources.filter((source) => source.publishedAt && freshness(new Date(source.publishedAt)) === "stale");
+const agingSources = allSources.filter((source) => source.publishedAt && freshness(new Date(source.publishedAt)) === "aging");
+const claimsPerSource = (allClaims.length / allSources.length).toFixed(2);
 ---
 <BaseLayout title="Evidence dashboard" description="A transparent overview of Qazaq Lens articles, claims, source types, publishers and review status.">
   <section class="wrap-wide page-hero">
@@ -24,6 +30,12 @@ const networkClaims = myths.flatMap((entry) => entry.data.claims.filter((claim) 
     <article><strong>{allClaims.length}</strong><span>registered claims</span></article>
     <article><strong>{allSources.length}</strong><span>source records</span></article>
     <article><strong>{uniquePublishers.size}</strong><span>named publishers</span></article>
+    <article><strong>{claimsPerSource}</strong><span>claims per source record</span></article>
+  </section>
+
+  <section class="wrap-wide dashboard-grid section-block">
+    <article class="card dashboard-panel"><p class="eyebrow">Freshness monitor</p><h2>Which evidence may need another look?</h2><div class="freshness-status"><div><strong class="freshness-number freshness-number--fresh">{allSources.length - staleSources.length - agingSources.length}</strong><span>fresh or current</span></div><div><strong class="freshness-number freshness-number--aging">{agingSources.length}</strong><span>aging</span></div><div><strong class="freshness-number freshness-number--stale">{staleSources.length}</strong><span>stale</span></div></div><p class="fine-print">Freshness is a review signal, not a quality verdict. Historical sources can remain appropriate when the claim concerns history; current statistics need more frequent checks.</p></article>
+    <article class="card dashboard-panel"><p class="eyebrow">Editorial queue</p><h2>What still needs human work?</h2><ul class="health-list"><li><span>Articles independently reviewed</span><strong>{myths.filter((entry) => entry.data.publicationStatus === "reviewed").length} / {myths.length}</strong></li><li><span>Sources with archive links</span><strong>{allSources.filter((source) => Boolean(source.archivedUrl)).length} / {allSources.length}</strong></li><li><span>Academic source records</span><strong>{allSources.filter((source) => source.type === "academic").length}</strong></li><li><span>Correction reports resolved</span><strong>See moderation queue</strong></li></ul><a class="btn" href="/methodology#review-status">Read review standard →</a></article>
   </section>
 
   <section class="wrap-wide dashboard-grid section-block">
