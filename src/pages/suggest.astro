@@ -1,0 +1,24 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+<BaseLayout title="Suggest a myth" description="Suggest a Kazakhstan stereotype, meme or claim for a future evidence check." noindex={true}>
+  <main class="wrap page-hero suggest-page">
+    <p class="eyebrow">Help shape the library</p>
+    <h1>Suggest a myth or meme</h1>
+    <p class="lead">Send a claim you have seen about Kazakhstan. The editor will assess whether it is widespread, verifiable and distinct from existing articles.</p>
+    <form class="correction-form" data-suggest-form>
+      <label>Claim or meme <textarea name="claim" required minlength="15" maxlength="1000" rows="4" placeholder="Example: Kazakhstan is…"></textarea></label>
+      <label>Where did you see it? <input name="where" maxlength="500" placeholder="Platform, article, video or conversation" /></label>
+      <label>Why should it be checked? <textarea name="context" required minlength="20" maxlength="2000" rows="4"></textarea></label>
+      <div class="form-grid"><label>Name or pseudonym <input name="name" maxlength="120" /></label><label>Email <input name="email" type="email" maxlength="200" /></label></div>
+      <div class="button-row"><button class="btn btn--primary" type="submit">Prepare suggestion</button><a class="btn" href="/report-error">Submit a correction instead</a></div>
+      <p class="form-status" data-suggest-status role="status" aria-live="polite"></p>
+    </form>
+    <p class="section-note">Suggestions are editorial leads, not automatic publications. Please do not send sensitive personal information.</p>
+  </main>
+  <script>
+    const form = document.querySelector<HTMLFormElement>("[data-suggest-form]");
+    const status = document.querySelector<HTMLElement>("[data-suggest-status]");
+    form?.addEventListener("submit", (event) => { event.preventDefault(); if (!form.reportValidity() || !status) return; const data = new FormData(form); const subject = encodeURIComponent(`Qazaq Lens suggestion: ${String(data.get("claim") ?? "").slice(0, 80)}`); const body = encodeURIComponent(`Claim or meme:\n${data.get("claim")}\n\nWhere seen:\n${data.get("where") || "Not provided"}\n\nWhy it should be checked:\n${data.get("context")}\n\nName: ${data.get("name") || "Anonymous"}\nEmail: ${data.get("email") || "Not provided"}`); window.location.href = `mailto:nazkari86@gmail.com?subject=${subject}&body=${body}`; status.textContent = "Your email draft is ready. Review it and press Send."; });
+  </script>
+</BaseLayout>

@@ -1,0 +1,43 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+const terms = [
+  ["Qazaq / Kazakh", "Qazaq is the self-name of the Kazakh people and language. Kazakh is the common English form for the language and nationality; Kazakhstani usually refers to a citizen or resident of Kazakhstan, regardless of ethnicity."],
+  ["Kazakhstani", "A civic term for people connected to the state of Kazakhstan. It is not a synonym for ethnic Kazakh: Kazakhstan has many ethnic communities and citizens."],
+  ["Kumys / Qymyz", "Fermented mare's milk with a place in Kazakh horse-breeding and hospitality traditions. It is cultural heritage, not a drink consumed identically by every person."],
+  ["Yurt", "A portable dwelling associated with Central Asian nomadic traditions and recognised living heritage. Modern Kazakh life is mostly urban and settled, while yurts remain used for cultural, festive and practical purposes."],
+  ["Zhuz", "A historical social and genealogical grouping among Kazakh communities. It should not be treated as a simple modern political party, race or rigid caste system."],
+  ["Oblast", "A major administrative region of Kazakhstan, broadly comparable to a province. Boundaries and names can change, so current administrative data should be dated."],
+  ["Nauryz", "A spring celebration observed across Central Asia and beyond. In Kazakhstan it combines seasonal, cultural and civic meanings and is not evidence of one single religious identity."],
+  ["Akim / Akimat", "An akim is a regional or city executive official; an akimat is the corresponding local executive body."],
+  ["Baikonur", "The name used for both the nearby city and the large space complex in Kazakhstan. Russia operates the complex under a lease; operation does not change its geographic location."],
+  ["Middle Corridor", "The Trans-Caspian International Transport Route linking rail, road and Caspian shipping between China, Central Asia, the Caucasus and Europe."],
+  ["Semipalatinsk", "The former Soviet nuclear test site and surrounding historical region. Its legacy is central to Kazakhstan's disarmament and nuclear-policy debates."],
+  ["Aral Sea", "A transboundary inland lake severely reduced by human water-management decisions. The Northern Aral in Kazakhstan has seen partial restoration, while the wider crisis continues."],
+];
+---
+<BaseLayout title="Glossary" description="A plain-language glossary for understanding Kazakhstan, its people, history and institutions.">
+  <main class="wrap page-hero glossary-page">
+    <p class="eyebrow">Context before conclusions</p>
+    <h1>Glossary</h1>
+    <p class="lead">Terms that are often translated, simplified or misunderstood in conversations about Kazakhstan.</p>
+    <label class="glossary-search"><span>Search terms</span><input type="search" data-glossary-search placeholder="Try: yurt, oblast, Qazaq…" /></label>
+    <div class="glossary-grid" data-glossary-list>
+      {terms.map(([term, definition]) => <article class="glossary-card" data-glossary-card data-glossary-text={`${term} ${definition}`.toLowerCase()}><h2>{term}</h2><p>{definition}</p></article>)}
+    </div>
+    <p class="empty-state" data-glossary-empty hidden>No matching terms. Try a different spelling.</p>
+  </main>
+  <script>
+    const input = document.querySelector<HTMLInputElement>("[data-glossary-search]");
+    const cards = [...document.querySelectorAll<HTMLElement>("[data-glossary-card]")];
+    const empty = document.querySelector<HTMLElement>("[data-glossary-empty]");
+    input?.addEventListener("input", () => { const query = input.value.trim().toLowerCase(); let visible = 0; cards.forEach((card) => { const show = !query || (card.dataset.glossaryText ?? "").includes(query); card.hidden = !show; if (show) visible++; }); if (empty) empty.hidden = visible > 0; });
+  </script>
+</BaseLayout>
+<style>
+  .glossary-search{display:grid;gap:.45rem;margin:2rem 0 1.5rem;max-width:680px;font:700 .72rem var(--font-mono);color:var(--muted)}
+  .glossary-search input{border:1px solid var(--line);border-radius:var(--radius-sm);padding:1rem;background:var(--surface);color:var(--ink);font:1rem var(--font-display)}
+  .glossary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+  .glossary-card{padding:1.4rem;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);transition:transform .25s ease,border-color .25s ease}
+  .glossary-card:hover{transform:translateY(-3px);border-color:var(--brand)} .glossary-card h2{margin:0;font-size:1.25rem}.glossary-card p{color:var(--muted);margin-bottom:0}
+  @media(max-width:720px){.glossary-grid{grid-template-columns:1fr}}
+</style>
