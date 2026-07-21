@@ -886,7 +886,7 @@ const storyData = storyMyths.map(entry => ({
   const resumeButton = document.querySelector<HTMLButtonElement>("[data-resume]");
   const resumeNumber = document.querySelector<HTMLElement>("[data-resume-number]");
   const storyKey = "qazaq-lens-story-progress";
-  const savedProgress = Number.parseInt(localStorage.getItem(storyKey) ?? "0", 10);
+  let savedProgress = 0; try { savedProgress = Number.parseInt(localStorage.getItem(storyKey) ?? "0", 10); } catch {}
   if (savedProgress > 0 && savedProgress < data.length && resumeButton && resumeNumber) {
     resumeButton.hidden = false;
     resumeButton.style.display = "inline-block";
@@ -961,7 +961,7 @@ const storyData = storyMyths.map(entry => ({
 
     const m = data[index];
     if (!m) return;
-    localStorage.setItem(storyKey, String(index));
+    try { localStorage.setItem(storyKey, String(index)); } catch {}
     chapterLinks.forEach((link) => link.classList.toggle("is-active", Number(link.dataset.chapterLink) === index));
     const hash = `#story-${m.slug}`;
     if (location.hash !== hash && !document.documentElement.classList.contains("is-jumping")) history.replaceState(null, "", hash);

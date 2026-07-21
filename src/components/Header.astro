@@ -54,17 +54,17 @@ const isCurrent = (href: string) => pathname === href || (href !== "/" && pathna
   const applyTheme = (theme: string) => {
     if (theme === "system") {
       delete document.documentElement.dataset.theme;
-      localStorage.removeItem("qazaq-lens-theme");
+      try { localStorage.removeItem("qazaq-lens-theme"); } catch {}
     } else {
       document.documentElement.dataset.theme = theme;
-      localStorage.setItem("qazaq-lens-theme", theme);
+      try { localStorage.setItem("qazaq-lens-theme", theme); } catch {}
     }
     if (icon) icon.textContent = ICONS[theme] ?? "◐";
     if (label) label.textContent = LABELS[theme] ?? "Theme";
   };
 
   const getTheme = () => {
-    const saved = localStorage.getItem("qazaq-lens-theme");
+    let saved = ""; try { saved = localStorage.getItem("qazaq-lens-theme") ?? ""; } catch {}
     if (saved === "light" || saved === "dark") return saved;
     return "system";
   };

@@ -11,6 +11,6 @@ const { slug, title } = Astro.props;
     const read = () => { try { return JSON.parse(localStorage.getItem(key) ?? "[]") as string[]; } catch { return []; } };
     const update = () => { const saved = read().includes(slug); button.setAttribute("aria-pressed", String(saved)); button.classList.toggle("is-saved", saved); const icon = button.querySelector<HTMLElement>("[aria-hidden]"); const label = button.querySelector<HTMLElement>("[data-bookmark-label]"); if (icon) icon.textContent = saved ? "★" : "☆"; if (label) label.textContent = saved ? "Saved" : "Save for later"; };
     update();
-    button.addEventListener("click", () => { const saved = read(); const next = saved.includes(slug) ? saved.filter((item) => item !== slug) : [...saved, slug]; localStorage.setItem(key, JSON.stringify(next)); update(); });
+    button.addEventListener("click", () => { const saved = read(); const next = saved.includes(slug) ? saved.filter((item) => item !== slug) : [...saved, slug]; try { localStorage.setItem(key, JSON.stringify(next)); } catch {} update(); });
   }
 </script>
