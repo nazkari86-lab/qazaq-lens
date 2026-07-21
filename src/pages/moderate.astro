@@ -1,0 +1,20 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+<BaseLayout title="Comment moderation" description="Private moderation workspace for Qazaq Lens comments." noindex={true}>
+  <section class="wrap page-hero moderation-page">
+    <p class="eyebrow">Private workspace</p><h1>Comment moderation.</h1>
+    <p class="lead">Only comments explicitly approved here appear publicly. The token is kept in this browser session and is never included in page markup.</p>
+    <form class="moderation-login" data-moderation-login><label>Admin token<input type="password" name="token" autocomplete="off" required /></label><button class="btn btn--primary" type="submit">Load pending comments</button><p class="form-status" data-moderation-status role="status" aria-live="polite"></p></form>
+    <section class="moderation-list" data-moderation-list hidden aria-live="polite"></section>
+  </section>
+</BaseLayout>
+<script>
+  const login = document.querySelector<HTMLFormElement>("[data-moderation-login]");
+  const list = document.querySelector<HTMLElement>("[data-moderation-list]");
+  const status = document.querySelector<HTMLElement>("[data-moderation-status]");
+  let token = "";
+  const escape = (value: string) => value.replace(/[<>&]/g, (char) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" }[char] ?? char));
+  const load = async () => { if (!list) return; const response = await fetch("/api/comments/moderate", { headers: { authorization: `Bearer ${token}` } }); const data = await response.json(); if (!response.ok) throw new Error(data.message ?? "Could not load comments."); const comments = data.comments ?? []; list.hidden = false; list.innerHTML = comments.length ? comments.map((comment: {id:string;author_name:string;author_email?:string;body:string;page_slug:string;created_at:string}) => `<article class="moderation-card" data-comment-id="${escape(comment.id)}"><div class="moderation-card-meta"><strong>${escape(comment.author_name)}</strong><span>${escape(comment.page_slug)}</span><time>${new Date(comment.created_at + "Z").toLocaleString()}</time></div><p>${escape(comment.body)}</p><small>${escape(comment.author_email ?? "No email supplied")}</small><div class="button-row"><button class="btn btn--primary" data-moderate="approved" type="button">Approve</button><button class="btn" data-moderate="rejected" type="button">Reject</button><button class="btn" data-moderate="hidden" type="button">Hide</button></div></article>`).join("") : `<p class="comments-empty">No pending comments.</p>`; list.querySelectorAll<HTMLButtonElement>("[data-moderate]").forEach((button) => button.addEventListener("click", async () => { const card = button.closest<HTMLElement>("[data-comment-id]"); const id = card?.dataset.commentId; if (!id) return; button.disabled = true; const update = await fetch("/api/comments/moderate", { method: "PATCH", headers: { authorization: `Bearer ${token}`, "content-type": "application/json" }, body: JSON.stringify({ id, status: button.dataset.moderate }) }); if (update.ok) card?.remove(); else { button.disabled = false; if (status) status.textContent = "Could not update that comment."; } })); };
+  login?.addEventListener("submit", async (event) => { event.preventDefault(); if (!login.reportValidity()) return; token = String(new FormData(login).get("token") ?? ""); if (status) status.textContent = "Loading…"; try { await load(); if (status) status.textContent = ""; } catch (error) { if (status) status.textContent = error instanceof Error ? error.message : "Could not load comments."; } });
+</script>
