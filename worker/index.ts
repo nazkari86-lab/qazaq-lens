@@ -86,6 +86,23 @@ async function handleCommentModeration(request: Request, env: Env) {
   return json({ ok: true, id, status });
 }
 
+async function handleCorrectionModeration(request: Request, env: Env) {
+  if (!env.QAZAQ_LENS_DB || !env.COMMENTS_ADMIN_TOKEN) return json({ message: "Moderation is not configured." }, 503);
+  if (request.headers.get("authorization") !== `Bearer ${env.COMMENTS_ADMIN_TOKEN}`) return json({ message: "Unauthorized." }, 401);
+  if (request.method === "GET") {
+    const result = await env.QAZAQ_LENS_DB.prepare(`SELECT id,created_at,page_url,page_title,issue,reason,source_url,source_title,suggestion,reporter_name,reporter_email,may_credit,locale,status FROM correction_reports WHERE status IN ('new','reviewing') ORDER BY created_at ASC LIMIT 200`).all();
+    return json({ reports: result.results });
+  }
+  if (request.method !== "PATCH") return json({ message: "Method not allowed." }, 405, { Allow: "GET, PATCH" });
+  let input: { id?: string; status?: string; note?: string };
+  try { input = await request.json(); } catch { return json({ message: "Invalid JSON request." }, 400); }
+  const id = commentText(input.id, 80);
+  const status = input.status;
+  if (!id || !["reviewing", "accepted", "rejected", "resolved"].includes(status ?? "")) return json({ message: "Invalid correction update." }, 400);
+  await env.QAZAQ_LENS_DB.prepare(`UPDATE correction_reports SET status = ? WHERE id = ?`).bind(status, id).run();
+  return json({ ok: true, id, status });
+}
+
 const sameOrigin = (request: Request) => {
   const origin = request.headers.get("origin");
   if (!origin) return true;
@@ -170,6 +187,7 @@ export default {
     if (url.pathname === "/api/report-error") return handleCorrection(request, env);
     if (url.pathname === "/api/comments") return handleComments(request, env);
     if (url.pathname === "/api/comments/moderate") return handleCommentModeration(request, env);
+    if (url.pathname === "/api/corrections/moderate") return handleCorrectionModeration(request, env);
     return env.ASSETS.fetch(request);
   },
 } satisfies ExportedHandler<Env>;
