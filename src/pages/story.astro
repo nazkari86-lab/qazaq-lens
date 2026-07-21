@@ -633,6 +633,7 @@ const storyData = storyMyths.map(entry => ({
   transition: transform .8s cubic-bezier(.2,.7,.2,1), filter .55s ease;
 }
 .sw-photo.is-active img { transform: scale(1); filter: saturate(1) contrast(1.04); }
+.sw-photo.is-active img{animation:sw-photo-breathe 8s ease-out both}.sw-photo.is-swapping img{animation:none}@keyframes sw-photo-breathe{from{transform:scale(1.045)}to{transform:scale(1)}}
 /* Per-myth color tint layer */
 .sw-photo-tint {
   position: absolute;
@@ -716,6 +717,7 @@ const storyData = storyMyths.map(entry => ({
 }
 .sw-hud-verdict[data-verdict="false"]      { color: var(--sw-red); }
 .sw-hud-verdict[data-verdict="misleading"] { color: var(--sw-amber); }
+.sw-hud--top,.sw-hud--bottom{animation:sw-hud-in .55s ease both}@keyframes sw-hud-in{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
 
 /* ─── ENDING ─────────────────────────────────────────────── */
 .sw-ending {

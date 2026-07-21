@@ -9,7 +9,7 @@ const sourceTypes = [...new Set(claims.flatMap((claim) => claim.sources.map((sou
   <p class="section-note">Each card is a traceable path: the article frames a claim, and the claim points to named publishers. Publisher labels are not treated as proof of independence by themselves.</p>
   <div class="network-filters" aria-label="Filter evidence network"><button class="filter-chip is-active" type="button" data-network-filter="all">All source types</button>{sourceTypes.map((type) => <button class="filter-chip" type="button" data-network-filter={type}>{type}</button>)}</div>
   <div class="network-list">
-    {claims.map((claim) => <article class="network-card" data-network-card data-network-types={claim.sources.map((source) => source.type).join(" ")}>
+    {claims.map((claim, index) => <article class="network-card" style={`--network-delay:${index * 35}ms`} data-network-card data-network-types={claim.sources.map((source) => source.type).join(" ")}>
       <div class="network-card-head"><span class="network-node network-node--article">{claim.article}</span><span class="network-arrow">→</span><span class="network-node network-node--claim">{claim.key}</span><span class={`confidence confidence--${claim.confidence}`}>{claim.confidence}</span></div>
       <p class="network-statement">{claim.statement}</p>
       <div class="network-sources">{claim.sources.map((source) => <a class="network-source" href={`/myths/${claim.slug}#source-${source.id}`}><span class={`network-source-dot network-source-dot--${source.type}`}></span><strong>{source.id}</strong><span>{source.publisher}</span></a>)}</div>
