@@ -1,0 +1,28 @@
+---
+interface NetworkClaim { key: string; article: string; slug: string; statement: string; confidence: string; sources: Array<{ id: string; title: string; publisher: string; type: string }> }
+interface Props { claims: NetworkClaim[] }
+const { claims } = Astro.props;
+const sourceTypes = [...new Set(claims.flatMap((claim) => claim.sources.map((source) => source.type)))];
+---
+<section class="evidence-network section-block" data-network>
+  <div class="section-heading-row"><div><p class="eyebrow">Evidence network</p><h2>Follow a conclusion back to its sources.</h2></div><span class="section-count">{claims.length} critical claims shown</span></div>
+  <p class="section-note">Each card is a traceable path: the article frames a claim, and the claim points to named publishers. Publisher labels are not treated as proof of independence by themselves.</p>
+  <div class="network-filters" aria-label="Filter evidence network"><button class="filter-chip is-active" type="button" data-network-filter="all">All source types</button>{sourceTypes.map((type) => <button class="filter-chip" type="button" data-network-filter={type}>{type}</button>)}</div>
+  <div class="network-list">
+    {claims.map((claim) => <article class="network-card" data-network-card data-network-types={claim.sources.map((source) => source.type).join(" ")}>
+      <div class="network-card-head"><span class="network-node network-node--article">{claim.article}</span><span class="network-arrow">→</span><span class="network-node network-node--claim">{claim.key}</span><span class={`confidence confidence--${claim.confidence}`}>{claim.confidence}</span></div>
+      <p class="network-statement">{claim.statement}</p>
+      <div class="network-sources">{claim.sources.map((source) => <a class="network-source" href={`/myths/${claim.slug}#source-${source.id}`}><span class={`network-source-dot network-source-dot--${source.type}`}></span><strong>{source.id}</strong><span>{source.publisher}</span></a>)}</div>
+    </article>)}
+  </div>
+  <p class="network-empty" data-network-empty hidden>No claims match this source type.</p>
+</section>
+<script>
+  const network = document.querySelector<HTMLElement>("[data-network]");
+  if (network) {
+    const cards = [...network.querySelectorAll<HTMLElement>("[data-network-card]")];
+    const buttons = [...network.querySelectorAll<HTMLButtonElement>("[data-network-filter]")];
+    const empty = network.querySelector<HTMLElement>("[data-network-empty]");
+    buttons.forEach((button) => button.addEventListener("click", () => { const type = button.dataset.networkFilter ?? "all"; buttons.forEach((item) => item.classList.toggle("is-active", item === button)); let visible = 0; cards.forEach((card) => { const show = type === "all" || (card.dataset.networkTypes ?? "").split(" ").includes(type); card.hidden = !show; if (show) visible++; }); if (empty) empty.hidden = visible > 0; }));
+  }
+</script>
