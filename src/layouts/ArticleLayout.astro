@@ -14,6 +14,7 @@ import RelatedMyths from "../components/RelatedMyths.astro";
 import WhyThisMatters from "../components/WhyThisMatters.astro";
 import Comments from "../components/Comments.astro";
 import BookmarkButton from "../components/BookmarkButton.astro";
+import ReadingMode from "../components/ReadingMode.astro";
 import EvidenceVisual from "../components/EvidenceVisual.astro";
 import type { MythEntry } from "../lib/content";
 
@@ -86,6 +87,7 @@ const jsonLd = [
           <p class="myth-quote">“{props.mythStatement}”</p>
           <h1>{props.title}</h1>
           <div class="article-actions"><ShareTools title={props.title} summary={props.summary} /><BookmarkButton slug={props.slug ?? Astro.params.slug ?? ""} title={props.title} /></div>
+          <ReadingMode />
         </div>
         <VerdictBox verdict={props.verdict} summary={props.summary} publicationStatus={props.publicationStatus} />
       </div>
