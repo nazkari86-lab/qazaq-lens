@@ -10,6 +10,7 @@ const rules = {
   "nuclear-weapons": [900, 1200, 7, 4, 7, ["nuclear", "Semipalatinsk", "non-proliferation"]], "only-steppe": [500, 750, 7, 3, 4, ["steppe", "mountains", "urban"]],
   "part-of-russia": [700, 950, 8, 3, 4, ["independence", "sovereign", "Russia"]], "silk-roads": [500, 750, 7, 3, 4, ["UNESCO", "Otrar", "network"]], yurts: [450, 700, 6, 3, 4, ["yurt", "heritage", "housing"]],
   "giant-door": [500, 800, 6, 3, 3, ["viral", "archaeological", "Kazakhstan"]], "horse-meat-kumys": [550, 850, 6, 3, 3, ["horse", "kumys", "heritage"]], "kazakhstan-memes": [550, 850, 6, 3, 3, ["memes", "TikTok", "folklore"]],
+  "aral-sea-gone": [450, 700, 6, 3, 3, ["Aral", "restoration", "water"]], "landlocked-isolated": [450, 700, 6, 3, 3, ["landlocked", "Caspian", "corridor"]], "internet-closed": [450, 750, 6, 3, 3, ["internet", "journalists", "restricted"]],
 };
 const words = (text) => (text.match(/\b[\p{L}\p{N}]+(?:[-’'][\p{L}\p{N}]+)*\b/gu) ?? []).length;
 const body = (raw) => raw.split(/^---\s*$/m).slice(-1)[0].replace(/<[^>]*>/g, " ").replace(/\[[^\]]*\]\([^)]*\)/g, " ").replace(/[#*_`>|]/g, " ");
