@@ -1,0 +1,30 @@
+---
+interface Props { slug: string; title: string }
+const { slug, title } = Astro.props;
+---
+<section class="comments" data-comments data-comments-slug={slug} aria-labelledby="comments-title">
+  <div class="comments-heading"><div><p class="eyebrow">Reader context</p><h2 id="comments-title">Comments</h2></div><span class="comments-count" data-comments-count>Loading…</span></div>
+  <p class="section-note">Comments are moderated before publication. Keep them specific, sourced and respectful.</p>
+  <div class="comments-list" data-comments-list><p class="comments-empty">No published comments yet. Add the first useful context.</p></div>
+  <form class="comment-form" data-comment-form>
+    <input type="hidden" name="startedAt" value={Date.now()} />
+    <label>Name<input name="name" required maxlength="80" autocomplete="name" /></label>
+    <label>Email <span>(optional, never published)</span><input name="email" type="email" maxlength="200" autocomplete="email" /></label>
+    <label class="comment-honeypot" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off" /></label>
+    <label>Comment<textarea name="body" required minlength="10" maxlength="2000" rows="4" placeholder={`Add context, a correction or a source about “${title}”…`}></textarea></label>
+    <div class="button-row"><button class="btn btn--primary" type="submit">Send for moderation</button><span class="comment-status" data-comment-status role="status" aria-live="polite"></span></div>
+  </form>
+</section>
+<script>
+  const root = document.querySelector<HTMLElement>("[data-comments]");
+  if (root) {
+    const slug = root.dataset.commentsSlug ?? "";
+    const list = root.querySelector<HTMLElement>("[data-comments-list]");
+    const count = root.querySelector<HTMLElement>("[data-comments-count]");
+    const status = root.querySelector<HTMLElement>("[data-comment-status]");
+    const form = root.querySelector<HTMLFormElement>("[data-comment-form]");
+    const render = (comments: Array<{author_name:string;body:string;created_at:string}>) => { if (count) count.textContent = `${comments.length} published`; if (list) list.innerHTML = comments.length ? comments.map((comment) => `<article class="comment"><strong>${comment.author_name.replace(/[<>&]/g, "")}</strong><time>${new Date(comment.created_at + "Z").toLocaleDateString()}</time><p>${comment.body.replace(/[<>&]/g, "")}</p></article>`).join("") : '<p class="comments-empty">No published comments yet. Add the first useful context.</p>'; };
+    fetch(`/api/comments?slug=${encodeURIComponent(slug)}`).then((response) => response.ok ? response.json() : Promise.reject()).then((data) => render(data.comments ?? [])).catch(() => { if (count) count.textContent = "Comments unavailable"; });
+    form?.addEventListener("submit", async (event) => { event.preventDefault(); if (!form.reportValidity()) return; if (status) status.textContent = "Sending…"; const input = Object.fromEntries(new FormData(form).entries()); try { const response = await fetch(`/api/comments?slug=${encodeURIComponent(slug)}`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ ...input, startedAt: Number(input.startedAt) }) }); const data = await response.json(); if (!response.ok) throw new Error(data.message ?? "Could not send comment."); form.reset(); if (status) status.textContent = "Received. It will appear after moderation."; } catch (error) { if (status) status.textContent = error instanceof Error ? error.message : "Could not send comment."; } });
+  }
+</script>

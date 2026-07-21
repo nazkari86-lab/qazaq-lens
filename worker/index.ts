@@ -1,6 +1,7 @@
 interface Env {
   ASSETS: Fetcher;
   QAZAQ_LENS_DB?: D1Database;
+  COMMENTS_ADMIN_TOKEN?: string;
 }
 
 interface CorrectionPayload {
@@ -35,6 +36,55 @@ const validUrl = (value: string) => {
     return false;
   }
 };
+
+const commentText = (value: unknown, max: number) => clean(value, max).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "");
+
+async function handleComments(request: Request, env: Env) {
+  if (!env.QAZAQ_LENS_DB) return json({ message: "The comment database is not connected yet." }, 503);
+  const url = new URL(request.url);
+  const slug = commentText(url.searchParams.get("slug"), 120);
+  if (!slug || !/^[a-z0-9-]+$/.test(slug)) return json({ message: "A valid article slug is required." }, 400);
+
+  if (request.method === "GET") {
+    const result = await env.QAZAQ_LENS_DB.prepare(`SELECT id,created_at,page_slug,author_name,body,locale FROM comments WHERE page_slug = ? AND status = 'approved' ORDER BY created_at ASC LIMIT 100`).bind(slug).all();
+    return json({ comments: result.results });
+  }
+  if (request.method !== "POST") return json({ message: "Method not allowed." }, 405, { Allow: "GET, POST" });
+  if (!sameOrigin(request)) return json({ message: "Cross-site submissions are not accepted." }, 403);
+  const contentType = request.headers.get("content-type") ?? "";
+  if (!contentType.includes("application/json")) return json({ message: "Content type must be application/json." }, 415);
+  if (Number(request.headers.get("content-length") ?? 0) > 8_000) return json({ message: "Comment is too large." }, 413);
+  let input: { name?: string; email?: string; body?: string; website?: string; startedAt?: number; locale?: string };
+  try { input = await request.json(); } catch { return json({ message: "Invalid JSON request." }, 400); }
+  if (commentText(input.website, 100)) return json({ ok: true, status: "pending" }, 201);
+  const elapsed = Date.now() - Number(input.startedAt ?? 0);
+  const name = commentText(input.name, 80);
+  const email = commentText(input.email, 200);
+  const body = commentText(input.body, 2000);
+  if (!Number.isFinite(elapsed) || elapsed < 1800 || elapsed > 86_400_000) return json({ message: "Please take a moment to review your comment and try again." }, 400);
+  if (name.length < 2 || body.length < 10) return json({ message: "Please provide a name and a comment of at least 10 characters." }, 400);
+  if (email && !/^\S+@\S+\.\S+$/.test(email)) return json({ message: "The email address is not valid." }, 400);
+  const id = crypto.randomUUID();
+  await env.QAZAQ_LENS_DB.prepare(`INSERT INTO comments (id,created_at,updated_at,page_url,page_slug,author_name,author_email,body,locale,status) VALUES (?,datetime('now'),datetime('now'),?,?,?,?,?,?,?,'pending')`).bind(id, new URL(request.url).origin + `/myths/${slug}/`, slug, name, email || null, body, commentText(input.locale, 30) || null).run();
+  return json({ ok: true, id, status: "pending" }, 201);
+}
+
+async function handleCommentModeration(request: Request, env: Env) {
+  if (!env.QAZAQ_LENS_DB || !env.COMMENTS_ADMIN_TOKEN) return json({ message: "Moderation is not configured." }, 503);
+  if (request.headers.get("authorization") !== `Bearer ${env.COMMENTS_ADMIN_TOKEN}`) return json({ message: "Unauthorized." }, 401);
+  if (request.method === "GET") {
+    const result = await env.QAZAQ_LENS_DB.prepare(`SELECT id,created_at,page_slug,author_name,author_email,body,locale,status,moderator_note FROM comments WHERE status = 'pending' ORDER BY created_at ASC LIMIT 200`).all();
+    return json({ comments: result.results });
+  }
+  if (request.method !== "PATCH") return json({ message: "Method not allowed." }, 405, { Allow: "GET, PATCH" });
+  let input: { id?: string; status?: string; note?: string };
+  try { input = await request.json(); } catch { return json({ message: "Invalid JSON request." }, 400); }
+  const id = commentText(input.id, 80);
+  const status = input.status;
+  if (!id || !["approved", "rejected", "hidden"].includes(status ?? "")) return json({ message: "Invalid moderation update." }, 400);
+  await env.QAZAQ_LENS_DB.prepare(`UPDATE comments SET status = ?, moderator_note = ?, updated_at = datetime('now') WHERE id = ?`).bind(status, commentText(input.note, 500) || null, id).run();
+  return json({ ok: true, id, status });
+}
 
 const sameOrigin = (request: Request) => {
   const origin = request.headers.get("origin");
@@ -118,6 +168,8 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     if (url.pathname === "/api/report-error") return handleCorrection(request, env);
+    if (url.pathname === "/api/comments") return handleComments(request, env);
+    if (url.pathname === "/api/comments/moderate") return handleCommentModeration(request, env);
     return env.ASSETS.fetch(request);
   },
 } satisfies ExportedHandler<Env>;

@@ -36,7 +36,8 @@ const db = new DatabaseSync(':memory:');
 db.exec(migration);
 for (const [index, functionPath] of functionPaths.entries()) {
   const source = await fs.readFile(functionPath, 'utf8');
-  const match = source.match(/\.prepare\(`([\s\S]*?)`\)\s*\n?\s*\.bind\(([\s\S]*?)\)\s*\.run\(\)/);
+  const matches = [...source.matchAll(/\.prepare\(`([\s\S]*?)`\)\s*\n?\s*\.bind\(([\s\S]*?)\)\s*\.run\(\)/g)];
+  const match = matches.find((candidate) => candidate[1].includes("correction_reports"));
   if (!match) throw new Error(`Could not locate the prepared correction INSERT and bind call in ${path.relative(root, functionPath)}.`);
   const sql = match[1];
   const bindText = match[2];

@@ -12,6 +12,7 @@ import ReadingProgress from "../components/ReadingProgress.astro";
 import KeyTakeaways from "../components/KeyTakeaways.astro";
 import RelatedMyths from "../components/RelatedMyths.astro";
 import WhyThisMatters from "../components/WhyThisMatters.astro";
+import Comments from "../components/Comments.astro";
 import EvidenceVisual from "../components/EvidenceVisual.astro";
 import type { MythEntry } from "../lib/content";
 
@@ -102,6 +103,7 @@ const jsonLd = [
         <LastReviewed publishedAt={props.publishedAt} lastReviewedAt={props.lastReviewedAt} author={props.author} reviewStatus={props.reviewStatus} reviewedBy={props.reviewedBy} readingMinutes={props.readingMinutes} />
         <Changelog entries={props.changelog} />
         <ReportError pageUrl={Astro.url.pathname} />
+        <Comments slug={props.slug ?? Astro.params.slug ?? ""} title={props.title} />
         <RelatedMyths entries={props.related} />
       </div>
     </div>
