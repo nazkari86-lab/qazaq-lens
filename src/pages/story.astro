@@ -4,9 +4,10 @@ import { getVisibleMyths } from "../lib/content";
 
 const myths = await getVisibleMyths();
 const order = [
-  "part-of-russia","kazakh-and-russian","nuclear-weapons","economy-oil",
-  "baikonur","ethnic-diversity","borat","capital-astana","yurts",
-  "only-steppe","silk-roads",
+  "part-of-russia","kazakh-and-russian","nuclear-weapons","nuclear-energy-weapons","economy-oil",
+  "baikonur","ethnic-diversity","secular-muslim","borat","capital-astana","yurts",
+  "only-steppe","aral-sea-gone","landlocked-isolated","silk-roads","internet-closed",
+  "giant-door","horse-meat-kumys","kazakhstan-memes",
 ];
 const storyMyths = order
   .map(slug => myths.find(e => e.data.slug === slug))
@@ -79,6 +80,14 @@ const mythMeta: Record<string, { stat: string; statLabel: string; lead: string; 
     lead: "The Silk Roads were a network, not a single line. Kazakhstan's valleys and settlements were part of the exchange system connecting Central and East Asia.",
     arc: "The route",
   },
+  "nuclear-energy-weapons": { stat: "2024", statLabel: "Year Kazakhstan held a referendum on its first nuclear power plant", lead: "Civilian nuclear power is an energy policy question. It is not the same as rebuilding the nuclear arsenal inherited from the Soviet Union.", arc: "The equation" },
+  "secular-muslim": { stat: "Secular", statLabel: "Constitutional status of the state — distinct from lived religious identity", lead: "Kazakhstan is Muslim-majority and constitutionally secular. Religious life, freedom of belief and state law belong in the same frame.", arc: "The balance" },
+  "aral-sea-gone": { stat: "2005", statLabel: "Year the Kok-Aral Dam helped restore part of the Northern Aral Sea", lead: "The Aral crisis is real and severe, but the story is not simply ‘gone’ or ‘saved’: the north has partially recovered while the wider basin remains damaged.", arc: "The recovery" },
+  "landlocked-isolated": { stat: "1st", statLabel: "World's largest landlocked country — connected through the Caspian and overland corridors", lead: "Landlocked creates logistics challenges. It does not make Kazakhstan isolated from trade, ports or the wider world.", arc: "The crossroads" },
+  "internet-closed": { stat: "Connected", statLabel: "An active online public sphere that is also restricted by blocking and pressure", lead: "Kazakhstan has online journalism, civic projects and debate. It also has documented limits on access and expression.", arc: "The signal" },
+  "giant-door": { stat: "2025", statLabel: "Year a supposed giant doorway in Kazakhstan became a viral internet claim", lead: "A dramatic video can be a powerful meme without being archaeological evidence. The claim remains unverified.", arc: "The hoax" },
+  "horse-meat-kumys": { stat: "Heritage", statLabel: "Horse meat and kumys are traditions, not a complete description of every daily diet", lead: "Kazakh cuisine includes horse meat and fermented mare's milk — alongside many other foods and regional habits.", arc: "The table" },
+  "kazakhstan-memes": { stat: "236", statLabel: "Kazakhstan-related memes examined in recent digital folklore research", lead: "Memes mix Kazakh, Russian and global formats. They show online communities at a moment, not one personality for an entire country.", arc: "The remix" },
 };
 
 const storyData = storyMyths.map(entry => ({
@@ -95,8 +104,8 @@ const storyData = storyMyths.map(entry => ({
 ---
 
 <BaseLayout
-  title="One country. Eleven shortcuts. · Qazaq Lens"
-  description="Eleven statements about Kazakhstan have spread far enough to feel like facts. Scroll through each one."
+  title="One country. Nineteen shortcuts. · Qazaq Lens"
+  description="Nineteen statements about Kazakhstan have spread far enough to feel like facts. Scroll through each one."
 >
   <div class="sw">
 
@@ -104,8 +113,8 @@ const storyData = storyMyths.map(entry => ({
     <section class="sw-title">
       <div class="sw-title-inner">
         <p class="sw-eyebrow">Qazaq Lens · Visual story</p>
-        <h1 class="sw-headline">One country.<br>Eleven shortcuts.</h1>
-        <p class="sw-sub">Eleven statements about Kazakhstan have spread far enough to feel like facts. Scroll through each one. The evidence follows each claim.</p>
+        <h1 class="sw-headline">One country.<br>Nineteen shortcuts.</h1>
+        <p class="sw-sub">Nineteen statements about Kazakhstan have spread far enough to feel like facts. Scroll through each one. The evidence follows each claim.</p>
         <div class="sw-scroll-hint" aria-hidden="true">
           <svg width="20" height="28" viewBox="0 0 20 28" fill="none">
             <rect x="1" y="1" width="18" height="22" rx="9" stroke="currentColor" stroke-width="1.5"/>
@@ -123,7 +132,7 @@ const storyData = storyMyths.map(entry => ({
     </section>
 
     <!-- SCROLL SHELL -->
-    <section class="sw-shell" aria-label="Eleven myth evidence checks">
+    <section class="sw-shell" aria-label="Nineteen myth evidence checks">
       <div class="sw-progress" aria-hidden="true">
         <span class="sw-progress-fill" data-story-progress></span>
         <span class="sw-progress-label" data-story-progress-label>01 / {storyData.length} · {storyData.length - 1} left</span>
@@ -164,7 +173,7 @@ const storyData = storyMyths.map(entry => ({
             <span class="sw-counter">— / {storyData.length}</span>
             <span class="sw-tag">The pattern</span>
           </div>
-          <h2 class="sw-pattern-head">Eleven myths.<br>Four origins.</h2>
+          <h2 class="sw-pattern-head">Nineteen myths.<br>Four origins.</h2>
           <p class="sw-lead">These shortcuts are not random. Almost every one traces to the same three sources — and understanding that is the beginning of seeing the actual country.</p>
           <div class="sw-pattern-grid">
             <div class="sw-pattern-card">
@@ -847,9 +856,17 @@ const storyData = storyMyths.map(entry => ({
     "ethnic-diversity":   "#c8607a",  // rose       — people, warmth
     "kazakh-and-russian": "#8f86d8",  // lavender   — language, scripts
     "nuclear-weapons":    "#d44a25",  // red-orange — danger, nuclear history
+    "nuclear-energy-weapons": "#e07a35",
     "only-steppe":        "#52a868",  // forest     — nature, landscapes
     "part-of-russia":     "#4872b5",  // steel blue — sovereignty, statehood
     "yurts":              "#c47a50",  // terracotta — heritage, felt
+    "secular-muslim":     "#b08bd1",
+    "aral-sea-gone":      "#4e9da6",
+    "landlocked-isolated": "#7c9b78",
+    "internet-closed":    "#d05f70",
+    "giant-door":         "#9173b5",
+    "horse-meat-kumys":   "#d18a52",
+    "kazakhstan-memes":   "#e0b04f",
   };
 
   // Tint overlays: accent at ~18% opacity (hex 2e ≈ 18%)
@@ -860,9 +877,17 @@ const storyData = storyMyths.map(entry => ({
     "ethnic-diversity":   "#c8607a2e",
     "kazakh-and-russian": "#8f86d82e",
     "nuclear-weapons":    "#d44a252e",
+    "nuclear-energy-weapons": "#e07a352e",
     "only-steppe":        "#52a8682e",
     "part-of-russia":     "#4872b52e",
     "yurts":              "#c47a502e",
+    "secular-muslim":     "#b08bd12e",
+    "aral-sea-gone":      "#4e9da62e",
+    "landlocked-isolated": "#7c9b782e",
+    "internet-closed":    "#d05f702e",
+    "giant-door":         "#9173b52e",
+    "horse-meat-kumys":   "#d18a522e",
+    "kazakhstan-memes":   "#e0b04f2e",
   };
 
   const photoStage = document.querySelector<HTMLElement>("[data-photo-stage]");
@@ -925,16 +950,28 @@ const storyData = storyMyths.map(entry => ({
       const token = ++swapToken;
       const swap = () => {
         if (token !== swapToken) return;
-        storyImage.src = next.heroImage;
-        storyImage.alt = next.heroAlt || `${next.title} visual evidence`;
-        loadedImage = index;
-        photoStage.classList.remove("is-swapping");
-        photoStage.classList.add("is-active");
+        photoStage.classList.add("is-swapping");
+        storyImage.style.opacity = "0";
+        const candidate = new Image();
+        candidate.decoding = "async";
+        candidate.onload = () => {
+          if (token !== swapToken) return;
+          storyImage.src = next.heroImage;
+          storyImage.alt = next.heroAlt || `${next.title} visual evidence`;
+          storyImage.style.opacity = "";
+          loadedImage = index;
+          photoStage.classList.remove("is-swapping");
+          photoStage.classList.add("is-active");
+        };
+        candidate.onerror = () => {
+          if (token === swapToken) { storyImage.style.opacity = ""; photoStage.classList.remove("is-swapping"); }
+        };
+        candidate.src = next.heroImage;
       };
       if (reducedMotion) swap();
       else {
         photoStage.classList.add("is-swapping");
-        window.setTimeout(swap, 45);
+        window.setTimeout(swap, 30);
       }
     }
 
@@ -949,7 +986,7 @@ const storyData = storyMyths.map(entry => ({
 
     if (index === null) {
       if (progress) progress.style.width = "100%";
-      if (progressLabel) progressLabel.textContent = "Pattern · you made it through all 11 checks";
+      if (progressLabel) progressLabel.textContent = `Pattern · you made it through all ${data.length} checks`;
       if (hudScroll) hudScroll.textContent = "";
       // reset accent to gold when at pattern step
       if (swRoot) {
