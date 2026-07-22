@@ -17,6 +17,8 @@ import BookmarkButton from "../components/BookmarkButton.astro";
 import ReadingMode from "../components/ReadingMode.astro";
 import EvidenceVisual from "../components/EvidenceVisual.astro";
 import EvidenceHealth from "../components/EvidenceHealth.astro";
+import KnowledgeCheck from "../components/KnowledgeCheck.astro";
+import EvidenceCard from "../components/EvidenceCard.astro";
 import type { MythEntry } from "../lib/content";
 
 interface Source { id: string; title: string; publisher: string; author?: string; publishedAt?: string; accessedAt: Date; url: string; archivedUrl?: string; language: string; type: "primary" | "academic" | "official" | "journalistic" | "background"; }
@@ -102,8 +104,10 @@ const jsonLd = [
         <div data-reveal data-reading-detail="summary"><WhyThisMatters text={whyThisMatters[props.slug ?? Astro.params.slug ?? ""] ?? "The wording matters because a memorable shortcut can shape how a real country and its people are understood."} /></div>
         <div data-reveal data-reading-detail="summary"><EvidenceVisual slug={props.slug ?? Astro.params.slug ?? ""} /></div>
         <div data-reveal data-reading-detail="summary"><EvidenceHealth myth={{ data: { sources: props.sources, lastReviewedAt: props.lastReviewedAt } } as any} /></div>
+        <div data-reveal data-reading-detail="summary"><EvidenceCard title={props.title} verdict={props.verdict} summary={props.summary} slug={props.slug ?? Astro.params.slug ?? ""} /></div>
         <div class="article-body" data-reveal data-reading-detail="article"><slot /></div>
         <div data-reveal data-reading-detail="evidence"><ClaimLedger claims={props.claims} /></div>
+        <div data-reveal data-reading-detail="evidence"><KnowledgeCheck claims={props.claims} /></div>
         <div data-reveal data-reading-detail="evidence"><SourceList sources={props.sources} /></div>
         <LastReviewed publishedAt={props.publishedAt} lastReviewedAt={props.lastReviewedAt} author={props.author} reviewStatus={props.reviewStatus} reviewedBy={props.reviewedBy} readingMinutes={props.readingMinutes} />
         <Changelog entries={props.changelog} />

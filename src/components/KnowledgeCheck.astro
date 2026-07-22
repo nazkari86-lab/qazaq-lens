@@ -1,0 +1,29 @@
+---
+interface Claim { id: string; statement: string; kind: string; confidence: string }
+interface Props { claims: Claim[] }
+const { claims } = Astro.props;
+const questions = claims.slice(0, 3).map((claim) => ({ id: claim.id, answer: claim.kind, statement: claim.statement }));
+---
+<section class="knowledge-check card" aria-labelledby="knowledge-check-title" data-knowledge-check>
+  <p class="eyebrow">Pause and check</p><h2 id="knowledge-check-title">What did the evidence actually show?</h2>
+  {questions.map((question, index) => <fieldset data-question data-answer={question.answer}><legend>{index + 1}. How is this claim classified?</legend><div class="quiz-options">{["fact","interpretation","reported-view","disputed"].map((answer) => <button type="button" data-answer-option={answer}>{answer.replaceAll("-", " ")}</button>)}</div><p class="quiz-feedback" data-feedback hidden>Correct classification: <strong>{question.answer.replaceAll("-", " ")}</strong>.</p></fieldset>)}
+  <p class="quiz-score" data-quiz-score>Answer the questions to check your reading.</p>
+</section>
+<script is:inline>
+  document.querySelectorAll<HTMLElement>("[data-knowledge-check]").forEach((root) => {
+    const questions = [...root.querySelectorAll<HTMLElement>("[data-question]")];
+    questions.forEach((question) => {
+      question.querySelectorAll<HTMLButtonElement>("[data-answer-option]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const correct = button.dataset.answer === question.dataset.answer;
+          question.querySelectorAll<HTMLButtonElement>("button").forEach((item) => item.disabled = true);
+          button.classList.add(correct ? "is-correct" : "is-wrong");
+          const feedback = question.querySelector<HTMLElement>("[data-feedback]");
+          if (feedback) feedback.hidden = false;
+          const score = root.querySelector<HTMLElement>("[data-quiz-score]");
+          if (score) score.textContent = `${root.querySelectorAll("button:disabled").length / 4} of ${questions.length} questions answered.`;
+        });
+      });
+    });
+  });
+</script>

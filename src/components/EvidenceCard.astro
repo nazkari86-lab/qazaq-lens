@@ -1,0 +1,8 @@
+---
+interface Props { title: string; verdict: string; summary: string; slug: string }
+const { title, verdict, summary, slug } = Astro.props;
+---
+<section class="evidence-card-builder card" aria-labelledby="evidence-card-title"><div><p class="eyebrow">Shareable evidence</p><h2 id="evidence-card-title">Take this context with you</h2><p class="section-note">Creates a compact text card suitable for messages, notes and social posts.</p></div><button class="btn btn--primary" type="button" data-evidence-card>Copy evidence card</button><span class="share-status" data-evidence-card-status role="status" aria-live="polite"></span></section>
+<script is:inline define:vars={{ title, verdict, summary, slug }}>
+  document.querySelector("[data-evidence-card]")?.addEventListener("click", async () => { const text = `QAZAQ LENS\n${title}\nVERDICT: ${verdict.toUpperCase()}\n${summary}\nRead the evidence: ${location.origin}/myths/${slug}`; const status = document.querySelector("[data-evidence-card-status]"); try { await navigator.clipboard.writeText(text); if (status) status.textContent = "Evidence card copied."; } catch { if (status) status.textContent = text; } });
+</script>
