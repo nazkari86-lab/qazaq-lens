@@ -80,7 +80,7 @@ const websiteJsonLd = {
         if (saved === "light" || saved === "dark") document.documentElement.dataset.theme = saved;
       } catch {}
     </script>
-    {webAnalyticsToken && <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={JSON.stringify({ token: webAnalyticsToken })}></script>}
+    {webAnalyticsToken && <script is:inline defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={JSON.stringify({ token: webAnalyticsToken })}></script>}
   </head>
   <body>
     <Header />
