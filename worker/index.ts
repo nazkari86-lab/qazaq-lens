@@ -98,8 +98,16 @@ async function handleCommentModeration(request: Request, env: Env) {
   if (!env.QAZAQ_LENS_DB || !env.COMMENTS_ADMIN_TOKEN) return json({ message: "Moderation is not configured." }, 503);
   if (request.headers.get("authorization") !== `Bearer ${env.COMMENTS_ADMIN_TOKEN}`) return json({ message: "Unauthorized." }, 401);
   if (request.method === "GET") {
-    const result = await env.QAZAQ_LENS_DB.prepare(`SELECT id,created_at,page_slug,author_name,author_email,body,locale,status,moderator_note FROM comments WHERE status = 'pending' ORDER BY created_at ASC LIMIT 200`).all();
+    const result = await env.QAZAQ_LENS_DB.prepare(`SELECT id,created_at,page_slug,author_name,author_email,body,locale,status,moderator_note FROM comments WHERE status IN ('pending','approved') ORDER BY created_at ASC LIMIT 200`).all();
     return json({ comments: result.results });
+  }
+  if (request.method === "DELETE") {
+    let input: { id?: string };
+    try { input = await request.json(); } catch { return json({ message: "Invalid deletion request." }, 400); }
+    const id = commentText(input.id, 80);
+    if (!id) return json({ message: "A comment id is required." }, 400);
+    const result = await env.QAZAQ_LENS_DB.prepare("DELETE FROM comments WHERE id = ?").bind(id).run();
+    return json({ ok: true, id, deleted: (result.meta?.changes ?? 0) > 0 });
   }
   if (request.method !== "PATCH") return json({ message: "Method not allowed." }, 405, { Allow: "GET, PATCH" });
   let input: { id?: string; status?: string; note?: string };
