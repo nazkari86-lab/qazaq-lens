@@ -28,7 +28,7 @@ const sourceCount = myths.reduce((sum,entry)=>sum+entry.data.sources.length,0);
           <div><dt>{reviewedCount}</dt><dd>independently reviewed</dd></div>
         </dl>
       </div>
-      <QazaqLensBanner />
+      <QazaqLensBanner explainerCount={myths.length} sourceCount={sourceCount} />
     </div>
   </section>
 

@@ -6,7 +6,7 @@ const topics = [...new Set(myths.flatMap((m)=>m.data.topics))].sort();
 const sources = myths.reduce((n,m)=>n+m.data.sources.length,0);
 const claims = myths.reduce((n,m)=>n+m.data.claims.length,0);
 const facts = [
-  ["19", "evidence explainers", "A growing library, not a claim to cover every story."],
+  [String(myths.length), "evidence explainers", "A growing library, not a claim to cover every story."],
   [String(claims), "registered claims", "Each claim has a visible type, confidence and source IDs."],
   [String(sources), "source records", "Official, academic, journalistic and primary evidence are separated."],
   [String(topics.length), "recurring topics", "Geography, language, history, society, media and more."],

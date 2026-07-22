@@ -53,9 +53,10 @@ async function handleComments(request: Request, env: Env) {
   if (!sameOrigin(request)) return json({ message: "Cross-site submissions are not accepted." }, 403);
   const contentType = request.headers.get("content-type") ?? "";
   if (!contentType.includes("application/json")) return json({ message: "Content type must be application/json." }, 415);
-  if (Number(request.headers.get("content-length") ?? 0) > 8_000) return json({ message: "Comment is too large." }, 413);
+  const rawBody = await request.text();
+  if (rawBody.length > 8_000) return json({ message: "Comment is too large." }, 413);
   let input: { name?: string; email?: string; body?: string; website?: string; startedAt?: number; locale?: string };
-  try { input = await request.json(); } catch { return json({ message: "Invalid JSON request." }, 400); }
+  try { input = JSON.parse(rawBody); } catch { return json({ message: "Invalid JSON request." }, 400); }
   if (commentText(input.website, 100)) return json({ ok: true, status: "pending" }, 201);
   const elapsed = Date.now() - Number(input.startedAt ?? 0);
   const name = commentText(input.name, 80);
@@ -105,7 +106,7 @@ async function handleCorrectionModeration(request: Request, env: Env) {
 
 const sameOrigin = (request: Request) => {
   const origin = request.headers.get("origin");
-  if (!origin) return true;
+  if (!origin) return false;
   try {
     return new URL(origin).host === new URL(request.url).host;
   } catch {
@@ -120,12 +121,11 @@ async function handleCorrection(request: Request, env: Env) {
   const contentType = request.headers.get("content-type") ?? "";
   if (!contentType.includes("application/json")) return json({ message: "Content type must be application/json." }, 415);
 
-  const length = Number(request.headers.get("content-length") ?? 0);
-  if (length > 32_000) return json({ message: "Submission is too large." }, 413);
-
+  const rawBody = await request.text();
+  if (rawBody.length > 32_000) return json({ message: "Submission is too large." }, 413);
   let input: CorrectionPayload;
   try {
-    input = await request.json<CorrectionPayload>();
+    input = JSON.parse(rawBody) as CorrectionPayload;
   } catch {
     return json({ message: "Invalid JSON request." }, 400);
   }

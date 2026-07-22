@@ -8,7 +8,7 @@ const clean = (value: unknown, max: number) => typeof value === "string" ? value
 const validUrl = (value: string) => { try { const url = new URL(value); return url.protocol === "https:" || url.protocol === "http:"; } catch { return false; } };
 const sameOrigin = (request: Request) => {
   const origin = request.headers.get("origin");
-  if (!origin) return true;
+  if (!origin) return false;
   try { return new URL(origin).host === new URL(request.url).host; } catch { return false; }
 };
 
@@ -16,11 +16,10 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   if (!sameOrigin(request)) return json({ message:"Cross-site submissions are not accepted." },403);
   const contentType = request.headers.get("content-type") ?? "";
   if (!contentType.includes("application/json")) return json({ message:"Content type must be application/json." },415);
-  const length = Number(request.headers.get("content-length") ?? 0);
-  if (length > 32_000) return json({ message:"Submission is too large." },413);
-
+  const rawBody = await request.text();
+  if (rawBody.length > 32_000) return json({ message:"Submission is too large." },413);
   let input: CorrectionPayload;
-  try { input = await request.json<CorrectionPayload>(); } catch { return json({ message:"Invalid JSON request." },400); }
+  try { input = JSON.parse(rawBody) as CorrectionPayload; } catch { return json({ message:"Invalid JSON request." },400); }
   if (clean(input.website,200)) return json({ ok:true,id:"accepted" });
   const elapsed = Date.now() - Number(input.startedAt ?? 0);
   if (!Number.isFinite(elapsed) || elapsed < 2500 || elapsed > 86_400_000) return json({ message:"Please reload the form and try again." },400);

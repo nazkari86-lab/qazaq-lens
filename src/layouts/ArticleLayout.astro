@@ -59,8 +59,9 @@ const whyThisMatters: Record<string, string> = {
 const site = Astro.site ?? new URL("https://qazaq-lens.nazkari86.workers.dev");
 const articleUrl = new URL(Astro.url.pathname, site).toString();
 const image = new URL(props.ogImage ?? "/og/default.png", site).toString();
-const jsonLd = [
-  {
+  const claimReviewRating = ({ false: { ratingValue: 1, alternateName: "False" }, misleading: { ratingValue: 2, alternateName: "Misleading" }, "partly-true": { ratingValue: 3, alternateName: "Partly true" } } as Record<string, { ratingValue: number; alternateName: string }>)[props.verdict];
+  const jsonLd = [
+    ...(claimReviewRating ? [{
     "@context": "https://schema.org", "@type": "Article", headline: props.title, description: props.summary,
     image: [image], datePublished: props.publishedAt.toISOString(), dateModified: props.lastReviewedAt.toISOString(),
     author: { "@type": "Organization", name: props.author }, publisher: { "@type": "Organization", name: "Qazaq Lens", url: site.toString() },
@@ -77,9 +78,9 @@ const jsonLd = [
   {
     "@context": "https://schema.org", "@type": "ClaimReview", url: articleUrl,
     claimReviewed: props.mythStatement,
-    reviewRating: { "@type": "Rating", ratingValue: ({ false: 1, misleading: 2, "partly-true": 3, disputed: 0 } as Record<string, number>)[props.verdict], bestRating: 3, worstRating: 0, alternateName: ({ false: "False", misleading: "Misleading", "partly-true": "Partly true", disputed: "Disputed" } as Record<string, string>)[props.verdict] },
-    author: { "@type": "Organization", name: props.author }, itemReviewed: { "@type": "Claim", name: props.mythStatement }, datePublished: props.publishedAt.toISOString(), dateModified: props.lastReviewedAt.toISOString(), citation: props.sources.map((source) => source.url), reviewBody: props.summary,
-  },
+    reviewRating: { "@type": "Rating", ...claimReviewRating, bestRating: 3, worstRating: 1 },
+    author: { "@type": "Organization", name: "Qazaq Lens", url: site.toString() }, itemReviewed: { "@type": "Claim", name: props.mythStatement }, datePublished: props.publishedAt.toISOString(), dateModified: props.lastReviewedAt.toISOString(), citation: props.sources.map((source) => source.url), reviewBody: props.summary,
+      } as Record<string, unknown>] : []),
 ];
 ---
 <BaseLayout title={props.title} description={props.summary} ogImage={props.ogImage} type="article" noindex={props.draft} jsonLd={jsonLd}>

@@ -97,6 +97,9 @@ const mythSchema = z
     if (data.heroImage && !data.heroImageCredit) {
       ctx.addIssue({ code: "custom", path: ["heroImageCredit"], message: "Every hero image must include visible credit metadata." });
     }
+    if (data.heroImage && !data.heroImageCreditUrl) {
+      ctx.addIssue({ code: "custom", path: ["heroImageCreditUrl"], message: "Every hero image must include a traceable credit URL." });
+    }
 
     data.claims.forEach((claim, claimIndex) => {
       claim.sourceIds.forEach((sourceId) => {
