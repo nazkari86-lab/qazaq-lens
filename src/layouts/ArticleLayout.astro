@@ -56,6 +56,27 @@ const whyThisMatters: Record<string, string> = {
   "kazakhstan-memes": "Memes reveal what people remix and debate online, not what every citizen believes. Digital folklore is evidence of discourse, not a national personality test.",
   "horse-meat-kumys": "Food heritage can be important without defining every contemporary diet. The distinction protects cultural specificity and everyday complexity.",
 };
+const whyWeChecked: Record<string, string> = {
+  "part-of-russia": "Selected because this shortcut repeatedly appears in international media, travel discussions and geopolitical commentary, and confuses Soviet history with present sovereignty.",
+  "kazakh-and-russian": "Selected because language-family confusion is common in international coverage and directly affects how readers interpret Kazakhstan's bilingual public life.",
+  "nuclear-weapons": "Selected because Kazakhstan's inherited Soviet arsenal is frequently used as shorthand for its current identity, despite the country's disarmament history.",
+  "economy-oil": "Selected because oil-only descriptions recur in business and travel coverage while leaving out the sectors that change how the modern economy works.",
+  "baikonur": "Selected because launch coverage often names Russia but leaves the site's geography, lease and sovereignty unexplained.",
+  "ethnic-diversity": "Selected because international summaries regularly reduce a complex census and identity story to one majority/minority statistic.",
+  "borat": "Selected because a globally famous comedy remains one of the most common reference points foreigners use when describing Kazakhstan.",
+  "capital-astana": "Selected because outdated capital names still appear in search results, educational material and international reporting.",
+  "yurts": "Selected because tourism imagery often turns a living heritage form into a claim about how most people live today.",
+  "only-steppe": "Selected because maps and travel narratives frequently use the steppe as a visual stand-in for the country's entire geography.",
+  "silk-roads": "Selected because the region's historical connectivity is often erased by modern borders and the idea of an empty interior.",
+  "internet-closed": "Selected because international rankings and headlines often flatten a connected but constrained digital environment into one absolute label.",
+  "secular-muslim": "Selected because public discussion often treats religious identity and constitutional secularism as mutually exclusive descriptions.",
+  "nuclear-energy-weapons": "Selected because current nuclear-power debates repeatedly inherit language from the country's testing and weapons history.",
+  "giant-door": "Selected because the viral image is a vivid example of how spectacular online claims can outrun authentication and local context.",
+  "aral-sea-gone": "Selected because the Aral Sea is globally recognisable, yet single before/after images hide both devastation and partial recovery.",
+  "landlocked-isolated": "Selected because geography explainers often equate lack of coastline with lack of trade, mobility or outside connection.",
+  "kazakhstan-memes": "Selected because memes are increasingly used as evidence of national character even though they represent particular online communities and moments.",
+  "horse-meat-kumys": "Selected because food stereotypes travel widely and can turn real cultural practices into assumptions about every person's daily diet.",
+};
 const site = Astro.site ?? new URL("https://qazaq-lens.nazkari86.workers.dev");
 const articleUrl = new URL(Astro.url.pathname, site).toString();
 const image = new URL(props.ogImage ?? "/og/default.png", site).toString();
@@ -116,6 +137,7 @@ const image = new URL(props.ogImage ?? "/og/default.png", site).toString();
       <aside class="article-sidebar"><TableOfContents headings={props.headings} /></aside>
       <div class="article-main">
         <div data-reveal data-reading-detail="summary"><KeyTakeaways items={props.keyTakeaways} /></div>
+        <div data-reveal data-reading-detail="summary"><WhyThisMatters label="Why we checked this claim" text={whyWeChecked[props.slug ?? Astro.params.slug ?? ""] ?? "This topic was selected because it recurs in international discussions and can be tested against traceable evidence."} /></div>
         <div data-reveal data-reading-detail="summary"><WhyThisMatters text={whyThisMatters[props.slug ?? Astro.params.slug ?? ""] ?? "The wording matters because a memorable shortcut can shape how a real country and its people are understood."} /></div>
         <div data-reveal data-reading-detail="summary"><EvidenceVisual slug={props.slug ?? Astro.params.slug ?? ""} /></div>
         <div data-reveal data-reading-detail="summary"><EvidenceHealth myth={{ data: { sources: props.sources, lastReviewedAt: props.lastReviewedAt } } as any} /></div>
