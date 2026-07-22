@@ -1,20 +1,11 @@
 ---
 import Logo from "./Logo.astro";
 const pathname = Astro.url.pathname;
-const nav = [
-  { href: "/start", label: "Start here" },
-  { href: "/story", label: "Visual story" },
-  { href: "/myths", label: "Evidence library" },
-  { href: "/sources", label: "Sources" },
-  { href: "/search", label: "Search" },
-  { href: "/profile", label: "Profile" },
-  { href: "/compare", label: "Compare" },
-  { href: "/data-status", label: "Data status" },
-  { href: "/glossary", label: "Glossary" },
-  { href: "/methodology", label: "Methodology" },
-  { href: "/about", label: "About" },
-];
 const isCurrent = (href: string) => pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
+const explore = [{ href: "/story", label: "Visual story" }, { href: "/myths", label: "Evidence library" }, { href: "/profile", label: "Country profile" }, { href: "/paths", label: "Reading paths" }, { href: "/gallery", label: "Visual archive" }];
+const evidence = [{ href: "/sources", label: "Source dashboard" }, { href: "/compare", label: "Compare explainers" }, { href: "/data-status", label: "Data status" }, { href: "/glossary", label: "Glossary" }, { href: "/methodology", label: "Methodology" }];
+const project = [{ href: "/about", label: "About" }, { href: "/corrections", label: "Corrections" }, { href: "/accessibility", label: "Accessibility" }, { href: "/privacy", label: "Privacy" }];
+const groupCurrent = (items: { href: string }[]) => items.some((item) => isCurrent(item.href));
 ---
 <a class="skip-link" href="#main-content">Skip to content</a>
 <header class="site-header" data-header>
@@ -25,9 +16,20 @@ const isCurrent = (href: string) => pathname === href || (href !== "/" && pathna
       <span class="nav-toggle-icon" aria-hidden="true"></span>
     </button>
     <nav id="primary-nav" class="primary-nav" aria-label="Primary navigation" data-nav>
-      {nav.map((item) => (
-        <a class:list={[item.href === "/story" && "nav-story-link"]} href={item.href} aria-current={isCurrent(item.href) ? "page" : undefined}>{item.label}</a>
-      ))}
+      <a href="/start" aria-current={isCurrent("/start") ? "page" : undefined}>Start</a>
+      <details class="nav-group" open={groupCurrent(explore)}>
+        <summary class:list={[groupCurrent(explore) && "is-current"]}>Explore</summary>
+        <div class="nav-dropdown">{explore.map((item) => <a class:list={[item.href === "/story" && "nav-story-link"]} href={item.href} aria-current={isCurrent(item.href) ? "page" : undefined}>{item.label}</a>)}</div>
+      </details>
+      <details class="nav-group" open={groupCurrent(evidence)}>
+        <summary class:list={[groupCurrent(evidence) && "is-current"]}>Evidence</summary>
+        <div class="nav-dropdown">{evidence.map((item) => <a href={item.href} aria-current={isCurrent(item.href) ? "page" : undefined}>{item.label}</a>)}</div>
+      </details>
+      <a href="/search" aria-current={isCurrent("/search") ? "page" : undefined}>Search</a>
+      <details class="nav-group" open={groupCurrent(project)}>
+        <summary class:list={[groupCurrent(project) && "is-current"]}>About</summary>
+        <div class="nav-dropdown">{project.map((item) => <a href={item.href} aria-current={isCurrent(item.href) ? "page" : undefined}>{item.label}</a>)}</div>
+      </details>
       <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme">
         <span class="theme-icon" aria-hidden="true" data-theme-icon>◐</span><span class="theme-label" data-theme-label>Theme</span>
       </button>
