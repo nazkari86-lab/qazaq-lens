@@ -16,7 +16,7 @@ const groupCurrent = (items: { href: string }[]) => items.some((item) => isCurre
       <span class="nav-toggle-icon" aria-hidden="true"></span>
     </button>
     <nav id="primary-nav" class="primary-nav" aria-label="Primary navigation" data-nav>
-      <a href="/start" aria-current={isCurrent("/start") ? "page" : undefined}>Start</a>
+      <a href="/start/" aria-current={isCurrent("/start") ? "page" : undefined}>Start</a>
       <details class="nav-group" open={groupCurrent(explore)}>
         <summary class:list={[groupCurrent(explore) && "is-current"]}>Explore</summary>
         <div class="nav-dropdown">{explore.map((item) => <a class:list={[item.href === "/story" && "nav-story-link"]} href={item.href} aria-current={isCurrent(item.href) ? "page" : undefined}>{item.label}</a>)}</div>
@@ -25,7 +25,7 @@ const groupCurrent = (items: { href: string }[]) => items.some((item) => isCurre
         <summary class:list={[groupCurrent(evidence) && "is-current"]}>Evidence</summary>
         <div class="nav-dropdown">{evidence.map((item) => <a href={item.href} aria-current={isCurrent(item.href) ? "page" : undefined}>{item.label}</a>)}</div>
       </details>
-      <a href="/search" aria-current={isCurrent("/search") ? "page" : undefined}>Search</a>
+      <a href="/search/" aria-current={isCurrent("/search") ? "page" : undefined}>Search</a>
       <details class="nav-group" open={groupCurrent(project)}>
         <summary class:list={[groupCurrent(project) && "is-current"]}>About</summary>
         <div class="nav-dropdown">{project.map((item) => <a href={item.href} aria-current={isCurrent(item.href) ? "page" : undefined}>{item.label}</a>)}</div>
