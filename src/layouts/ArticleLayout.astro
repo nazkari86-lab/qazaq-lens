@@ -77,7 +77,7 @@ const whyWeChecked: Record<string, string> = {
   "kazakhstan-memes": "Selected because memes are increasingly used as evidence of national character even though they represent particular online communities and moments.",
   "horse-meat-kumys": "Selected because food stereotypes travel widely and can turn real cultural practices into assumptions about every person's daily diet.",
 };
-const site = Astro.site ?? new URL("https://qazaq-lens.nazkari86.workers.dev");
+const site = Astro.site ?? new URL("https://qazaqlens.org");
 const articleUrl = new URL(Astro.url.pathname, site).toString();
 const image = new URL(props.ogImage ?? "/og/default.png", site).toString();
   const claimReviewRating = ({ false: { ratingValue: 1, alternateName: "False" }, misleading: { ratingValue: 2, alternateName: "Misleading" }, "partly-true": { ratingValue: 3, alternateName: "Partly true" } } as Record<string, { ratingValue: number; alternateName: string }>)[props.verdict];

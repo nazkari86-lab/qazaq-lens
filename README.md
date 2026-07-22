@@ -74,7 +74,7 @@ npx wrangler deploy
 Set this environment variable:
 
 ```text
-PUBLIC_SITE_URL=https://qazaq-lens.nazkari86.workers.dev
+PUBLIC_SITE_URL=https://qazaqlens.org
 ```
 
 Run `npx wrangler login` once on the deployment machine, or provide `CLOUDFLARE_API_TOKEN` for non-interactive deploys.
