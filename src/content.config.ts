@@ -19,6 +19,8 @@ const sourceSchema = z.object({
   accessedAt: z.coerce.date(),
   url: z.url(),
   archivedUrl: z.url().optional(),
+  locator: z.string().optional(),
+  independenceGroup: z.string().optional(),
   language: z.string().default("English"),
   type: sourceType,
 });
