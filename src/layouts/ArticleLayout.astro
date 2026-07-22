@@ -19,6 +19,7 @@ import EvidenceVisual from "../components/EvidenceVisual.astro";
 import EvidenceHealth from "../components/EvidenceHealth.astro";
 import KnowledgeCheck from "../components/KnowledgeCheck.astro";
 import EvidenceCard from "../components/EvidenceCard.astro";
+import SelectionAnnotation from "../components/SelectionAnnotation.astro";
 import type { MythEntry } from "../lib/content";
 
 interface Source { id: string; title: string; publisher: string; author?: string; publishedAt?: string; accessedAt: Date; url: string; archivedUrl?: string; language: string; type: "primary" | "academic" | "official" | "journalistic" | "background"; }
@@ -117,4 +118,5 @@ const jsonLd = [
       </div>
     </div>
   </article>
+  <SelectionAnnotation />
 </BaseLayout>
