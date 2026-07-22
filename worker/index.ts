@@ -39,6 +39,20 @@ const validUrl = (value: string) => {
 
 const commentText = (value: unknown, max: number) => clean(value, max).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "");
 
+const enforceRateLimit = async (request: Request, env: Env, bucket: string) => {
+  if (!env.QAZAQ_LENS_DB) return true;
+  const identity = request.headers.get("cf-connecting-ip") ?? "unknown";
+  const windowStart = Math.floor(Date.now() / 3_600_000);
+  try {
+    const key = `${bucket}:${identity}`;
+    await env.QAZAQ_LENS_DB.prepare("INSERT INTO rate_limits (bucket, window_start, count) VALUES (?, ?, 1) ON CONFLICT(bucket, window_start) DO UPDATE SET count = count + 1").bind(key, windowStart).run();
+    const row = await env.QAZAQ_LENS_DB.prepare("SELECT count FROM rate_limits WHERE bucket = ? AND window_start = ?").bind(key, windowStart).first<{ count: number }>();
+    return (row?.count ?? 0) <= (bucket === "comment" ? 12 : 8);
+  } catch {
+    return true;
+  }
+};
+
 async function handleComments(request: Request, env: Env) {
   if (!env.QAZAQ_LENS_DB) return json({ message: "The comment database is not connected yet." }, 503);
   const url = new URL(request.url);
@@ -51,6 +65,7 @@ async function handleComments(request: Request, env: Env) {
   }
   if (request.method !== "POST") return json({ message: "Method not allowed." }, 405, { Allow: "GET, POST" });
   if (!sameOrigin(request)) return json({ message: "Cross-site submissions are not accepted." }, 403);
+  if (!(await enforceRateLimit(request, env, "comment"))) return json({ message: "Too many submissions. Please try again later." }, 429, { "retry-after": "3600" });
   const contentType = request.headers.get("content-type") ?? "";
   if (!contentType.includes("application/json")) return json({ message: "Content type must be application/json." }, 415);
   const rawBody = await request.text();
@@ -117,6 +132,7 @@ const sameOrigin = (request: Request) => {
 async function handleCorrection(request: Request, env: Env) {
   if (request.method !== "POST") return json({ message: "Method not allowed." }, 405, { Allow: "POST" });
   if (!sameOrigin(request)) return json({ message: "Cross-site submissions are not accepted." }, 403);
+  if (!(await enforceRateLimit(request, env, "correction"))) return json({ message: "Too many submissions. Please try again later." }, 429, { "retry-after": "3600" });
 
   const contentType = request.headers.get("content-type") ?? "";
   if (!contentType.includes("application/json")) return json({ message: "Content type must be application/json." }, 415);

@@ -60,28 +60,27 @@ const site = Astro.site ?? new URL("https://qazaq-lens.nazkari86.workers.dev");
 const articleUrl = new URL(Astro.url.pathname, site).toString();
 const image = new URL(props.ogImage ?? "/og/default.png", site).toString();
   const claimReviewRating = ({ false: { ratingValue: 1, alternateName: "False" }, misleading: { ratingValue: 2, alternateName: "Misleading" }, "partly-true": { ratingValue: 3, alternateName: "Partly true" } } as Record<string, { ratingValue: number; alternateName: string }>)[props.verdict];
-  const jsonLd = [
-    ...(claimReviewRating ? [{
+  const articleJsonLd = {
     "@context": "https://schema.org", "@type": "Article", headline: props.title, description: props.summary,
     image: [image], datePublished: props.publishedAt.toISOString(), dateModified: props.lastReviewedAt.toISOString(),
     author: { "@type": "Organization", name: props.author }, publisher: { "@type": "Organization", name: "Qazaq Lens", url: site.toString() },
     mainEntityOfPage: articleUrl, about: { "@type": "Country", name: "Kazakhstan" }, keywords: props.topics.join(", "),
     citation: props.sources.map((source) => source.url),
-  },
-  {
+  };
+  const breadcrumbJsonLd = {
     "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: site.toString() },
       { "@type": "ListItem", position: 2, name: "Evidence library", item: new URL("/myths", site).toString() },
       { "@type": "ListItem", position: 3, name: props.title, item: articleUrl },
     ],
-  },
-  {
+  };
+  const claimReviewJsonLd = {
     "@context": "https://schema.org", "@type": "ClaimReview", url: articleUrl,
     claimReviewed: props.mythStatement,
     reviewRating: { "@type": "Rating", ...claimReviewRating, bestRating: 3, worstRating: 1 },
     author: { "@type": "Organization", name: "Qazaq Lens", url: site.toString() }, itemReviewed: { "@type": "Claim", name: props.mythStatement }, datePublished: props.publishedAt.toISOString(), dateModified: props.lastReviewedAt.toISOString(), citation: props.sources.map((source) => source.url), reviewBody: props.summary,
-      } as Record<string, unknown>] : []),
-];
+  } as Record<string, unknown>;
+  const jsonLd = [articleJsonLd, breadcrumbJsonLd, ...(claimReviewRating ? [claimReviewJsonLd] : [])];
 ---
 <BaseLayout title={props.title} description={props.summary} ogImage={props.ogImage} type="article" noindex={props.draft} jsonLd={jsonLd}>
   <ReadingProgress />
