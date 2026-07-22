@@ -132,10 +132,20 @@ const sameOrigin = (request: Request) => {
   const origin = request.headers.get("origin");
   if (!origin) return false;
   try {
-    return new URL(origin).host === new URL(request.url).host;
+    return [new URL(request.url).host, "qazaqlens.org", "www.qazaqlens.org"].includes(new URL(origin).host);
   } catch {
     return false;
   }
+};
+
+const corsify = (request: Request, response: Response) => {
+  const origin = request.headers.get("origin");
+  if (!origin || !["https://qazaqlens.org", "https://www.qazaqlens.org"].includes(origin)) return response;
+  const headers = new Headers(response.headers);
+  headers.set("access-control-allow-origin", origin);
+  headers.set("access-control-allow-credentials", "true");
+  headers.set("vary", "Origin");
+  return new Response(response.body, { status: response.status, headers });
 };
 
 async function handleCorrection(request: Request, env: Env) {
@@ -214,10 +224,16 @@ export default {
       const destination = new URL(url.pathname + url.search, "https://qazaqlens.org");
       return Response.redirect(destination.toString(), 308);
     }
-    if (url.pathname === "/api/report-error") return handleCorrection(request, env);
-    if (url.pathname === "/api/comments") return handleComments(request, env);
-    if (url.pathname === "/api/comments/moderate") return handleCommentModeration(request, env);
-    if (url.pathname === "/api/corrections/moderate") return handleCorrectionModeration(request, env);
+    if (url.pathname.startsWith("/api/")) {
+      if (request.method === "OPTIONS") { const origin = request.headers.get("origin"); const headers = new Headers({ "access-control-allow-methods": "GET, POST, PATCH, OPTIONS", "access-control-allow-headers": "authorization, content-type", "access-control-max-age": "86400" }); if (origin && ["https://qazaqlens.org", "https://www.qazaqlens.org"].includes(origin)) headers.set("access-control-allow-origin", origin); return new Response(null, { status: 204, headers }); }
+      let response: Response;
+      if (url.pathname === "/api/report-error") response = await handleCorrection(request, env);
+      else if (url.pathname === "/api/comments") response = await handleComments(request, env);
+      else if (url.pathname === "/api/comments/moderate") response = await handleCommentModeration(request, env);
+      else if (url.pathname === "/api/corrections/moderate") response = await handleCorrectionModeration(request, env);
+      else response = json({ message: "Not found." }, 404);
+      return corsify(request, response);
+    }
     return env.ASSETS.fetch(request);
   },
 } satisfies ExportedHandler<Env>;
