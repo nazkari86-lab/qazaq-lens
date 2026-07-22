@@ -176,6 +176,7 @@ async function handleCorrection(request: Request, env: Env) {
   if (!validUrl(pageUrl) || !validUrl(sourceUrl) || issue.length < 20 || reason.length < 20) {
     return json({ message: "Complete all required fields with valid URLs." }, 400);
   }
+  const normalizedSourceUrl = new URL(sourceUrl).toString();
   if (email && !/^\S+@\S+\.\S+$/.test(email)) return json({ message: "The email address is not valid." }, 400);
   if (!env.QAZAQ_LENS_DB) return json({ message: "The correction database is not connected yet." }, 503);
 
@@ -190,7 +191,7 @@ async function handleCorrection(request: Request, env: Env) {
         pageTitle || null,
         issue,
         reason,
-        sourceUrl,
+        normalizedSourceUrl,
         sourceTitle || null,
         suggestion || null,
         name || null,

@@ -8,7 +8,7 @@ const page = Astro.url.searchParams.get("page") ?? "";
     <p class="lead">No account is required. Do not include sensitive personal information.</p>
     <noscript><div class="notice">JavaScript is required to submit this form. You can still copy the report fields manually.</div></noscript>
     <form id="correction-form" class="correction-form" novalidate>
-      <input type="hidden" name="startedAt" value={Date.now()} />
+      <input type="hidden" name="startedAt" />
       <div class="honeypot" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off" /></label></div>
       <label>Page URL <input type="url" name="pageUrl" required value={page ? new URL(page, Astro.site).toString() : Astro.site?.toString()} /></label>
       <label>What appears to be incorrect or incomplete? <textarea name="issue" required minlength="20" maxlength="2000" rows="5"></textarea></label>
@@ -30,6 +30,8 @@ const page = Astro.url.searchParams.get("page") ?? "";
     const form = document.querySelector<HTMLFormElement>('#correction-form');
     const statusEl = document.querySelector<HTMLElement>('#form-status');
     const copyButton = document.querySelector<HTMLButtonElement>('#copy-report');
+    const startedAt = form?.querySelector<HTMLInputElement>('input[name="startedAt"]');
+    if (startedAt) startedAt.value = String(Date.now());
     if (form && statusEl) {
       const serialize = (): CorrectionDraft => {
         const data = new FormData(form);
@@ -61,6 +63,7 @@ const page = Astro.url.searchParams.get("page") ?? "";
           const result: { id?: string; message?: string } = await response.json().catch(() => ({}));
           if (!response.ok) throw new Error(result.message || 'Submission service is not configured yet.');
           form.reset();
+          if (startedAt) startedAt.value = String(Date.now());
           statusEl.textContent = `Thank you. Your report ID is ${result.id ?? 'recorded'}.`;
         } catch (error) {
           statusEl.textContent = `${error instanceof Error ? error.message : 'Submission failed.'} Use “Copy report instead” so your work is not lost.`;
