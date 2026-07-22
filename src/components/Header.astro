@@ -3,7 +3,7 @@ import Logo from "./Logo.astro";
 const pathname = Astro.url.pathname;
 const isCurrent = (href: string) => pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
 const explore = [{ href: "/story", label: "Visual story" }, { href: "/myths", label: "Evidence library" }, { href: "/profile", label: "Country profile" }, { href: "/paths", label: "Reading paths" }, { href: "/gallery", label: "Visual archive" }];
-const evidence = [{ href: "/sources", label: "Source dashboard" }, { href: "/compare", label: "Compare explainers" }, { href: "/data-status", label: "Data status" }, { href: "/glossary", label: "Glossary" }, { href: "/methodology", label: "Methodology" }];
+const evidence = [{ href: "/sources", label: "Source dashboard" }, { href: "/compare", label: "Compare explainers" }, { href: "/data-status", label: "Data status" }, { href: "/analytics", label: "Analytics" }, { href: "/glossary", label: "Glossary" }, { href: "/methodology", label: "Methodology" }];
 const project = [{ href: "/about", label: "About" }, { href: "/corrections", label: "Corrections" }, { href: "/accessibility", label: "Accessibility" }, { href: "/privacy", label: "Privacy" }];
 const groupCurrent = (items: { href: string }[]) => items.some((item) => isCurrent(item.href));
 ---
