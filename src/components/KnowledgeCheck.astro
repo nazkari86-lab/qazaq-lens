@@ -7,23 +7,32 @@ const questions = claims.slice(0, 3).map((claim) => ({ id: claim.id, answer: cla
 <section class="knowledge-check card" aria-labelledby="knowledge-check-title" data-knowledge-check>
   <p class="eyebrow">Pause and check</p><h2 id="knowledge-check-title">What did the evidence actually show?</h2>
   {questions.map((question, index) => <fieldset data-question data-answer={question.answer}><legend>{index + 1}. How is this claim classified?</legend><div class="quiz-options">{["fact","interpretation","reported-view","disputed"].map((answer) => <button type="button" data-answer-option={answer}>{answer.replaceAll("-", " ")}</button>)}</div><p class="quiz-feedback" data-feedback hidden>Correct classification: <strong>{question.answer.replaceAll("-", " ")}</strong>.</p></fieldset>)}
-  <p class="quiz-score" data-quiz-score>Answer the questions to check your reading.</p>
+  <div class="quiz-actions"><button class="btn btn--primary" type="button" data-quiz-submit disabled>Finish check</button><p class="quiz-score" data-quiz-score>Answer every question, then finish the check.</p></div>
 </section>
 <script is:inline>
-  document.querySelectorAll<HTMLElement>("[data-knowledge-check]").forEach((root) => {
-    const questions = [...root.querySelectorAll<HTMLElement>("[data-question]")];
+  document.querySelectorAll("[data-knowledge-check]").forEach((root) => {
+    const questions = [...root.querySelectorAll("[data-question]")];
+    const submit = root.querySelector("[data-quiz-submit]");
+    let score = 0;
     questions.forEach((question) => {
-      question.querySelectorAll<HTMLButtonElement>("[data-answer-option]").forEach((button) => {
+      question.querySelectorAll("[data-answer-option]").forEach((button) => {
         button.addEventListener("click", () => {
           const correct = button.dataset.answer === question.dataset.answer;
-          question.querySelectorAll<HTMLButtonElement>("button").forEach((item) => item.disabled = true);
+          question.querySelectorAll("button").forEach((item) => item.disabled = true);
+          question.dataset.answered = "true";
+          if (correct) score += 1;
           button.classList.add(correct ? "is-correct" : "is-wrong");
-          const feedback = question.querySelector<HTMLElement>("[data-feedback]");
+          const feedback = question.querySelector("[data-feedback]");
           if (feedback) feedback.hidden = false;
-          const score = root.querySelector<HTMLElement>("[data-quiz-score]");
-          if (score) score.textContent = `${root.querySelectorAll("button:disabled").length / 4} of ${questions.length} questions answered.`;
+          if (submit && questions.every((item) => item.dataset.answered === "true")) submit.disabled = false;
         });
       });
+    });
+    submit?.addEventListener("click", () => {
+      const output = root.querySelector("[data-quiz-score]");
+      if (output) output.textContent = `Result: ${score} of ${questions.length} correct. Review the claim ledger below for the full evidence.`;
+      submit.textContent = "Check complete";
+      submit.disabled = true;
     });
   });
 </script>
