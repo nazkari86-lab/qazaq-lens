@@ -209,6 +209,10 @@ async function handleCorrection(request: Request, env: Env) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (url.hostname === "qazaq-lens.nazkari86.workers.dev" && (request.method === "GET" || request.method === "HEAD")) {
+      const destination = new URL(url.pathname + url.search, "https://qazaqlens.org");
+      return Response.redirect(destination.toString(), 308);
+    }
     if (url.pathname === "/api/report-error") return handleCorrection(request, env);
     if (url.pathname === "/api/comments") return handleComments(request, env);
     if (url.pathname === "/api/comments/moderate") return handleCommentModeration(request, env);
