@@ -90,7 +90,7 @@ async function handleComments(request: Request, env: Env) {
   if (name.length < 2 || body.length < 10) return json({ message: "Please provide a name and a comment of at least 10 characters." }, 400);
   if (email && !/^\S+@\S+\.\S+$/.test(email)) return json({ message: "The email address is not valid." }, 400);
   const id = crypto.randomUUID();
-  await env.QAZAQ_LENS_DB.prepare(`INSERT INTO comments (id,created_at,updated_at,page_url,page_slug,author_name,author_email,body,locale,status) VALUES (?,datetime('now'),datetime('now'),?,?,?,?,?,?,?,'pending')`).bind(id, new URL(request.url).origin + `/myths/${slug}/`, slug, name, email || null, body, commentText(input.locale, 30) || null).run();
+  await env.QAZAQ_LENS_DB.prepare(`INSERT INTO comments (id,created_at,updated_at,page_url,page_slug,author_name,author_email,body,locale,status) VALUES (?,datetime('now'),datetime('now'),?,?,?,?,?,?,'pending')`).bind(id, new URL(request.url).origin + `/myths/${slug}/`, slug, name, email || null, body, commentText(input.locale, 30) || null).run();
   return json({ ok: true, id, status: "pending" }, 201);
 }
 
