@@ -46,7 +46,7 @@ const mythSchema = z
     mythStatement: z.string().min(5),
     slug: z.string().regex(/^[a-z0-9-]+$/),
     summary: z.string().min(40),
-    verdict: z.enum(["false", "misleading", "partly-true", "disputed"]),
+    verdict: z.enum(["false", "misleading", "partly-true", "outdated", "unverified", "disputed"]),
     publicationStatus: z.enum(["beta", "reviewed"]),
     draft: z.boolean().default(false),
     publishedAt: z.coerce.date(),

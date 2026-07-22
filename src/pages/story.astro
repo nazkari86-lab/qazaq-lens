@@ -3,7 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import { getVisibleMyths } from "../lib/content";
 
 const myths = await getVisibleMyths();
-const verdictLabels: Record<string, string> = { false: "FALSE", misleading: "MISLEADING", "partly-true": "PARTLY TRUE", disputed: "DISPUTED" };
+const verdictLabels: Record<string, string> = { false: "FALSE", misleading: "MISLEADING", "partly-true": "PARTLY TRUE", outdated: "OUTDATED", unverified: "UNVERIFIED", disputed: "DISPUTED" };
 const order = [
   "part-of-russia","kazakh-and-russian","nuclear-weapons","nuclear-energy-weapons","economy-oil",
   "baikonur","ethnic-diversity","secular-muslim","borat","capital-astana","yurts",
@@ -859,7 +859,7 @@ const storyData = storyMyths.map(entry => ({
 
   type MythEntry = {
     slug: string; title: string; statement: string;
-  verdict: "false" | "misleading" | "partly-true" | "disputed"; heroImage: string; heroAlt?: string;
+  verdict: "false" | "misleading" | "partly-true" | "outdated" | "unverified" | "disputed"; heroImage: string; heroAlt?: string;
     stat: string; statLabel: string; lead: string;
     sourceCount: number; reviewedAt: string;
   };
@@ -1053,7 +1053,7 @@ const storyData = storyMyths.map(entry => ({
     if (hudCounter) hudCounter.textContent = `${String(index + 1).padStart(2, "0")} / ${data.length}`;
     if (hudLabel)   hudLabel.textContent   = m.title.replace(/^Kazakhstan[' s]*/i, "");
     if (hudVerdict) {
-      hudVerdict.textContent = ({ false: "FALSE", misleading: "MISLEADING", "partly-true": "PARTLY TRUE", disputed: "DISPUTED" } as Record<string,string>)[m.verdict] ?? m.verdict.toUpperCase();
+      hudVerdict.textContent = ({ false: "FALSE", misleading: "MISLEADING", "partly-true": "PARTLY TRUE", outdated: "OUTDATED", unverified: "UNVERIFIED", disputed: "DISPUTED" } as Record<string,string>)[m.verdict] ?? m.verdict.toUpperCase();
       hudVerdict.dataset.verdict = m.verdict;
     }
     if (hudSources) hudSources.textContent = `${m.sourceCount} sources · ${m.reviewedAt}`;

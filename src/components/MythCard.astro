@@ -4,7 +4,7 @@ interface Props {
   title: string;
   mythStatement: string;
   summary: string;
-  verdict: "false" | "misleading" | "partly-true" | "disputed";
+  verdict: "false" | "misleading" | "partly-true" | "outdated" | "unverified" | "disputed";
   publicationStatus: "beta" | "reviewed";
   lastReviewedAt: Date;
   topics?: string[];
@@ -15,7 +15,7 @@ interface Props {
   compact?: boolean;
 }
 const { href, title, mythStatement, summary, verdict, publicationStatus, lastReviewedAt, topics = [], heroImage, heroImageAlt, sourceCount, readingMinutes, compact = false } = Astro.props;
-const labels = { false: "False", misleading: "Misleading", "partly-true": "Partly true", disputed: "Disputed" };
+const labels = { false: "False", misleading: "Misleading", "partly-true": "Partly true", outdated: "Outdated", unverified: "Unverified", disputed: "Disputed" };
 const reviewed = lastReviewedAt.toLocaleDateString("en-GB", { year: "numeric", month: "short", day: "numeric" });
 ---
 <a href={href} class:list={["myth-card", "card", compact && "myth-card--compact"]} data-search-card data-verdict={verdict} data-search-text={`${title} ${mythStatement} ${summary} ${topics.join(" ")}`.toLowerCase()}>

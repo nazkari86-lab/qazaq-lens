@@ -27,7 +27,7 @@ interface Claim { id: string; statement: string; kind: "fact" | "interpretation"
 interface Change { date: Date; summary: string }
 interface Heading { depth: number; slug: string; text: string }
 interface Props {
-  title: string; mythStatement: string; summary: string; verdict: "false" | "misleading" | "partly-true" | "disputed";
+  title: string; mythStatement: string; summary: string; verdict: "false" | "misleading" | "partly-true" | "outdated" | "unverified" | "disputed";
   slug?: string;
   publicationStatus: "beta" | "reviewed"; publishedAt: Date; lastReviewedAt: Date; author: string; reviewStatus: string;
   reviewedBy: string[]; sources: Source[]; claims: Claim[]; changelog: Change[]; keyTakeaways: string[]; topics: string[];

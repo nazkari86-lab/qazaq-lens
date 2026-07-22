@@ -1,11 +1,11 @@
 ---
 interface Props {
-  verdict: "false" | "misleading" | "partly-true" | "disputed";
+  verdict: "false" | "misleading" | "partly-true" | "outdated" | "unverified" | "disputed";
   summary: string;
   publicationStatus: "beta" | "reviewed";
 }
 const { verdict, summary, publicationStatus } = Astro.props;
-const labels = { false: "False", misleading: "Misleading", "partly-true": "Partly true", disputed: "Disputed" };
+const labels = { false: "False", misleading: "Misleading", "partly-true": "Partly true", outdated: "Outdated", unverified: "Unverified", disputed: "Disputed" };
 ---
 <div class={`verdict-box verdict-box--${verdict}`}>
   <div class="verdict-row">
