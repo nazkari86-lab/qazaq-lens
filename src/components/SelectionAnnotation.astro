@@ -2,7 +2,7 @@
 ---
 <aside class="selection-annotation" data-selection-annotation hidden><span>Selected text ready</span><button class="btn" type="button" data-annotate-send>Suggest context</button><button class="btn" type="button" data-annotate-close aria-label="Close annotation tools">×</button></aside>
 <script is:inline>
-  const tool = document.querySelector<HTMLElement>("[data-selection-annotation]"); let selected = "";
+  const tool = document.querySelector("[data-selection-annotation]"); let selected = "";
   document.addEventListener("selectionchange", () => { const selection = window.getSelection(); const text = selection?.toString().trim() ?? ""; if (text.length >= 20 && text.length <= 800 && selection?.anchorNode?.parentElement?.closest(".article-body")) { selected = text; if (tool) tool.hidden = false; } });
   tool?.querySelector("[data-annotate-close]")?.addEventListener("click", () => { tool.hidden = true; selected = ""; });
   tool?.querySelector("[data-annotate-send]")?.addEventListener("click", () => { if (!selected) return; const subject = encodeURIComponent("Qazaq Lens annotation suggestion"); const body = encodeURIComponent(`Selected passage:\n\"${selected}\"\n\nPage: ${location.href}\n\nSuggested context or source:\n`); location.href = `mailto:nazkari86@gmail.com?subject=${subject}&body=${body}`; });

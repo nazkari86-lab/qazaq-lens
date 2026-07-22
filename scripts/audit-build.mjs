@@ -57,6 +57,11 @@ for (const file of htmlFiles) {
   const relative = path.relative(dist, file);
   const html = await fs.readFile(file, 'utf8');
 
+  const inlineScripts = [...html.matchAll(/<script\s+[^>]*is:inline[^>]*>([\s\S]*?)<\/script>/gi)].map((match) => match[1]);
+  if (inlineScripts.some((script) => /querySelector(All)?\s*<|getElementById\s*</.test(script))) {
+    errors.push(`${relative}: inline script contains TypeScript-only DOM generic syntax`);
+  }
+
   if (!/<html\s[^>]*lang=["'][^"']+["']/i.test(html)) errors.push(`${relative}: missing html lang`);
   if (!/<title>[^<]{3,}<\/title>/i.test(html)) errors.push(`${relative}: missing or empty title`);
   if (!/<meta\s+name=["']description["'][^>]+content=["'][^"']{20,}["']/i.test(html) && !/<meta\s+content=["'][^"']{20,}["'][^>]+name=["']description["']/i.test(html)) errors.push(`${relative}: missing useful meta description`);
