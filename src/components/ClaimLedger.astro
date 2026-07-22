@@ -28,9 +28,16 @@ const labels = { fact: "Fact", interpretation: "Interpretation", "reported-view"
           <span class={`confidence confidence--${claim.confidence}`}>{claim.confidence} confidence</span>
         </div>
         <p class="claim-statement">{claim.statement}</p>
+        <button class="citation-copy" type="button" data-claim-link={`#claim-${claim.id}`}>Copy claim link</button>
         <p class="claim-sources">Evidence: {claim.sourceIds.map((id, index) => <><a href={`#source-${id}`}>{id}</a>{index < claim.sourceIds.length - 1 ? ", " : ""}</>)}</p>
         {claim.note && <p class="section-note">{claim.note}</p>}
       </li>
     ))}
   </ol>
 </details>
+<script is:inline>
+  document.querySelectorAll("[data-claim-link]").forEach((button) => button.addEventListener("click", async () => {
+    const url = `${location.origin}${location.pathname}${button.dataset.claimLink || ""}`;
+    try { await navigator.clipboard.writeText(url); button.textContent = "Link copied"; setTimeout(() => button.textContent = "Copy claim link", 1400); } catch { button.textContent = "Copy failed"; }
+  }));
+</script>

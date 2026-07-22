@@ -1,0 +1,15 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getVisibleMyths } from "../lib/content";
+const myths = (await getVisibleMyths()).sort((a,b)=>a.data.title.localeCompare(b.data.title));
+const compareData = myths.map((myth) => ({ slug: myth.data.slug, title: myth.data.title, verdict: myth.data.verdict, summary: myth.data.summary, topics: myth.data.topics, sources: myth.data.sources.length, reviewed: myth.data.lastReviewedAt.toISOString().slice(0,10) }));
+---
+<BaseLayout title="Compare explainers" description="Compare verdicts, evidence coverage and topics across Qazaq Lens explainers.">
+  <main class="wrap-wide page-hero"><p class="eyebrow">Evidence comparison</p><h1>Put the shortcuts side by side.</h1><p class="lead">Select up to four explainers to compare their verdicts, source coverage and review dates.</p></main>
+  <section class="wrap-wide compare-tool"><div class="compare-picker" aria-label="Choose explainers">{myths.map((myth)=><label class="compare-option"><input type="checkbox" value={myth.data.slug} data-compare-option /><span>{myth.data.title}</span><small>{myth.data.verdict} · {myth.data.sources.length} sources</small></label>)}</div><p class="form-status" data-compare-status>Select at least two explainers.</p><div class="compare-grid" data-compare-grid></div></section>
+  <script is:inline define:vars={{ compareData }}>
+    const options = [...document.querySelectorAll<HTMLInputElement>("[data-compare-option]")]; const grid = document.querySelector<HTMLElement>("[data-compare-grid]"); const status = document.querySelector<HTMLElement>("[data-compare-status]");
+    const render = () => { const selected = options.filter((o) => o.checked).map((o) => compareData.find((m) => m.slug === o.value)).filter(Boolean); options.forEach((o) => { o.disabled = !o.checked && selected.length >= 4; }); if (status) status.textContent = selected.length < 2 ? "Select at least two explainers." : `${selected.length} explainers selected.`; if (grid) { grid.innerHTML = selected.map((m) => `<article class="compare-card"><p class="eyebrow">${m.verdict.replaceAll("-", " ")}</p><h2><a data-compare-link data-slug="${m.slug}">${m.title}</a></h2><p>${m.summary}</p><div class="compare-meta"><span>${m.sources} sources</span><span>Checked ${m.reviewed}</span></div><div class="topic-row">${m.topics.map((t) => `<span class="topic-chip">${t}</span>`).join("")}</div></article>`).join(""); grid.querySelectorAll<HTMLElement>("[data-compare-link]").forEach((link) => { link.setAttribute("href", "/myths/" + link.dataset.slug); }); } };
+    options.forEach((o) => o.addEventListener("change", render)); render();
+  </script>
+</BaseLayout>

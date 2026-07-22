@@ -1,0 +1,14 @@
+---
+import { getFreshness, getSourceDiversity, type MythEntry } from "../lib/content";
+interface Props { myth: MythEntry }
+const { myth } = Astro.props;
+const diversity = getSourceDiversity(myth);
+const freshness = getFreshness(myth);
+const labels: Record<string, string> = { academic: "Academic", official: "Official", journalistic: "Journalistic", primary: "Primary", background: "Background" };
+---
+<section class="evidence-health card" aria-labelledby="evidence-health-title">
+  <div class="section-heading-row"><div><p class="eyebrow">Evidence health</p><h2 id="evidence-health-title">How to read this evidence</h2></div><strong class={`health-badge health-badge--${freshness.state}`}>{freshness.state}</strong></div>
+  <div class="health-grid"><div><span>Source diversity</span><strong>{diversity.score}/100</strong><small>{diversity.publishers} publishers · {diversity.types} source types</small></div><div><span>Last checked</span><strong>{freshness.days === 0 ? "Today" : `${freshness.days} days ago`}</strong><small>Review dates are visible, not hidden.</small></div></div>
+  <div class="health-types" aria-label="Source type breakdown">{Object.entries(diversity.counts).map(([type, count]) => <span><i class={`health-dot health-dot--${type}`}></i>{labels[type] ?? type}: {count}</span>)}</div>
+  <p class="section-note">A high score means the article draws on several publisher types. It does not mean every source is neutral.</p>
+</section>

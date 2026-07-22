@@ -1,0 +1,13 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getFreshness, getSourceDiversity, getVisibleMyths } from "../lib/content";
+const myths = (await getVisibleMyths()).sort((a,b)=>b.data.lastReviewedAt.valueOf()-a.data.lastReviewedAt.valueOf());
+const fresh = myths.filter((m)=>getFreshness(m).state === "fresh").length;
+const aging = myths.filter((m)=>getFreshness(m).state === "aging").length;
+const stale = myths.filter((m)=>getFreshness(m).state === "stale").length;
+const fmt = (date: Date) => date.toLocaleDateString("en-GB", { year:"numeric", month:"short", day:"numeric" });
+---
+<BaseLayout title="Data status" description="Review dates, source diversity and evidence health for every Qazaq Lens explainer.">
+  <main class="wrap-wide page-hero"><p class="eyebrow">Editorial transparency</p><h1>Data status</h1><p class="lead">A public dashboard for freshness and source diversity across the evidence library.</p><div class="freshness-status"><div><span>Fresh</span><strong class="freshness-number freshness-number--fresh">{fresh}</strong></div><div><span>Review soon</span><strong class="freshness-number freshness-number--aging">{aging}</strong></div><div><span>Needs review</span><strong class="freshness-number freshness-number--stale">{stale}</strong></div></div></main>
+  <section class="wrap-wide section-block"><div class="status-table" role="table" aria-label="Article evidence health"><div class="status-row status-row--head" role="row"><span>Explainer</span><span>Last checked</span><span>Sources</span><span>Health</span></div>{myths.map((myth)=><div class="status-row" role="row"><a href={`/myths/${myth.data.slug}`}>{myth.data.title}</a><span>{fmt(myth.data.lastReviewedAt)}</span><span>{myth.data.sources.length} sources · {getSourceDiversity(myth).publishers} publishers</span><strong class={`health-badge health-badge--${getFreshness(myth).state}`}>{getFreshness(myth).state}</strong></div>)}</div></section>
+</BaseLayout>
