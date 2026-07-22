@@ -4,7 +4,7 @@ Qazaq Lens is a free, mobile-first evidence library that explains recurring misc
 
 ## Current product
 
-- Eleven public-beta explainers with claim-by-claim citations
+- Nineteen public-beta explainers with claim-by-claim citations
 - Pudding-style visual story route at `/story/`
 - Searchable evidence library with topic filters
 - Public evidence dashboard showing article, claim, source and publisher counts

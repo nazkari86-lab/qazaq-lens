@@ -3,6 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import { getVisibleMyths } from "../lib/content";
 
 const myths = await getVisibleMyths();
+const verdictLabels: Record<string, string> = { false: "FALSE", misleading: "MISLEADING", "partly-true": "PARTLY TRUE", disputed: "DISPUTED" };
 const order = [
   "part-of-russia","kazakh-and-russian","nuclear-weapons","nuclear-energy-weapons","economy-oil",
   "baikonur","ethnic-diversity","secular-muslim","borat","capital-astana","yurts",
@@ -160,7 +161,7 @@ const storyData = storyMyths.map(entry => ({
               <span class="sw-stat-label">{myth.statLabel}</span>
             </div>
             <div class:list={["sw-verdict", `sw-verdict--${myth.verdict}`]}>
-              {myth.verdict === "false" ? "FALSE" : "MISLEADING"}
+              {verdictLabels[myth.verdict]}
             </div>
             <a class="sw-link" href={`/myths/${myth.slug}`}>Read the full evidence check <span aria-hidden="true">→</span></a>
             {storyData[i + 1] && <a class="sw-next" href={`#story-${storyData[i + 1].slug}`}><span>Next chapter</span><strong>{storyData[i + 1].arc}</strong><i aria-hidden="true">↓</i></a>}
@@ -173,8 +174,8 @@ const storyData = storyMyths.map(entry => ({
             <span class="sw-counter">— / {storyData.length}</span>
             <span class="sw-tag">The pattern</span>
           </div>
-          <h2 class="sw-pattern-head">Nineteen myths.<br>Four origins.</h2>
-          <p class="sw-lead">These shortcuts are not random. Almost every one traces to the same three sources — and understanding that is the beginning of seeing the actual country.</p>
+        <h2 class="sw-pattern-head">Nineteen myths.<br>Five patterns.</h2>
+        <p class="sw-lead">These shortcuts are not random. They emerge from historical conflation, pop culture, outdated snapshots, single-feature generalisations and sensational information gaps.</p>
           <div class="sw-pattern-grid">
             <div class="sw-pattern-card">
               <span class="sw-pattern-n">01</span>
@@ -190,6 +191,16 @@ const storyData = storyMyths.map(entry => ({
               <span class="sw-pattern-n">03</span>
               <h3>Outdated snapshots</h3>
               <p>Almaty as capital, oil as the dominant export, yurts as housing — all were accurate at some point. The country moved on. The reference did not.</p>
+            </div>
+            <div class="sw-pattern-card">
+              <span class="sw-pattern-n">04</span>
+              <h3>Single-feature generalisation</h3>
+              <p>Steppe, Islam, horse meat and landlocked geography each describe one layer. None can stand in for a whole society, landscape or daily life.</p>
+            </div>
+            <div class="sw-pattern-card">
+              <span class="sw-pattern-n">05</span>
+              <h3>Information gaps and sensationalism</h3>
+              <p>Viral doorways, nuclear shorthand and “closed internet” claims grow when uncertainty is replaced by a dramatic answer.</p>
             </div>
           </div>
         </article>
@@ -227,7 +238,7 @@ const storyData = storyMyths.map(entry => ({
           <!-- HUD bottom -->
           <div class="sw-hud sw-hud--bottom">
             <span class="sw-hud-verdict" data-hud-verdict data-verdict={storyData[0].verdict}>
-              {storyData[0].verdict === "false" ? "FALSE" : "MISLEADING"}
+              {verdictLabels[storyData[0].verdict]}
             </span>
             <span class="sw-hud-sources" data-hud-sources>{storyData[0].sourceCount} sources · {storyData[0].reviewedAt}</span>
             <span class="sw-hud-scroll" data-hud-scroll>Scroll to continue</span>
@@ -265,7 +276,7 @@ const storyData = storyMyths.map(entry => ({
         <p class="sw-eyebrow">The point is not a new stereotype</p>
         <h2 class="sw-ending-head">Context makes the picture larger.</h2>
         <p class="sw-ending-body">
-          These eleven checks are a starting point, not a summary of a country. Follow the evidence, keep the uncertainty visible, and let Kazakhstan stay bigger than the shortcut assigned to it.
+          These nineteen checks are a starting point, not a summary of a country. Follow the evidence, keep the uncertainty visible, and let Kazakhstan stay bigger than the shortcut assigned to it.
         </p>
         <a class="sw-cta" href="/myths">Open the full evidence library</a>
         <a class="sw-secondary-cta" href="/sources">See the source map first →</a>
@@ -530,6 +541,8 @@ const storyData = storyMyths.map(entry => ({
 }
 .sw-verdict--false     { background: color-mix(in srgb, var(--sw-red)   14%, transparent); color: var(--sw-red); }
 .sw-verdict--misleading{ background: color-mix(in srgb, var(--sw-amber) 14%, transparent); color: var(--sw-amber); }
+.sw-verdict--partly-true{ background: color-mix(in srgb, #b98a32 14%, transparent); color: #d9ad57; }
+.sw-verdict--disputed{ background: color-mix(in srgb, var(--sw-accent) 14%, transparent); color: var(--sw-accent); }
 .sw-link {
   font-family: var(--sw-font-ui);
   font-size: .72rem;
@@ -724,8 +737,10 @@ const storyData = storyMyths.map(entry => ({
   text-transform: uppercase;
   transition: color .3s;
 }
-.sw-hud-verdict[data-verdict="false"]      { color: var(--sw-red); }
-.sw-hud-verdict[data-verdict="misleading"] { color: var(--sw-amber); }
+  .sw-hud-verdict[data-verdict="false"]      { color: var(--sw-red); }
+  .sw-hud-verdict[data-verdict="misleading"] { color: var(--sw-amber); }
+  .sw-hud-verdict[data-verdict="partly-true"] { color: #d9ad57; }
+  .sw-hud-verdict[data-verdict="disputed"] { color: var(--sw-accent); }
 .sw-hud--top,.sw-hud--bottom{animation:sw-hud-in .55s ease both}@keyframes sw-hud-in{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
 
 /* ─── ENDING ─────────────────────────────────────────────── */
@@ -842,7 +857,7 @@ const storyData = storyMyths.map(entry => ({
 
   type MythEntry = {
     slug: string; title: string; statement: string;
-    verdict: "false" | "misleading"; heroImage: string; heroAlt?: string;
+  verdict: "false" | "misleading" | "partly-true" | "disputed"; heroImage: string; heroAlt?: string;
     stat: string; statLabel: string; lead: string;
     sourceCount: number; reviewedAt: string;
   };
@@ -1036,7 +1051,7 @@ const storyData = storyMyths.map(entry => ({
     if (hudCounter) hudCounter.textContent = `${String(index + 1).padStart(2, "0")} / ${data.length}`;
     if (hudLabel)   hudLabel.textContent   = m.title.replace(/^Kazakhstan[' s]*/i, "");
     if (hudVerdict) {
-      hudVerdict.textContent = m.verdict === "false" ? "FALSE" : "MISLEADING";
+      hudVerdict.textContent = ({ false: "FALSE", misleading: "MISLEADING", "partly-true": "PARTLY TRUE", disputed: "DISPUTED" } as Record<string,string>)[m.verdict] ?? m.verdict.toUpperCase();
       hudVerdict.dataset.verdict = m.verdict;
     }
     if (hudSources) hudSources.textContent = `${m.sourceCount} sources · ${m.reviewedAt}`;

@@ -1,12 +1,14 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { getVisibleMyths } from "../lib/content";
+const myths = (await getVisibleMyths()).filter((entry) => entry.data.heroImage);
 ---
 <BaseLayout title="Image credits" description="Licensing and attribution for graphics and photographs used by Qazaq Lens.">
   <article class="wrap article-shell">
     <p class="eyebrow">Image policy</p><h1>Image credits</h1>
     <div class="article-body">
-      <p>The current prototype uses only original typographic graphics generated for Qazaq Lens. It does not use film stills, posters or third-party photographs.</p>
-      <p>Any future external image must list the creator, original source, license and required attribution on this page before publication.</p>
+      <p>Qazaq Lens uses real photographs and visual materials with credits shown below. Pinterest and search results are not treated as licenses; every external image must have a traceable source and attribution before publication.</p>
+      <div class="credits-list">{myths.map((entry) => <article class="credit-entry"><img src={entry.data.heroImage} alt="" loading="lazy" /><div><h2><a href={`/myths/${entry.data.slug}`}>{entry.data.title}</a></h2><p>{entry.data.heroImageCredit ?? "Credit metadata pending"}</p>{entry.data.heroImageCreditUrl && <a href={entry.data.heroImageCreditUrl} target="_blank" rel="noopener noreferrer">Open original source ↗</a>}</div></article>)}</div>
     </div>
   </article>
 </BaseLayout>
