@@ -544,6 +544,7 @@ const storyData = storyMyths.map(entry => ({
 .sw-verdict--false     { background: color-mix(in srgb, var(--sw-red)   14%, transparent); color: var(--sw-red); }
 .sw-verdict--misleading{ background: color-mix(in srgb, var(--sw-amber) 14%, transparent); color: var(--sw-amber); }
 .sw-verdict--partly-true{ background: color-mix(in srgb, #b98a32 14%, transparent); color: #d9ad57; }
+.sw-verdict--outdated,.sw-verdict--unverified{ background: color-mix(in srgb, #d9b768 14%, transparent); color: #d9b768; }
 .sw-verdict--disputed{ background: color-mix(in srgb, var(--sw-accent) 14%, transparent); color: var(--sw-accent); }
 .sw-link {
   font-family: var(--sw-font-ui);
@@ -742,6 +743,7 @@ const storyData = storyMyths.map(entry => ({
   .sw-hud-verdict[data-verdict="false"]      { color: var(--sw-red); }
   .sw-hud-verdict[data-verdict="misleading"] { color: var(--sw-amber); }
   .sw-hud-verdict[data-verdict="partly-true"] { color: #d9ad57; }
+  .sw-hud-verdict[data-verdict="outdated"],.sw-hud-verdict[data-verdict="unverified"] { color: #d9b768; }
   .sw-hud-verdict[data-verdict="disputed"] { color: var(--sw-accent); }
 .sw-hud--top,.sw-hud--bottom{animation:sw-hud-in .55s ease both}@keyframes sw-hud-in{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
 
