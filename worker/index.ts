@@ -39,12 +39,20 @@ const validUrl = (value: string) => {
 
 const commentText = (value: unknown, max: number) => clean(value, max).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "");
 
+const hashIdentity = async (request: Request) => {
+  const ip = request.headers.get("cf-connecting-ip") ?? "unknown";
+  const bytes = new TextEncoder().encode(ip);
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+};
+
 const enforceRateLimit = async (request: Request, env: Env, bucket: string) => {
   if (!env.QAZAQ_LENS_DB) return true;
-  const identity = request.headers.get("cf-connecting-ip") ?? "unknown";
   const windowStart = Math.floor(Date.now() / 3_600_000);
   try {
-    const key = `${bucket}:${identity}`;
+    const identityHash = await hashIdentity(request);
+    const key = `${bucket}:${identityHash}`;
+    await env.QAZAQ_LENS_DB.prepare("DELETE FROM rate_limits WHERE window_start < ?").bind(windowStart - 48).run();
     await env.QAZAQ_LENS_DB.prepare("INSERT INTO rate_limits (bucket, window_start, count) VALUES (?, ?, 1) ON CONFLICT(bucket, window_start) DO UPDATE SET count = count + 1").bind(key, windowStart).run();
     const row = await env.QAZAQ_LENS_DB.prepare("SELECT count FROM rate_limits WHERE bucket = ? AND window_start = ?").bind(key, windowStart).first<{ count: number }>();
     return (row?.count ?? 0) <= (bucket === "comment" ? 12 : 8);
