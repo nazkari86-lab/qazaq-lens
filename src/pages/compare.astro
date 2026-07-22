@@ -4,9 +4,9 @@ import { getSourceDiversity, getVisibleMyths } from "../lib/content";
 const myths = (await getVisibleMyths()).sort((a,b)=>a.data.title.localeCompare(b.data.title));
 const compareData = myths.map((myth) => ({ slug: myth.data.slug, title: myth.data.title, verdict: myth.data.verdict, summary: myth.data.summary, topics: myth.data.topics, sources: myth.data.sources.length, reviewed: myth.data.lastReviewedAt.toISOString().slice(0,10) }));
 const rankings = {
-  recent: [...myths].sort((a,b)=>b.data.lastReviewedAt.valueOf()-a.data.lastReviewedAt.valueOf()).slice(0,5),
-  sourced: [...myths].sort((a,b)=>b.data.sources.length-a.data.sources.length || b.data.lastReviewedAt.valueOf()-a.data.lastReviewedAt.valueOf()).slice(0,5),
-  diverse: [...myths].sort((a,b)=>getSourceDiversity(b).score-getSourceDiversity(a).score || b.data.sources.length-a.data.sources.length).slice(0,5),
+  recent: [...myths].sort((a,b)=>b.data.lastReviewedAt.valueOf()-a.data.lastReviewedAt.valueOf() || b.data.sources.length-a.data.sources.length),
+  sourced: [...myths].sort((a,b)=>b.data.sources.length-a.data.sources.length || b.data.lastReviewedAt.valueOf()-a.data.lastReviewedAt.valueOf()),
+  diverse: [...myths].sort((a,b)=>getSourceDiversity(b).score-getSourceDiversity(a).score || b.data.sources.length-a.data.sources.length),
 };
 const dateLabel = (date: Date) => date.toLocaleDateString("en-GB", { year:"numeric", month:"short", day:"numeric" });
 const rankingsData = { recent: rankings.recent.map((m)=>({slug:m.data.slug,title:m.data.title,metric:`Checked ${dateLabel(m.data.lastReviewedAt)} · ${m.data.sources.length} sources`})), sourced: rankings.sourced.map((m)=>({slug:m.data.slug,title:m.data.title,metric:`${m.data.sources.length} sources · ${getSourceDiversity(m).publishers} publishers`})), diverse: rankings.diverse.map((m)=>({slug:m.data.slug,title:m.data.title,metric:`Diversity score ${getSourceDiversity(m).score}/100`})) };
