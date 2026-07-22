@@ -1,0 +1,9 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getVisibleMyths } from "../lib/content";
+const myths = (await getVisibleMyths()).filter((m)=>m.data.heroImage);
+---
+<BaseLayout title="Visual archive" description="A real-image visual archive for Qazaq Lens explainers, with source credits and article context.">
+  <main class="wrap-wide page-hero"><p class="eyebrow">Visual archive</p><h1>Images with context.</h1><p class="lead">Every image below is tied to an explainer, credited and used as an entry point—not as proof by itself.</p></main>
+  <section class="wrap-wide gallery-grid">{myths.map((myth)=><a class="gallery-card" href={`/myths/${myth.data.slug}`}><div class="gallery-image"><img src={myth.data.heroImage} alt={myth.data.heroImageAlt ?? myth.data.title} loading="lazy" /></div><div class="gallery-copy"><span class="tag">{myth.data.verdict}</span><h2>{myth.data.title}</h2><p>{myth.data.heroImageCredit ?? "Image credit on article page"}</p></div></a>)}</section>
+</BaseLayout>

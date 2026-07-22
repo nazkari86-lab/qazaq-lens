@@ -1,0 +1,19 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getVisibleMyths } from "../lib/content";
+const myths = await getVisibleMyths();
+const topics = [...new Set(myths.flatMap((m)=>m.data.topics))].sort();
+const sources = myths.reduce((n,m)=>n+m.data.sources.length,0);
+const claims = myths.reduce((n,m)=>n+m.data.claims.length,0);
+const facts = [
+  ["19", "evidence explainers", "A growing library, not a claim to cover every story."],
+  [String(claims), "registered claims", "Each claim has a visible type, confidence and source IDs."],
+  [String(sources), "source records", "Official, academic, journalistic and primary evidence are separated."],
+  [String(topics.length), "recurring topics", "Geography, language, history, society, media and more."],
+];
+---
+<BaseLayout title="Kazakhstan profile" description="A sourced orientation profile for understanding Kazakhstan beyond shorthand and stereotypes.">
+  <main class="wrap-wide page-hero profile-page"><p class="eyebrow">Country profile</p><h1>Kazakhstan, in layers.</h1><p class="lead">Use this page as a map of questions, not a single national summary. Each layer links to explainers and visible evidence.</p><div class="profile-facts">{facts.map(([value,label,note])=><article class="card"><strong>{value}</strong><h2>{label}</h2><p>{note}</p></article>)}</div></main>
+  <section class="wrap-wide section-block"><div class="section-heading-row"><div><p class="eyebrow">Evidence layers</p><h2>Start with a question</h2></div><a href="/data-status">Review data status →</a></div><div class="profile-topics">{topics.map((topic)=><a class="profile-topic" href={`/myths?topic=${encodeURIComponent(topic.toLowerCase())}`}><span>{topic}</span><small>{myths.filter((m)=>m.data.topics.includes(topic)).length} explainers</small></a>)}</div></section>
+  <section class="wrap-wide section-block profile-note"><p class="eyebrow">Reading rule</p><h2>No single layer is the whole country.</h2><p>A landscape is not a population. A language is not a political border. A state policy is not every person’s private life. Follow the sources, inspect the claim, then decide how much the shortcut explains.</p><div class="button-row"><a class="btn btn--primary" href="/start">Start the guided introduction</a><a class="btn" href="/myths">Browse all explainers</a></div></section>
+</BaseLayout>
