@@ -16,6 +16,7 @@ const site = Astro.site ?? new URL("https://qazaq-lens.nazkari86.workers.dev");
 const canonicalURL = new URL(Astro.url.pathname, site);
 const ogImageURL = new URL(ogImage, site);
 const fullTitle = title === "Qazaq Lens" ? title : `${title} · Qazaq Lens`;
+const webAnalyticsToken = import.meta.env.PUBLIC_CF_WEB_ANALYTICS_TOKEN;
 const orgJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
@@ -79,6 +80,7 @@ const websiteJsonLd = {
         if (saved === "light" || saved === "dark") document.documentElement.dataset.theme = saved;
       } catch {}
     </script>
+    {webAnalyticsToken && <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={JSON.stringify({ token: webAnalyticsToken })}></script>}
   </head>
   <body>
     <Header />
