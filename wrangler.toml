@@ -5,6 +5,7 @@ main = "worker/index.ts"
 [assets]
 directory = "dist"
 binding = "ASSETS"
+run_worker_first = true
 
 [[d1_databases]]
 binding = "QAZAQ_LENS_DB"
