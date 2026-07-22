@@ -17,7 +17,7 @@ const questions = claims.slice(0, 3).map((claim) => ({ id: claim.id, answer: cla
     questions.forEach((question) => {
       question.querySelectorAll("[data-answer-option]").forEach((button) => {
         button.addEventListener("click", () => {
-          const correct = button.dataset.answer === question.dataset.answer;
+          const correct = button.dataset.answerOption === question.dataset.answer;
           question.querySelectorAll("button").forEach((item) => item.disabled = true);
           question.dataset.answered = "true";
           if (correct) score += 1;
