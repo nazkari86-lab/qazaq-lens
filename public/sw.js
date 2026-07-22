@@ -1,4 +1,4 @@
-const VERSION = "qazaq-lens-v5";
+const VERSION = "qazaq-lens-v6";
 const BUILD_ASSETS = [];
 const CORE = [
   "/", "/start/", "/myths/", "/sources/", "/methodology/", "/about/", "/privacy/", "/offline/", "/story/", "/search/", "/compare/", "/profile/", "/paths/", "/gallery/", "/data-status/",
