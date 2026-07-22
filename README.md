@@ -74,7 +74,7 @@ Run `npx wrangler login` once on the deployment machine, or provide `CLOUDFLARE_
 ```bash
 npx wrangler login
 npx wrangler d1 create qazaq-lens-feedback
-npx wrangler d1 execute qazaq-lens-feedback --remote --file=migrations/0001_feedback.sql
+npx wrangler d1 migrations apply qazaq-lens-feedback --remote
 ```
 
 Then add a Workers D1 binding:
