@@ -7,7 +7,7 @@ const walk = async (dir) => (await Promise.all((await readdir(dir, { withFileTyp
   return entry.isDirectory() ? walk(path) : [path];
 }))).flat();
 const files = await walk(root);
-const assets = files.map((file) => `/${relative(root, file).replaceAll("\\", "/")}`).filter((file) => /\.(?:css|js|png|jpe?g|webp|svg|woff2?|webmanifest)$/.test(file));
+const assets = files.map((file) => `/${relative(root, file).replaceAll("\\", "/")}`).filter((file) => /\.(?:css|js|woff2?|webmanifest)$/.test(file) || file === "/favicon.svg" || file.startsWith("/icons/"));
 const swPath = join(root, "sw.js");
 let sw = await readFile(swPath, "utf8");
 sw = sw.replace(/const BUILD_ASSETS = \[[\s\S]*?\];/, `const BUILD_ASSETS = ${JSON.stringify(assets)};`);
