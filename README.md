@@ -34,7 +34,7 @@ npm run dev
 To see aggregated page views and referrers in Cloudflare Web Analytics, create a Web Analytics token in the Cloudflare dashboard and provide it at build time:
 
 ```bash
-PUBLIC_CF_WEB_ANALYTICS_TOKEN=your_token npm run build
+Cloudflare Web Analytics Beacon is intentionally disabled in the public build so an account token is not embedded in every page. Use Cloudflare's zone analytics for aggregate traffic, or add a privacy-preserving analytics provider after reviewing its data-collection policy.
 ```
 
 The analytics beacon is disabled when the variable is absent. Never commit the token to the repository.

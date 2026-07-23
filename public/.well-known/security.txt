@@ -1,0 +1,5 @@
+Contact: mailto:nazkari86@gmail.com
+Preferred-Languages: en, ru
+Policy: https://qazaqlens.org/about/
+Canonical: https://qazaqlens.org/.well-known/security.txt
+Expires: 2027-07-23T00:00:00.000Z
