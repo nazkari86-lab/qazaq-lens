@@ -232,6 +232,12 @@ export default {
       const destination = new URL(url.pathname + url.search, "https://qazaqlens.org");
       return Response.redirect(destination.toString(), 308);
     }
+    if (url.pathname === "/.well-known/security.txt" && (request.method === "GET" || request.method === "HEAD")) {
+      return new Response(
+        "Contact: mailto:nazkari86@gmail.com\nPreferred-Languages: en, ru\nPolicy: https://qazaqlens.org/about/\nCanonical: https://qazaqlens.org/.well-known/security.txt\nExpires: 2027-07-23T00:00:00.000Z\n",
+        { headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "public, max-age=86400" } },
+      );
+    }
     if (url.pathname.startsWith("/api/")) {
       if (request.method === "OPTIONS") { const origin = request.headers.get("origin"); const headers = new Headers({ "access-control-allow-methods": "GET, POST, PATCH, OPTIONS", "access-control-allow-headers": "authorization, content-type", "access-control-max-age": "86400" }); if (origin && ["https://qazaqlens.org", "https://www.qazaqlens.org"].includes(origin)) headers.set("access-control-allow-origin", origin); return new Response(null, { status: 204, headers }); }
       let response: Response;
