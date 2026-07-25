@@ -1,7 +1,26 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Qazaq Lens Methodology — How the evidence process works",
+  "author": {
+    "@type": "Person",
+    "name": "Dulat Nurlanuly",
+    "url": "https://www.linkedin.com/in/dulat-nurlanuly-637888424/",
+    "sameAs": ["https://www.linkedin.com/in/dulat-nurlanuly-637888424/", "https://github.com/nazkari86-lab"]
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Qazaq Lens",
+    "url": "https://qazaqlens.org"
+  },
+  "dateModified": "2026-07-25",
+  "url": "https://qazaqlens.org/methodology/"
+};
 ---
-<BaseLayout title="Methodology" description="How Qazaq Lens selects claims, validates evidence, shows review status and corrects mistakes.">
+<BaseLayout title="Methodology" description="How Qazaq Lens selects claims, validates evidence, shows review status and corrects mistakes." jsonLd={jsonLd}>
   <article class="wrap article-shell">
     <p class="eyebrow">Methodology</p><h1>How the evidence process works</h1>
     <div class="article-body">

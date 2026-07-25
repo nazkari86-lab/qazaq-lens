@@ -84,9 +84,19 @@ const image = new URL(props.ogImage ?? "/og/default.png", site).toString();
   const articleJsonLd = {
     "@context": "https://schema.org", "@type": "Article", headline: props.title, description: props.summary,
     image: [image], datePublished: props.publishedAt.toISOString(), dateModified: props.lastReviewedAt.toISOString(),
-    author: { "@type": "Organization", name: props.author }, publisher: { "@type": "Organization", name: "Qazaq Lens", url: site.toString() },
+    author: {
+      "@type": "Person",
+      "name": "Dulat Nurlanuly",
+      "url": "https://www.linkedin.com/in/dulat-nurlanuly-637888424/",
+      "sameAs": ["https://www.linkedin.com/in/dulat-nurlanuly-637888424/", "https://github.com/nazkari86-lab"]
+    },
+    publisher: { "@type": "Organization", name: "Qazaq Lens", url: site.toString() },
     mainEntityOfPage: articleUrl, about: { "@type": "Country", name: "Kazakhstan" }, keywords: props.topics.join(", "),
     citation: props.sources.map((source) => source.url),
+    speakable: {
+      "@type": "SpeakableSpecification",
+      "cssSelector": [".verdict-box", ".article-body p:first-of-type", ".key-takeaways"]
+    },
   };
   const breadcrumbJsonLd = {
     "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
@@ -103,7 +113,7 @@ const image = new URL(props.ogImage ?? "/og/default.png", site).toString();
   } as Record<string, unknown>;
   const jsonLd = [articleJsonLd, breadcrumbJsonLd, ...(claimReviewRating ? [claimReviewJsonLd] : [])];
 ---
-<BaseLayout title={props.title} description={props.summary} ogImage={props.ogImage} type="article" noindex={props.draft} jsonLd={jsonLd}>
+<BaseLayout title={`${props.title} — Kazakhstan Fact Check`} description={props.summary} ogImage={props.ogImage} type="article" noindex={props.draft} jsonLd={jsonLd}>
   <ReadingProgress />
   <article class="article-shell">
     {props.heroImage && (

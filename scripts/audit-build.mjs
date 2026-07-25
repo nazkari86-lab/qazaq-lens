@@ -37,7 +37,7 @@ if (!await exists(dist)) {
 }
 
 const allFiles = await walk(dist);
-const htmlFiles = allFiles.filter((file) => file.endsWith('.html'));
+const htmlFiles = allFiles.filter((file) => file.endsWith('.html') && !path.basename(file).startsWith('google'));
 const requiredFiles = [
   'manifest.webmanifest', 'sw.js', 'robots.txt', 'sitemap-index.xml', 'rss.xml',
   'favicon.svg', 'icons/icon-192.png', 'icons/icon-512.png', '_headers', '_routes.json',

@@ -12,6 +12,20 @@ const rules = {
   "giant-door": [500, 800, 6, 3, 3, ["viral", "archaeological", "Kazakhstan"]], "horse-meat-kumys": [550, 850, 6, 3, 3, ["horse", "kumys", "heritage"]], "kazakhstan-memes": [550, 850, 6, 3, 3, ["memes", "TikTok", "folklore"]],
   "aral-sea-gone": [450, 700, 6, 3, 3, ["Aral", "restoration", "water"]], "landlocked-isolated": [450, 700, 6, 3, 3, ["landlocked", "Caspian", "corridor"]], "internet-closed": [450, 750, 6, 3, 3, ["internet", "journalists", "restricted"]],
   "secular-muslim": [450, 700, 6, 3, 3, ["secular", "Islam", "religion"]], "nuclear-energy-weapons": [450, 700, 6, 3, 3, ["civilian", "weapons", "Semipalatinsk"]],
+  "economy-oil": [700, 1100, 8, 7, 8, ["oil", "uranium", "diversification"]],
+  "ethnic-diversity": [700, 1100, 9, 5, 7, ["ethnic", "language", "deport"]],
+  "ai-accuracy-kazakhstan": [550, 850, 6, 4, 4, ["Kazakhstan", "errors", "language"]],
+  "almaty-earthquake": [550, 850, 6, 4, 4, ["Almaty", "seismic", "earthquake"]],
+  "apple-origins": [500, 800, 5, 4, 4, ["apple", "Kazakhstan", "sieversii"]],
+  "bride-kidnapping": [550, 850, 5, 5, 4, ["Kazakhstan", "abduction", "consensual"]],
+  "charyn-canyon": [500, 800, 5, 3, 4, ["canyon", "Charyn", "claim"]],
+  "europe-or-asia": [500, 800, 5, 4, 5, ["Kazakhstan", "Europe", "boundary"]],
+  "horse-domestication": [650, 950, 5, 5, 5, ["horses", "Botai", "horse"]],
+  "kazakh-statehood": [650, 950, 7, 4, 4, ["Kazakh", "Khanate", "Kazakhstan"]],
+  "latin-alphabet": [550, 850, 6, 4, 4, ["Latin", "Cyrillic", "alphabet"]],
+  "not-middle-east": [500, 800, 6, 4, 4, ["Kazakhstan", "Middle", "language"]],
+  "semipalatinsk-safe": [550, 850, 6, 4, 4, ["Semipalatinsk", "nuclear", "Kazakhstan"]],
+  "tomyris": [650, 950, 6, 4, 4, ["Tomyris", "Kazakh", "Massagetae"]],
 };
 const words = (text) => (text.match(/\b[\p{L}\p{N}]+(?:[-’'][\p{L}\p{N}]+)*\b/gu) ?? []).length;
 const body = (raw) => raw.split(/^---\s*$/m).slice(-1)[0].replace(/<[^>]*>/g, " ").replace(/\[[^\]]*\]\([^)]*\)/g, " ").replace(/[#*_`>|]/g, " ");

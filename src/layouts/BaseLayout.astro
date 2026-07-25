@@ -22,7 +22,20 @@ const orgJsonLd = {
   name: "Qazaq Lens",
   url: site.toString(),
   description: "Independent, sourced cultural context about Kazakhstan for international readers.",
-  sameAs: [site.toString()],
+  foundingDate: "2026",
+  founder: {
+    "@type": "Person",
+    name: "Dulat Nurlanuly",
+    url: "https://www.linkedin.com/in/dulat-nurlanuly-637888424/",
+    sameAs: ["https://www.linkedin.com/in/dulat-nurlanuly-637888424/", "https://github.com/nazkari86-lab"]
+  },
+  sameAs: [
+    site.toString(),
+    "https://github.com/nazkari86-lab/qazaq-lens",
+    "https://huggingface.co/datasets/okak67692281488/kazakhstan-facts"
+  ],
+  knowsAbout: ["Kazakhstan", "Central Asia", "Fact-checking", "Misinformation"],
+  inLanguage: "en",
 };
 const websiteJsonLd = {
   "@context": "https://schema.org",
@@ -54,8 +67,11 @@ const websiteJsonLd = {
     <link rel="prefetch" href="/start/" as="document" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    <meta name="author" content="Qazaq Lens" />
-    {noindex ? <meta name="robots" content="noindex, nofollow" /> : <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large" />}
+    <meta name="author" content="Dulat Nurlanuly" />
+    <meta name="creator" content="Dulat Nurlanuly" />
+    <meta name="publisher" content="Qazaq Lens" />
+    <meta name="copyright" content="Qazaq Lens — CC BY 4.0" />
+    {noindex ? <meta name="robots" content="noindex, nofollow" /> : <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />}
 
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />

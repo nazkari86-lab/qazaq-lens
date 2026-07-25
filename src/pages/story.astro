@@ -91,6 +91,18 @@ const mythMeta: Record<string, { stat: string; statLabel: string; lead: string; 
   "giant-door": { stat: "2025", statLabel: "Year a supposed giant doorway in Kazakhstan became a viral internet claim", lead: "A dramatic video can be a powerful meme without being archaeological evidence. The claim remains unverified.", arc: "The hoax" },
   "horse-meat-kumys": { stat: "Heritage", statLabel: "Horse meat and kumys are traditions, not a complete description of every daily diet", lead: "Kazakh cuisine includes horse meat and fermented mare's milk — alongside many other foods and regional habits.", arc: "The table" },
   "kazakhstan-memes": { stat: "236", statLabel: "Kazakhstan-related memes examined in recent digital folklore research", lead: "Memes mix Kazakh, Russian and global formats. They show online communities at a moment, not one personality for an entire country.", arc: "The remix" },
+  "charyn-canyon": { stat: "Unverified", statLabel: "No recognised scientific body has ranked Charyn Canyon second globally", lead: "Charyn is a striking geological feature in south-east Kazakhstan. The 'second largest canyon in the world' claim appears on tourism sites but lacks an authoritative source.", arc: "The claim" },
+  "europe-or-asia": { stat: "Partly", statLabel: "A small western portion falls on the European side of the Ural boundary", lead: "The UN classifies Kazakhstan as Central Asia. Under the Ural River convention the far west touches Europe. Both things are true at once.", arc: "The boundary" },
+  "apple-origins": { stat: "Malus sieversii", statLabel: "The primary wild ancestor of domestic apples, native to the Tian Shan near Almaty", lead: "The Almaty region gave the world the original apple — or at least its main wild ancestor. Modern cultivars then hybridised further, making the story more complicated than a simple birthplace claim.", arc: "The origin" },
+  "horse-domestication": { stat: "~3500 BCE", statLabel: "Age of the oldest evidence of horse riding, from Botai culture sites in northern Kazakhstan", lead: "The Botai culture left the oldest riding evidence. But 2021 ancient-DNA research found modern horses descend from a different population, not Botai horses — so the story is still being rewritten.", arc: "The ancestor" },
+  "bride-kidnapping": { stat: "2023", statLabel: "Year Kazakhstan strengthened criminal penalties for forced marriage", lead: "Bride kidnapping exists and causes harm. Kazakhstan criminalised it and strengthened penalties in 2023. Presenting it as a universally accepted tradition misrepresents the law and urban attitudes.", arc: "The misread" },
+  "semipalatinsk-safe": { stat: "456", statLabel: "Nuclear tests conducted at the Semipalatinsk site during the Soviet era", lead: "Kazakhstan closed the Semipalatinsk test site in 1991. Remediation continues, but significant contamination persists and health studies are ongoing.", arc: "The legacy" },
+  "latin-alphabet": { stat: "2031", statLabel: "Target year for completing Kazakhstan's transition from Cyrillic to Latin script", lead: "The switch was announced in 2017. As of 2025, Cyrillic still dominates in practice. Full transition is a government plan, not a completed fact.", arc: "The transition" },
+  "almaty-earthquake": { stat: "9–10", statLabel: "MSK seismic intensity zone covering Almaty — the country's highest hazard rating", lead: "Major earthquakes struck Almaty in 1887 and 1911. Active faults run under the city and hundreds of minor tremors are recorded annually. The risk is well-documented and ongoing.", arc: "The fault" },
+  "ai-accuracy-kazakhstan": { stat: "KazMMLU", statLabel: "Benchmark measuring AI performance on Kazakhstan-specific knowledge", lead: "Major AI models score measurably lower on Kazakh knowledge. Common errors include the wrong capital, nuclear weapons status, and language classification.", arc: "The gap" },
+  "not-middle-east": { stat: "Central Asia", statLabel: "UN regional classification — not Middle East, not Arab world", lead: "Kazakhstan is classified as Central Asia by the UN and every major institution. Its Muslim majority and Turkic language have no connection to Arab culture or the Middle East.", arc: "The map" },
+  "kazakh-statehood": { stat: "~1465", statLabel: "Year the Kazakh Khanate was founded — centuries before modern independence", lead: "Modern Kazakhstan as a sovereign state dates to 1991. But the Kazakh Khanate organised Kazakh territory for roughly 400 years before Russian conquest.", arc: "The timeline" },
+  "tomyris": { stat: "~530 BCE", statLabel: "Approximate period of Tomyris, according to Herodotus", lead: "Tomyris was queen of the Massagetae in territory overlapping modern Kazakhstan. Calling her 'Kazakh' applies a 21st-century identity to a 6th-century BCE context — the Kazakh people emerged 2,000 years later.", arc: "The anachronism" },
 };
 
 const storyData = storyMyths.map(entry => ({
@@ -107,8 +119,8 @@ const storyData = storyMyths.map(entry => ({
 ---
 
 <BaseLayout
-  title="One country. Nineteen shortcuts."
-  description="Nineteen statements about Kazakhstan have spread far enough to feel like facts. Scroll through each one."
+  title={`One country. ${storyData.length} shortcuts.`}
+  description={`${storyData.length} statements about Kazakhstan have spread far enough to feel like facts. Scroll through each one.`}
 >
   <div class="sw">
 
@@ -116,8 +128,8 @@ const storyData = storyMyths.map(entry => ({
     <section class="sw-title">
       <div class="sw-title-inner">
         <p class="sw-eyebrow">Qazaq Lens · Visual story</p>
-        <h1 class="sw-headline">One country.<br>Nineteen shortcuts.</h1>
-        <p class="sw-sub">Nineteen statements about Kazakhstan have spread far enough to feel like facts. Scroll through each one. The evidence follows each claim.</p>
+        <h1 class="sw-headline">One country.<br>{storyData.length} shortcuts.</h1>
+        <p class="sw-sub">{storyData.length} statements about Kazakhstan have spread far enough to feel like facts. Scroll through each one. The evidence follows each claim.</p>
         <div class="sw-scroll-hint" aria-hidden="true">
           <svg width="20" height="28" viewBox="0 0 20 28" fill="none">
             <rect x="1" y="1" width="18" height="22" rx="9" stroke="currentColor" stroke-width="1.5"/>
@@ -135,7 +147,7 @@ const storyData = storyMyths.map(entry => ({
     </section>
 
     <!-- SCROLL SHELL -->
-    <section class="sw-shell" aria-label="Nineteen myth evidence checks">
+    <section class="sw-shell" aria-label={`${storyData.length} myth evidence checks`}>
       <div class="sw-progress" aria-hidden="true">
         <span class="sw-progress-fill" data-story-progress></span>
         <span class="sw-progress-label" data-story-progress-label>01 / {storyData.length} · {storyData.length - 1} left</span>
@@ -179,7 +191,7 @@ const storyData = storyMyths.map(entry => ({
             <span class="sw-counter">— / {storyData.length}</span>
             <span class="sw-tag">The pattern</span>
           </div>
-        <h2 class="sw-pattern-head">Nineteen myths.<br>Five patterns.</h2>
+        <h2 class="sw-pattern-head">{storyData.length} myths.<br>Five patterns.</h2>
         <p class="sw-lead">These shortcuts are not random. They emerge from historical conflation, pop culture, outdated snapshots, single-feature generalisations and sensational information gaps.</p>
           <div class="sw-pattern-grid">
             <div class="sw-pattern-card">
@@ -281,7 +293,7 @@ const storyData = storyMyths.map(entry => ({
         <p class="sw-eyebrow">The point is not a new stereotype</p>
         <h2 class="sw-ending-head">Context makes the picture larger.</h2>
         <p class="sw-ending-body">
-          These nineteen checks are a starting point, not a summary of a country. Follow the evidence, keep the uncertainty visible, and let Kazakhstan stay bigger than the shortcut assigned to it.
+          These {storyData.length} checks are a starting point, not a summary of a country. Follow the evidence, keep the uncertainty visible, and let Kazakhstan stay bigger than the shortcut assigned to it.
         </p>
         <a class="sw-cta" href="/myths">Open the full evidence library</a>
         <a class="sw-secondary-cta" href="/sources">See the source map first →</a>
@@ -437,7 +449,7 @@ const storyData = storyMyths.map(entry => ({
   text-transform: uppercase;
   transition: color .3s ease;
 }
-.sw-chapters{position:fixed;z-index:18;left:1rem;top:50%;transform:translateY(-50%);display:grid;gap:.35rem;padding:.45rem;border:1px solid var(--sw-line);border-radius:5px;background:#080807b8;backdrop-filter:blur(12px)}.sw-chapters-title{padding:.25rem .35rem;color:var(--sw-muted);font: .55rem var(--sw-font-ui);letter-spacing:.1em;text-transform:uppercase}.sw-chapters a{display:flex;align-items:center;gap:.45rem;width:1.8rem;min-height:1.5rem;overflow:hidden;color:var(--sw-muted);text-decoration:none;transition:width .25s,color .25s}.sw-chapters a span{font: .58rem var(--sw-font-ui);color:var(--sw-accent)}.sw-chapters a b{font: .58rem var(--sw-font-ui);font-weight:400;white-space:nowrap;opacity:0;transition:opacity .2s}.sw-chapters:hover a,.sw-chapters a:focus-visible{width:7.5rem}.sw-chapters:hover a b,.sw-chapters a:focus-visible b{opacity:1}.sw-chapters a.is-active{color:var(--sw-ink)}.sw-chapters a.is-active::before{content:"";position:absolute;left:.45rem;width:2px;height:1rem;background:var(--sw-accent)}
+.sw-chapters{position:fixed;z-index:18;left:1rem;top:50%;transform:translateY(-50%);display:grid;gap:.35rem;padding:.45rem;border:1px solid var(--sw-line);border-radius:5px;background:#080807b8;backdrop-filter:blur(12px);max-height:calc(100svh - 2rem);overflow-y:auto;scrollbar-width:none}.sw-chapters::-webkit-scrollbar{display:none}.sw-chapters-title{padding:.25rem .35rem;color:var(--sw-muted);font: .55rem var(--sw-font-ui);letter-spacing:.1em;text-transform:uppercase}.sw-chapters a{display:flex;align-items:center;gap:.45rem;width:7.5rem;min-height:1.5rem;overflow:hidden;color:var(--sw-muted);text-decoration:none;transition:color .25s}.sw-chapters a span{font: .58rem var(--sw-font-ui);color:var(--sw-accent)}.sw-chapters a b{font: .58rem var(--sw-font-ui);font-weight:400;white-space:nowrap;opacity:1}.sw-chapters a.is-active{color:var(--sw-ink)}.sw-chapters a.is-active::before{content:"";position:absolute;left:.45rem;width:2px;height:1rem;background:var(--sw-accent)}
 .sw-chapters-toggle{display:flex;align-items:center;justify-content:space-between;gap:.8rem;width:100%;border:0;background:transparent;color:var(--sw-muted);padding:.25rem .35rem;font:700 .55rem var(--sw-font-ui);letter-spacing:.1em;text-transform:uppercase;cursor:pointer}.sw-chapters-toggle span{color:var(--sw-accent);font-size:.9rem;line-height:1;transition:transform .2s}.sw-chapters.is-collapsed .sw-chapters-toggle span{transform:rotate(45deg)}.sw-chapters.is-collapsed .sw-chapter-links{display:none}.sw-chapter-links{display:grid;gap:.35rem}
 @media (max-width: 860px) {
   .sw-shell { grid-template-columns: 1fr; }
@@ -445,7 +457,7 @@ const storyData = storyMyths.map(entry => ({
 
 /* ─── TEXT STEPS ─────────────────────────────────────────── */
 .sw-steps {
-  padding: 0 clamp(1.5rem,5vw,4rem);
+  padding: 0 clamp(1.5rem,5vw,4rem) 0 clamp(10.5rem,13vw,11.5rem);
 }
 .sw-step {
   min-height: 90vh;
@@ -843,7 +855,7 @@ const storyData = storyMyths.map(entry => ({
   }
   .sw-photo-myth { display: none; }
   .sw-steps { padding-inline: 1.25rem; }
-  .sw-chapters{left:auto;right:.7rem;top:auto;bottom:.7rem;transform:none;display:block;max-width:calc(100vw - 1.4rem);padding:.35rem;background:#080807ee}.sw-chapters-title{display:none}.sw-chapters-toggle{color:var(--sw-ink);padding:.55rem .65rem;font-size:.65rem}.sw-chapters.is-collapsed .sw-chapters-toggle span{transform:none}.sw-chapters.is-open .sw-chapters-toggle span{transform:rotate(45deg)}.sw-chapter-links{display:none;max-height:45vh;overflow-y:auto;padding:.25rem}.sw-chapters.is-open .sw-chapter-links{display:grid}.sw-chapters a{width:auto;min-height:2rem;justify-content:flex-start;padding:.35rem .45rem;overflow:visible}.sw-chapters a b{display:block;opacity:1;white-space:normal;font-size:.58rem}.sw-chapters a.is-active::before{display:none}.sw-next{max-width:none}
+  .sw-chapters{left:auto;right:.7rem;top:auto;bottom:.7rem;transform:none;display:flex;flex-direction:column;z-index:90;max-width:calc(100vw - 1.4rem);max-height:calc(100svh - 5.5rem);padding:.35rem;background:#080807ee}.sw-chapters-title{display:none}.sw-chapters-toggle{flex-shrink:0;color:var(--sw-ink);padding:.55rem .65rem;font-size:.65rem}.sw-chapters.is-collapsed .sw-chapters-toggle span{transform:none}.sw-chapters.is-open .sw-chapters-toggle span{transform:rotate(45deg)}.sw-chapter-links{display:none;flex:1;min-height:0;overflow-y:auto;padding:.25rem}.sw-chapters.is-open .sw-chapter-links{display:grid}.sw-chapters a{width:auto;min-height:2rem;justify-content:flex-start;padding:.35rem .45rem;overflow:visible}.sw-chapters a b{display:block;opacity:1;white-space:normal;font-size:.58rem}.sw-chapters a.is-active::before{display:none}.sw-next{max-width:none}
 }
 
 /* ─── REDUCED MOTION ─────────────────────────────────────── */
@@ -882,6 +894,8 @@ const storyData = storyMyths.map(entry => ({
     chaptersToggle.setAttribute("aria-expanded", String(open));
   });
   document.querySelectorAll<HTMLAnchorElement>("[data-chapter-link]").forEach((link) => link.addEventListener("click", closeChapters));
+  if (mobileChapters()) { chapters?.classList.add("is-open"); chaptersToggle?.setAttribute("aria-expanded", "true"); }
+  window.addEventListener("scroll", () => { if (mobileChapters()) closeChapters(); }, { passive: true });
 
   // Per-myth accent colors — each myth has its own visual identity
   const accentColors: Record<string, string> = {
@@ -902,6 +916,18 @@ const storyData = storyMyths.map(entry => ({
     "giant-door":         "#9173b5",
     "horse-meat-kumys":   "#d18a52",
     "kazakhstan-memes":   "#e0b04f",
+    "charyn-canyon":      "#c2814a",
+    "europe-or-asia":     "#5b8fd4",
+    "apple-origins":      "#6daa57",
+    "horse-domestication":"#b07a45",
+    "bride-kidnapping":   "#d44a6a",
+    "semipalatinsk-safe": "#d44a25",
+    "latin-alphabet":     "#8f6fd8",
+    "almaty-earthquake":  "#4a8ab0",
+    "ai-accuracy-kazakhstan": "#3fa89e",
+    "not-middle-east":    "#c59a3e",
+    "kazakh-statehood":   "#4872b5",
+    "tomyris":            "#a86b4a",
   };
 
   // Tint overlays: accent at ~18% opacity (hex 2e ≈ 18%)
@@ -923,6 +949,18 @@ const storyData = storyMyths.map(entry => ({
     "giant-door":         "#9173b52e",
     "horse-meat-kumys":   "#d18a522e",
     "kazakhstan-memes":   "#e0b04f2e",
+    "charyn-canyon":      "#c2814a2e",
+    "europe-or-asia":     "#5b8fd42e",
+    "apple-origins":      "#6daa572e",
+    "horse-domestication":"#b07a452e",
+    "bride-kidnapping":   "#d44a6a2e",
+    "semipalatinsk-safe": "#d44a252e",
+    "latin-alphabet":     "#8f6fd82e",
+    "almaty-earthquake":  "#4a8ab02e",
+    "ai-accuracy-kazakhstan": "#3fa89e2e",
+    "not-middle-east":    "#c59a3e2e",
+    "kazakh-statehood":   "#4872b52e",
+    "tomyris":            "#a86b4a2e",
   };
 
   const photoStage = document.querySelector<HTMLElement>("[data-photo-stage]");

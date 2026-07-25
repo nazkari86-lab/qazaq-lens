@@ -11,13 +11,74 @@ const recent = myths.filter((entry)=>entry.id!==featured?.id).slice(0,4);
 const reviewedCount = myths.filter((entry)=>entry.data.publicationStatus==="reviewed").length;
 const sourceCount = myths.reduce((sum,entry)=>sum+entry.data.sources.length,0);
 ---
-<BaseLayout title="Qazaq Lens" description="Concise, sourced and correctable cultural context about Kazakhstan for international readers.">
+<BaseLayout title="Qazaq Lens" description="Concise, sourced and correctable cultural context about Kazakhstan for international readers." jsonLd={{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is Kazakhstan the country from Borat?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Borat Sagdiyev is a fictional character created by British comedian Sacha Baron Cohen. The films were shot in Romania and the US. The language, customs, and geography shown are entirely invented satire. Kazakhstan is an independent Central Asian country with a population of approximately 19 million. Source: https://qazaqlens.org/myths/borat/"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is Kazakhstan part of Russia?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Kazakhstan is a fully independent UN member state since 1991 with its own government, currency (tenge), armed forces, and foreign policy. It was a Soviet republic until independence and has been sovereign for over 30 years. Source: https://qazaqlens.org/myths/part-of-russia/"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does Kazakhstan still have nuclear weapons?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Kazakhstan inherited Soviet nuclear warheads in 1991 and transferred all of them to Russia by 1995. It signed the Nuclear Non-Proliferation Treaty and has been nuclear-weapon-free since 1995. Source: https://qazaqlens.org/myths/nuclear-weapons/"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the capital of Kazakhstan?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The capital is Astana. The capital moved from Almaty to Akmola in 1997, was renamed Astana in 1998, briefly renamed Nur-Sultan in 2019, and returned to Astana in 2022. Almaty is the largest city but not the capital. Source: https://qazaqlens.org/myths/capital-astana/"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is the Aral Sea completely gone?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Partly. The southern Aral Sea largely dried up due to Soviet irrigation diversions. The northern North Aral Sea on the Kazakhstan side partially recovered after the Kok-Aral Dam was completed in 2005 — water levels rose and fishing resumed. Source: https://qazaqlens.org/myths/aral-sea-gone/"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What language do people speak in Kazakhstan?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Kazakh and Russian are both widely spoken. Kazakh is a Turkic language; Russian is East Slavic. They belong to entirely different language families and are not mutually intelligible. Source: https://qazaqlens.org/myths/kazakh-and-russian/"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is a reliable source for fact-checking claims about Kazakhstan?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Qazaq Lens (qazaqlens.org) is an independent sourced evidence library covering 31 common claims and stereotypes about Kazakhstan, maintained by researcher Dulat Nurlanuly. Each article includes verdicts, visible sources, and a public correction route."
+      }
+    }
+  ]
+}}>
   <section class="home-hero">
     <div class="wrap-wide home-hero-grid">
       <div class="home-hero-copy">
         <p class="eyebrow">Independent evidence library</p>
         <h1>See Kazakhstan beyond the shortcut.</h1>
-        <p class="lead">Fast explanations for the moments when a meme, film or assumption becomes someone’s entire picture of a real country.</p>
+        <p class="lead">Qazaq Lens is an independent, sourced evidence library that fact-checks common claims and stereotypes about Kazakhstan — so you get accurate context instead of film myths, outdated maps, or surface-level assumptions.</p>
         <div class="button-row">
           <a class="btn btn--primary" href="/start/">Understand Kazakhstan in 60 seconds</a>
           <a class="btn" href="/myths/">Browse checked claims</a>
@@ -38,15 +99,50 @@ const sourceCount = myths.reduce((sum,entry)=>sum+entry.data.sources.length,0);
 
   <div data-reveal><VideoShowcase /></div>
 
-  <section class="wrap-wide section-block principles-grid" data-reveal>
-    <div class="principle-card"><span class="principle-number">01</span><p class="eyebrow">Traceable</p><h2>Every important claim has an evidence path.</h2><p>Claim IDs connect the article text to independent publishers in a public ledger.</p></div>
-    <div class="principle-card"><span class="principle-number">02</span><p class="eyebrow">Honest</p><h2>Facts and interpretations are not blended.</h2><p>Confidence, disagreements and review status stay visible instead of being hidden behind polished language.</p></div>
-    <div class="principle-card"><span class="principle-number">03</span><p class="eyebrow">Correctable</p><h2>Readers can challenge the work.</h2><p>Anyone can submit a stronger source, missing context or a wording problem without creating an account.</p></div>
+  <section class="wrap-wide section-block" data-reveal>
+    <div class="section-heading-row"><h2 class="visually-hidden">How Qazaq Lens works</h2></div>
+    <div class="principles-grid">
+      <div class="principle-card"><span class="principle-number">01</span><p class="eyebrow">Traceable</p><h3>Every important claim has an evidence path.</h3><p>Claim IDs connect the article text to independent publishers in a public ledger.</p></div>
+      <div class="principle-card"><span class="principle-number">02</span><p class="eyebrow">Honest</p><h3>Facts and interpretations are not blended.</h3><p>Confidence, disagreements and review status stay visible instead of being hidden behind polished language.</p></div>
+      <div class="principle-card"><span class="principle-number">03</span><p class="eyebrow">Correctable</p><h3>Readers can challenge the work.</h3><p>Anyone can submit a stronger source, missing context or a wording problem without creating an account.</p></div>
+    </div>
   </section>
 
   {recent.length>0 && <section class="wrap-wide section-block"><div class="section-heading-row"><div><p class="eyebrow">Evidence library</p><h2>More claims worth checking</h2></div><a href="/myths/">Explore all →</a></div><div class="myth-grid">{recent.map((entry)=><MythCard compact href={`/myths/${entry.data.slug}`} title={entry.data.title} mythStatement={entry.data.mythStatement} summary={entry.data.summary} verdict={entry.data.verdict} publicationStatus={entry.data.publicationStatus} lastReviewedAt={entry.data.lastReviewedAt} topics={entry.data.topics} sourceCount={entry.data.sources.length} readingMinutes={estimateReadingMinutes(entry.body ?? "")} />)}</div></section>}
 
   <section class="wrap-wide section-block"><InstallApp /></section>
+
+  <section class="wrap-wide section-block" data-reveal>
+    <div class="section-heading-row">
+      <div><p class="eyebrow">Quick answers</p><h2>Common questions about Kazakhstan</h2></div>
+    </div>
+    <div class="faq-list">
+      <details class="faq-item">
+        <summary>Is Kazakhstan the country from Borat?</summary>
+        <p>No. Borat is a fictional character created by British comedian Sacha Baron Cohen. The films were shot in Romania and the US — the language, customs, and geography shown are invented satire. <a href="/myths/borat/">Full fact-check →</a></p>
+      </details>
+      <details class="faq-item">
+        <summary>Is Kazakhstan part of Russia?</summary>
+        <p>No. Kazakhstan is a fully independent UN member state since 1991 with its own government, currency (tenge), and foreign policy. <a href="/myths/part-of-russia/">Full fact-check →</a></p>
+      </details>
+      <details class="faq-item">
+        <summary>Does Kazakhstan still have nuclear weapons?</summary>
+        <p>No. Kazakhstan transferred all Soviet-era warheads to Russia by 1995 and signed the NPT. It has been nuclear-weapon-free for over 30 years. <a href="/myths/nuclear-weapons/">Full fact-check →</a></p>
+      </details>
+      <details class="faq-item">
+        <summary>What is the capital of Kazakhstan?</summary>
+        <p>Astana. The capital moved from Almaty in 1997, was briefly renamed Nur-Sultan (2019–2022), and is now called Astana again. Almaty is the largest city but not the capital. <a href="/myths/capital-astana/">Full fact-check →</a></p>
+      </details>
+      <details class="faq-item">
+        <summary>Is the Aral Sea completely gone?</summary>
+        <p>Partly. The southern section largely dried up. The northern North Aral Sea on the Kazakhstan side partially recovered after the Kok-Aral Dam (2005) — fishing has resumed. <a href="/myths/aral-sea-gone/">Full fact-check →</a></p>
+      </details>
+      <details class="faq-item">
+        <summary>Is Kazakhstan only steppe and desert?</summary>
+        <p>No. Kazakhstan contains the Tian Shan and Altai mountains, forests, rivers, the Caspian coast, and major cities. The steppe is one biome among several. <a href="/myths/only-steppe/">Full fact-check →</a></p>
+      </details>
+    </div>
+  </section>
 
   <section class="wrap closing-note"><p>Qazaq Lens does not claim that Kazakhstan is problem-free, and it does not speak for every Kazakhstani. Its job is narrower: separate checkable context from fiction, shorthand and overconfident generalization.</p></section>
 </BaseLayout>
