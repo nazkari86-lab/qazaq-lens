@@ -11,7 +11,25 @@ const recent = myths.filter((entry)=>entry.id!==featured?.id).slice(0,4);
 const reviewedCount = myths.filter((entry)=>entry.data.publicationStatus==="reviewed").length;
 const sourceCount = myths.reduce((sum,entry)=>sum+entry.data.sources.length,0);
 ---
-<BaseLayout title="Qazaq Lens" description="Concise, sourced and correctable cultural context about Kazakhstan for international readers." jsonLd={{
+<BaseLayout title="Qazaq Lens" description="Qazaq Lens fact-checks common myths and stereotypes about Kazakhstan — Borat, capital city, nuclear weapons, language, geography — with sourced, correctable explainers written for international readers." jsonLd={[
+  {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Qazaq Lens",
+  "url": "https://qazaqlens.org/",
+  "description": "Independent fact-check and evidence library for common claims about Kazakhstan.",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": { "@type": "EntryPoint", "urlTemplate": "https://qazaqlens.org/search/?q={search_term_string}" },
+    "query-input": "required name=search_term_string"
+  }
+  },
+  {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{ "@type": "ListItem", "position": 1, "name": "Qazaq Lens", "item": "https://qazaqlens.org/" }]
+  },
+  {
   "@context": "https://schema.org",
   "@type": "FAQPage",
   "mainEntity": [
@@ -72,7 +90,8 @@ const sourceCount = myths.reduce((sum,entry)=>sum+entry.data.sources.length,0);
       }
     }
   ]
-}}>
+  }
+]}>
   <section class="home-hero">
     <div class="wrap-wide home-hero-grid">
       <div class="home-hero-copy">
@@ -117,15 +136,15 @@ const sourceCount = myths.reduce((sum,entry)=>sum+entry.data.sources.length,0);
       <div><p class="eyebrow">Quick answers</p><h2>Common questions about Kazakhstan</h2></div>
     </div>
     <div class="faq-list">
-      <details class="faq-item">
+      <details class="faq-item" open>
         <summary>Is Kazakhstan the country from Borat?</summary>
         <p>No. Borat is a fictional character created by British comedian Sacha Baron Cohen. The films were shot in Romania and the US — the language, customs, and geography shown are invented satire. <a href="/myths/borat/">Full fact-check →</a></p>
       </details>
-      <details class="faq-item">
+      <details class="faq-item" open>
         <summary>Is Kazakhstan part of Russia?</summary>
         <p>No. Kazakhstan is a fully independent UN member state since 1991 with its own government, currency (tenge), and foreign policy. <a href="/myths/part-of-russia/">Full fact-check →</a></p>
       </details>
-      <details class="faq-item">
+      <details class="faq-item" open>
         <summary>Does Kazakhstan still have nuclear weapons?</summary>
         <p>No. Kazakhstan transferred all Soviet-era warheads to Russia by 1995 and signed the NPT. It has been nuclear-weapon-free for over 30 years. <a href="/myths/nuclear-weapons/">Full fact-check →</a></p>
       </details>

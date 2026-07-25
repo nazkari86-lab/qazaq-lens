@@ -15,7 +15,7 @@ const { title, description, ogImage = "/og/default.png", type = "website", noind
 const site = Astro.site ?? new URL("https://qazaqlens.org");
 const canonicalURL = new URL(Astro.url.pathname, site);
 const ogImageURL = new URL(ogImage, site);
-const fullTitle = title === "Qazaq Lens" ? title : `${title} · Qazaq Lens`;
+const fullTitle = title === "Qazaq Lens" ? "Qazaq Lens — Kazakhstan Fact-Check & Evidence Library" : `${title} · Qazaq Lens`;
 const orgJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
