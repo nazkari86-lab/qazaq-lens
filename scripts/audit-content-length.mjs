@@ -26,6 +26,8 @@ const rules = {
   "not-middle-east": [500, 800, 6, 4, 4, ["Kazakhstan", "Middle", "language"]],
   "semipalatinsk-safe": [550, 850, 6, 4, 4, ["Semipalatinsk", "nuclear", "Kazakhstan"]],
   "tomyris": [650, 950, 6, 4, 4, ["Tomyris", "Kazakh", "Massagetae"]],
+  "safety-tourism": [550, 900, 5, 4, 4, ["Kazakhstan", "safety", "precautions"]],
+  "country-size": [600, 900, 5, 4, 4, ["Kazakhstan", "largest", "landlocked"]],
 };
 const words = (text) => (text.match(/\b[\p{L}\p{N}]+(?:[-’'][\p{L}\p{N}]+)*\b/gu) ?? []).length;
 const body = (raw) => raw.split(/^---\s*$/m).slice(-1)[0].replace(/<[^>]*>/g, " ").replace(/\[[^\]]*\]\([^)]*\)/g, " ").replace(/[#*_`>|]/g, " ");
