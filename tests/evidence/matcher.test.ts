@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { matchEvidence } from "../../src/lib/evidence/matcher";
+import { matchClaim } from "../../src/lib/evidence/matcher";
 import type { EvidenceRegistryRecord } from "../../src/lib/evidence/types";
 
 const partOfRussia: EvidenceRegistryRecord = {
@@ -69,9 +69,9 @@ const capitalAstana: EvidenceRegistryRecord = {
 
 const records = [partOfRussia, capitalAstana];
 
-describe("matchEvidence", () => {
+describe("matchClaim", () => {
   it("ranks the Russia-region myth first and explains the myth match", () => {
-    const matches = matchEvidence(
+    const matches = matchClaim(
       "Is Kazakhstan a region of Russia?",
       records,
     );
@@ -84,17 +84,31 @@ describe("matchEvidence", () => {
     });
   });
 
+  it("scores a query containing the complete myth as containment", () => {
+    const matches = matchClaim(
+      "Kazakhstan is part of Russia today",
+      records,
+    );
+
+    expect(matches[0]?.record.slug).toBe("part-of-russia");
+    expect(matches[0]?.score).toBe(0.92);
+    expect(matches[0]?.reasons).toContainEqual({
+      field: "myth",
+      label: "Kazakhstan is part of Russia",
+    });
+  });
+
   it("returns no results for generic, weak, or unrelated input", () => {
-    expect(matchEvidence("tell me something interesting", records)).toEqual([]);
-    expect(matchEvidence("weather tomorrow", records)).toEqual([]);
-    expect(matchEvidence("best hotels", records)).toEqual([]);
-    expect(matchEvidence("hello Kazakhstan", records)).toEqual([]);
-    expect(matchEvidence("Kazakhstan", records)).toEqual([]);
+    expect(matchClaim("tell me something interesting", records)).toEqual([]);
+    expect(matchClaim("weather tomorrow", records)).toEqual([]);
+    expect(matchClaim("best hotels", records)).toEqual([]);
+    expect(matchClaim("hello Kazakhstan", records)).toEqual([]);
+    expect(matchClaim("Kazakhstan", records)).toEqual([]);
   });
 
   it("sorts equal alias matches by slug", () => {
     expect(
-      matchEvidence("shared equal alias phrase", records).map(
+      matchClaim("shared equal alias phrase", records).map(
         ({ record }) => record.slug,
       ),
     ).toEqual(["capital-astana", "part-of-russia"]);
@@ -104,17 +118,23 @@ describe("matchEvidence", () => {
     const fetchSpy = vi.spyOn(globalThis, "fetch");
 
     expect(
-      matchEvidence("https://example.com/viral-post", records),
+      matchClaim("https://example.com/viral-post", records),
     ).toEqual([]);
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
-  it("does not special-case or fetch canonical Qazaq Lens URLs", () => {
+  it("rejects all Qazaq Lens URLs without fetching", () => {
     const fetchSpy = vi.spyOn(globalThis, "fetch");
 
     expect(
-      matchEvidence(
+      matchClaim(
         "https://qazaqlens.org/myths/part-of-russia/",
+        records,
+      ),
+    ).toEqual([]);
+    expect(
+      matchClaim(
+        "https://qazaqlens.org/kazakhstan-part-russia",
         records,
       ),
     ).toEqual([]);
@@ -132,23 +152,23 @@ describe("matchEvidence", () => {
     }));
 
     expect(
-      matchEvidence("What is the capital of Kazakhstan", manyRecords),
+      matchClaim("What is the capital of Kazakhstan", manyRecords),
     ).toHaveLength(5);
     expect(
-      matchEvidence("What is the capital of Kazakhstan", manyRecords, 99),
+      matchClaim("What is the capital of Kazakhstan", manyRecords, 99),
     ).toHaveLength(5);
     expect(
-      matchEvidence("What is the capital of Kazakhstan", manyRecords, 2),
+      matchClaim("What is the capital of Kazakhstan", manyRecords, 2),
     ).toHaveLength(2);
   });
 
   it("is deterministic, rounds scores, and does not mutate records", () => {
     const before = structuredClone(records);
-    const first = matchEvidence("Is Kazakhstan a region of Russia?", records);
+    const first = matchClaim("Is Kazakhstan a region of Russia?", records);
 
     for (let call = 0; call < 5; call += 1) {
       expect(
-        matchEvidence("Is Kazakhstan a region of Russia?", records),
+        matchClaim("Is Kazakhstan a region of Russia?", records),
       ).toEqual(first);
     }
 
@@ -167,7 +187,7 @@ describe("matchEvidence", () => {
       ],
     };
 
-    const [match] = matchEvidence(
+    const [match] = matchClaim(
       "Is Kazakhstan a region of Russia",
       [repeated],
     );

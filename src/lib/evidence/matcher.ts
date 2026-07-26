@@ -26,14 +26,10 @@ interface ScoredField {
   order: number;
 }
 
-function isExternalHttpUrl(value: string) {
+function isHttpUrl(value: string) {
   try {
     const url = new URL(value);
-    if (url.protocol !== "http:" && url.protocol !== "https:") {
-      return false;
-    }
-
-    return url.hostname !== "qazaqlens.org";
+    return url.protocol === "http:" || url.protocol === "https:";
   } catch {
     return false;
   }
@@ -67,7 +63,11 @@ function scoreField(
     return 1;
   }
 
-  if (normalizedField.includes(normalizedQuery)) {
+  if (
+    normalizedField.includes(normalizedQuery) ||
+    (tokenize(fieldValue).length >= 2 &&
+      normalizedQuery.includes(normalizedField))
+  ) {
     return 0.92;
   }
 
@@ -133,7 +133,7 @@ function scoreRecord(
   } satisfies ClaimMatch;
 }
 
-export function matchEvidence(
+export function matchClaim(
   query: string,
   records: readonly EvidenceRegistryRecord[],
   limit = MAX_RESULTS,
@@ -144,7 +144,7 @@ export function matchEvidence(
   if (
     normalizedQuery.length < 4 ||
     queryTokens.length < 2 ||
-    isExternalHttpUrl(query.trim())
+    isHttpUrl(query.trim())
   ) {
     return [];
   }
