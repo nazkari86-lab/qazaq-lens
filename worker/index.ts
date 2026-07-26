@@ -257,7 +257,17 @@ const corsify = (request: Request, response: Response) => {
 };
 
 const serveAsset = async (request: Request, env: Env, pathname: string) => {
-  const response = await env.ASSETS.fetch(request);
+  let response = await env.ASSETS.fetch(request);
+  // Workers Assets resolves the root document, but a custom-domain request for
+  // a static Astro directory can otherwise miss `/section/` instead of its
+  // generated `/section/index.html`. Keep the fallback limited to safe GET/HEAD
+  // document paths; files and API routes retain their original request.
+  if (response.status === 404 && (request.method === "GET" || request.method === "HEAD") && (pathname.endsWith("/") || !pathname.slice(pathname.lastIndexOf("/") + 1).includes("."))) {
+    const documentPath = pathname.endsWith("/") ? `${pathname}index.html` : `${pathname}/index.html`;
+    const documentUrl = new URL(request.url);
+    documentUrl.pathname = documentPath;
+    response = await env.ASSETS.fetch(new Request(documentUrl, request));
+  }
   const headers = new Headers(response.headers);
   if (pathname === "/data/registry.json") headers.set("cache-control", "public, max-age=3600");
   if (pathname.startsWith("/cards/")) {
