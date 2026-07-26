@@ -172,7 +172,51 @@ const realisticRecords: EvidenceRegistryRecord[] = [
       },
     ],
   },
+  {
+    ...partOfRussia,
+    slug: "yurts",
+    title: "Most Kazakhstanis Do Not Live in Yurts",
+    mythStatement: "People in Kazakhstan mostly live in yurts.",
+    summary:
+      "False. The yurt is important living heritage and remains culturally meaningful, but Kazakhstan is a predominantly urban country and most residents live in permanent modern housing.",
+    canonicalUrl: "https://qazaqlens.org/myths/yurts/",
+    aliases: ["Do Kazakhs live in yurts", "Kazakhstan yurt homes"],
+    topics: ["Culture", "Housing"],
+    claims: [
+      {
+        id: "C1",
+        statement:
+          "A majority of Kazakhstan's population lives in urban areas rather than in nomadic dwellings.",
+        significance: "critical",
+        confidence: "high",
+      },
+    ],
+  },
 ];
+
+const nuclearWeapons: EvidenceRegistryRecord = {
+  ...partOfRussia,
+  slug: "nuclear-weapons",
+  title: "Kazakhstan Does Not Still Possess Nuclear Weapons",
+  mythStatement: "Kazakhstan is a nuclear-armed state",
+  summary:
+    "Historically accurate but now false. Kazakhstan inherited the fourth-largest nuclear arsenal on earth when the Soviet Union collapsed in 1991. It then voluntarily transferred or dismantled all of those weapons by 1995.",
+  canonicalUrl: "https://qazaqlens.org/myths/nuclear-weapons/",
+  aliases: [
+    "does Kazakhstan have nuclear weapons",
+    "Kazakhstan nuclear arsenal",
+  ],
+  topics: ["History", "Statehood", "Society"],
+  claims: [
+    {
+      id: "C1",
+      statement:
+        "Kazakhstan transferred all nuclear weapons to Russia and acceded to the Nuclear Non-Proliferation Treaty as a non-nuclear weapons state, completing the process in 1995.",
+      significance: "critical",
+      confidence: "high",
+    },
+  ],
+};
 
 describe("matchClaim", () => {
   it("ranks the Russia-region myth first and explains the myth match", () => {
@@ -224,6 +268,22 @@ describe("matchClaim", () => {
       expect(matchClaim(query, realisticRecords)).toEqual([]);
     },
   );
+
+  it("ranks the nuclear-weapons claim without function-word-only lower matches", () => {
+    const functionWordDistractor: EvidenceRegistryRecord = {
+      ...capitalAstana,
+      slug: "function-word-distractor",
+      aliases: ["Kazakhstan and others have", "unrelated fixture phrase"],
+    };
+
+    expect(
+      matchClaim("does Kazakhstan have nuclear weapons", [
+        nuclearWeapons,
+        functionWordDistractor,
+        ...realisticRecords,
+      ]).map(({ record }) => record.slug),
+    ).toEqual(["nuclear-weapons"]);
+  });
 
   it("sorts equal alias matches by slug", () => {
     expect(

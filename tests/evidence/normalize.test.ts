@@ -44,6 +44,13 @@ describe("tokenize", () => {
     ]);
   });
 
+  it("removes weak function words but preserves negations", () => {
+    expect(tokenize("in with or and has have no not")).toEqual([
+      "no",
+      "not",
+    ]);
+  });
+
   it("returns no tokens for empty and punctuation-only input", () => {
     expect(tokenize("")).toEqual([]);
     expect(tokenize(" —?!… ")).toEqual([]);

@@ -1,14 +1,20 @@
 const STOP_WORDS = new Set([
   "a",
   "an",
+  "and",
   "are",
   "does",
+  "has",
+  "have",
+  "in",
   "is",
   "of",
+  "or",
   "the",
   "to",
   "was",
   "were",
+  "with",
 ]);
 
 export function normalizeText(value: string) {
