@@ -56,6 +56,7 @@ const mythSchema = z
     reviewedBy: z.array(z.string()).default([]),
     featured: z.boolean().default(false),
     topics: z.array(z.string().min(2)).min(1),
+    aliases: z.array(z.string().min(3).max(120)).max(12).default([]),
     keyTakeaways: z.array(z.string().min(12)).min(2).max(5),
     ogImage: z.string().optional(),
     heroImage: z.string().optional(),
