@@ -36,6 +36,7 @@ function createMythEntry(slug: string): MythEntry {
       featured: false,
       topics: [`Topic ${slug}`],
       aliases: [`alias ${slug}`],
+      evidenceCadence: "slow",
       keyTakeaways: [
         `First sufficiently detailed takeaway for ${slug}.`,
         `Second sufficiently detailed takeaway for ${slug}.`,

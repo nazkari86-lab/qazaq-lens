@@ -1,0 +1,48 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+<BaseLayout title="Claim suggestion moderation" description="Private moderation workspace for unmatched claim suggestions." noindex={true}>
+  <section class="wrap page-hero moderation-page">
+    <p class="eyebrow">Private workspace</p>
+    <h1>Claim suggestions.</h1>
+    <p class="lead">Review unmatched claims before they enter the editorial roadmap. The admin token stays only in this page session.</p>
+    <form class="moderation-login" data-claim-login>
+      <label>Admin token<input type="password" name="token" autocomplete="off" required /></label>
+      <button class="btn btn--primary" type="submit">Load suggestions</button>
+      <p class="form-status" data-claim-status role="status" aria-live="polite"></p>
+    </form>
+    <section class="moderation-list" data-claim-list hidden aria-live="polite"></section>
+  </section>
+</BaseLayout>
+<script>
+  const login = document.querySelector<HTMLFormElement>("[data-claim-login]");
+  const list = document.querySelector<HTMLElement>("[data-claim-list]");
+  const status = document.querySelector<HTMLElement>("[data-claim-status]");
+  let token = "";
+  const escape = (value: string) => value.replace(/[<>&"']/g, (char) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;", "'": "&#39;" }[char] ?? char));
+  const load = async () => {
+    if (!list) return;
+    const response = await fetch("/api/claim-suggestions/moderate", { headers: { authorization: `Bearer ${token}` } });
+    const data = await response.json() as { message?: string; suggestions?: Array<{ id:string; claim_text:string; context?:string; locale?:string; status:string; created_at:string }> };
+    if (!response.ok) throw new Error(data.message ?? "Could not load suggestions.");
+    const suggestions = data.suggestions ?? [];
+    list.hidden = false;
+    list.innerHTML = suggestions.length ? suggestions.map((item) => `<article class="moderation-card" data-claim-id="${escape(item.id)}"><div class="moderation-card-meta"><strong>${escape(item.status)}</strong><time>${new Date(item.created_at + "Z").toLocaleString()}</time></div><p>${escape(item.claim_text)}</p>${item.context ? `<p><strong>Context:</strong> ${escape(item.context)}</p>` : ""}<small>${escape(item.locale ?? "Locale unavailable")}</small><div class="button-row"><button class="btn" data-claim-status="reviewing" type="button">Mark reviewing</button><button class="btn btn--primary" data-claim-status="accepted" type="button">Accept</button><button class="btn" data-claim-status="rejected" type="button">Reject</button><button class="btn" data-claim-status="resolved" type="button">Resolve</button></div></article>`).join("") : "<p class=\"comments-empty\">No open claim suggestions.</p>";
+    list.querySelectorAll<HTMLButtonElement>("[data-claim-status]").forEach((button) => button.addEventListener("click", async () => {
+      const card = button.closest<HTMLElement>("[data-claim-id]");
+      const id = card?.dataset.claimId;
+      if (!id) return;
+      button.disabled = true;
+      const update = await fetch("/api/claim-suggestions/moderate", { method: "PATCH", headers: { authorization: `Bearer ${token}`, "content-type": "application/json" }, body: JSON.stringify({ id, status: button.dataset.claimStatus }) });
+      if (update.ok && button.dataset.claimStatus !== "reviewing") card?.remove(); else button.disabled = false;
+    }));
+  };
+  login?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!login.reportValidity()) return;
+    token = String(new FormData(login).get("token") ?? "");
+    if (status) status.textContent = "Loading…";
+    try { await load(); if (status) status.textContent = ""; }
+    catch (error) { if (status) status.textContent = error instanceof Error ? error.message : "Could not load suggestions."; }
+  });
+</script>

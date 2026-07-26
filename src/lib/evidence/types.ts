@@ -5,6 +5,24 @@ export const CLAIM_CONFIDENCE = ["high", "medium", "low"] as const;
 
 export type Verdict = (typeof VERDICTS)[number];
 export type PublicationStatus = (typeof PUBLICATION_STATUSES)[number];
+export const EVIDENCE_CADENCES = ["historical", "slow", "current"] as const;
+export type EvidenceCadence = (typeof EVIDENCE_CADENCES)[number];
+
+export interface EvidenceWarning {
+  code: "review-overdue" | "critical-low-confidence" | "single-independence-group" | "missing-published-date" | "missing-archive" | "external-review-pending";
+  severity: "notice" | "warning";
+  message: string;
+}
+
+export interface EvidenceHealthResult {
+  review: { days: number; dueDays: number; state: "current" | "review-soon" | "overdue" };
+  diversity: { publishers: number; sourceTypes: number; independenceGroups: number; counts: Record<string, number> };
+  sourceFreshness: { current: number; aging: number; stale: number; unknown: number };
+  claims: { critical: number; lowConfidenceCritical: number };
+  archives: { covered: number; total: number };
+  externalReview: { status: "pending" | "reviewed"; reviewers: string[] };
+  warnings: EvidenceWarning[];
+}
 export type ClaimSignificance = (typeof CLAIM_SIGNIFICANCE)[number];
 export type ClaimConfidence = (typeof CLAIM_CONFIDENCE)[number];
 

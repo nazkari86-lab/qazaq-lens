@@ -30,8 +30,8 @@ export function getSourceDiversity(myth: MythEntry) {
   const counts = myth.data.sources.reduce<Record<string, number>>((all, source) => { all[source.type] = (all[source.type] ?? 0) + 1; return all; }, {});
   const publishers = new Set(myth.data.sources.map((source) => source.publisher)).size;
   const types = Object.keys(counts).length;
-  const score = Math.min(100, Math.round((publishers / Math.max(1, myth.data.sources.length) * 55) + (types / 5 * 45)));
-  return { counts, publishers, types, score };
+  const independenceGroups = new Set(myth.data.sources.map((source) => source.independenceGroup ?? source.publisher)).size;
+  return { counts, publishers, types, independenceGroups };
 }
 
 export function getFreshness(myth: MythEntry, now = new Date()) {

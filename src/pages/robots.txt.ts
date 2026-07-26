@@ -3,9 +3,6 @@ export function GET({ site }: { site?: URL }) {
   const body = [
     "User-agent: *",
     "Allow: /",
-    "Disallow: /moderate-corrections",
-    "Disallow: /profile",
-    "Disallow: /api/",
     "",
     "# AI answer engines — explicitly allowed",
     "User-agent: GPTBot",
@@ -48,7 +45,7 @@ export function GET({ site }: { site?: URL }) {
     "",
     "# Machine-readable data",
     `# ${origin}/llms.txt`,
-    `# ${origin}/data/export.json`,
+    `# ${origin}/data/registry.json`,
   ].join("\n");
   return new Response(body, {
     headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "public, max-age=3600" },

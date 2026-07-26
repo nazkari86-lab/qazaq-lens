@@ -6,10 +6,10 @@ const compareData = myths.map((myth) => ({ slug: myth.data.slug, title: myth.dat
 const rankings = {
   recent: [...myths].sort((a,b)=>b.data.lastReviewedAt.valueOf()-a.data.lastReviewedAt.valueOf() || b.data.sources.length-a.data.sources.length),
   sourced: [...myths].sort((a,b)=>b.data.sources.length-a.data.sources.length || b.data.lastReviewedAt.valueOf()-a.data.lastReviewedAt.valueOf()),
-  diverse: [...myths].sort((a,b)=>getSourceDiversity(b).score-getSourceDiversity(a).score || b.data.sources.length-a.data.sources.length),
+  diverse: [...myths].sort((a,b)=>getSourceDiversity(b).independenceGroups-getSourceDiversity(a).independenceGroups || getSourceDiversity(b).types-getSourceDiversity(a).types || b.data.sources.length-a.data.sources.length),
 };
 const dateLabel = (date: Date) => date.toLocaleDateString("en-GB", { year:"numeric", month:"short", day:"numeric" });
-const rankingsData = { recent: rankings.recent.map((m)=>({slug:m.data.slug,title:m.data.title,metric:`Checked ${dateLabel(m.data.lastReviewedAt)} · ${m.data.sources.length} sources`})), sourced: rankings.sourced.map((m)=>({slug:m.data.slug,title:m.data.title,metric:`${m.data.sources.length} sources · ${getSourceDiversity(m).publishers} publishers`})), diverse: rankings.diverse.map((m)=>({slug:m.data.slug,title:m.data.title,metric:`Diversity score ${getSourceDiversity(m).score}/100`})) };
+const rankingsData = { recent: rankings.recent.map((m)=>({slug:m.data.slug,title:m.data.title,metric:`Checked ${dateLabel(m.data.lastReviewedAt)} · ${m.data.sources.length} sources`})), sourced: rankings.sourced.map((m)=>({slug:m.data.slug,title:m.data.title,metric:`${m.data.sources.length} sources · ${getSourceDiversity(m).publishers} publishers`})), diverse: rankings.diverse.map((m)=>({slug:m.data.slug,title:m.data.title,metric:`${getSourceDiversity(m).independenceGroups} independence groups · ${getSourceDiversity(m).types} source types`})) };
 ---
 <BaseLayout title="Compare explainers" description="Compare verdicts, evidence coverage and topics across Qazaq Lens explainers.">
   <main class="wrap-wide page-hero"><p class="eyebrow">Evidence comparison</p><h1>Put the shortcuts side by side.</h1><p class="lead">Select up to four explainers to compare their verdicts, source coverage and review dates.</p></main>

@@ -180,7 +180,12 @@ html:not([data-theme="dark"]) .astro-code span{color:var(--shiki-light)!importan
 .ask-no-match h2{margin:.25rem 0 .7rem}
 .ask-no-match>p:not(.eyebrow):not(.suggestion-intake-note){max-width:40rem;color:var(--muted)}
 .ask-no-match .btn{min-height:44px}
-.suggestion-intake-note{margin:1rem 0 0;padding-top:1rem;border-top:1px solid var(--line);color:var(--muted);font-size:.82rem}
+.suggestion-intake-form{display:grid;gap:.7rem;margin:1rem 0 0;padding-top:1rem;border-top:1px solid var(--line)}
+.suggestion-intake-form label{font:700 .72rem var(--font-mono);letter-spacing:.04em;text-transform:uppercase}
+.suggestion-intake-form textarea{width:100%;resize:vertical;min-height:88px;padding:.75rem;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--surface);color:var(--ink)}
+.suggestion-intake-form .btn{justify-self:start;min-height:44px}
+.suggestion-intake-note{margin:0;color:var(--muted);font-size:.82rem}
+.card-page{padding-bottom:5rem}.evidence-card-preview{max-width:780px;margin-top:2rem}.evidence-card-preview>img{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:var(--radius-sm);margin-bottom:1.5rem;background:var(--surface-2)}.evidence-card-preview .button-row{margin-top:1.25rem}
 @media(max-width:720px){
   .ask-verdict-note{display:grid}
   .ask-lookup{grid-template-columns:minmax(0,1fr);gap:1rem}

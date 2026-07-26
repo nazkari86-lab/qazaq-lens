@@ -22,7 +22,7 @@ import EvidenceCard from "../components/EvidenceCard.astro";
 import SelectionAnnotation from "../components/SelectionAnnotation.astro";
 import type { MythEntry } from "../lib/content";
 
-interface Source { id: string; title: string; publisher: string; author?: string; publishedAt?: string; accessedAt: Date; url: string; archivedUrl?: string; language: string; type: "primary" | "academic" | "official" | "journalistic" | "background"; }
+interface Source { id: string; title: string; publisher: string; author?: string; publishedAt?: string; accessedAt: Date; url: string; archivedUrl?: string; independenceGroup?: string; language: string; type: "primary" | "academic" | "official" | "journalistic" | "background"; }
 interface Claim { id: string; statement: string; kind: "fact" | "interpretation" | "reported-view" | "disputed"; significance: "critical" | "supporting"; confidence: "high" | "medium" | "low"; sourceIds: string[]; note?: string; }
 interface Change { date: Date; summary: string }
 interface Heading { depth: number; slug: string; text: string }
@@ -30,7 +30,7 @@ interface Props {
   title: string; mythStatement: string; summary: string; verdict: "false" | "misleading" | "partly-true" | "outdated" | "unverified" | "disputed";
   slug?: string;
   publicationStatus: "beta" | "reviewed"; publishedAt: Date; lastReviewedAt: Date; author: string; reviewStatus: string;
-  reviewedBy: string[]; sources: Source[]; claims: Claim[]; changelog: Change[]; keyTakeaways: string[]; topics: string[];
+  reviewedBy: string[]; sources: Source[]; claims: Claim[]; changelog: Change[]; keyTakeaways: string[]; topics: string[]; evidenceCadence?: "historical" | "slow" | "current";
   headings: Heading[]; readingMinutes: number; related: MythEntry[]; ogImage?: string; draft?: boolean;
   heroImage?: string; heroImageAlt?: string; heroImageCredit?: string; heroImageCreditUrl?: string;
 }
@@ -150,8 +150,8 @@ const image = new URL(props.ogImage ?? "/og/default.png", site).toString();
         <div data-reveal data-reading-detail="summary"><WhyThisMatters label="Why we checked this claim" text={whyWeChecked[props.slug ?? Astro.params.slug ?? ""] ?? "This topic was selected because it recurs in international discussions and can be tested against traceable evidence."} /></div>
         <div data-reveal data-reading-detail="summary"><WhyThisMatters text={whyThisMatters[props.slug ?? Astro.params.slug ?? ""] ?? "The wording matters because a memorable shortcut can shape how a real country and its people are understood."} /></div>
         <div data-reveal data-reading-detail="summary"><EvidenceVisual slug={props.slug ?? Astro.params.slug ?? ""} /></div>
-        <div data-reveal data-reading-detail="summary"><EvidenceHealth myth={{ data: { sources: props.sources, lastReviewedAt: props.lastReviewedAt } } as any} /></div>
-        <div data-reveal data-reading-detail="summary"><EvidenceCard title={props.title} verdict={props.verdict} summary={props.summary} slug={props.slug ?? Astro.params.slug ?? ""} /></div>
+        <div data-reveal data-reading-detail="summary"><EvidenceHealth evidence={{ sources: props.sources, claims: props.claims, lastReviewedAt: props.lastReviewedAt, evidenceCadence: props.evidenceCadence, publicationStatus: props.publicationStatus, reviewedBy: props.reviewedBy }} /></div>
+        <div data-reveal data-reading-detail="summary"><EvidenceCard title={props.title} slug={props.slug ?? Astro.params.slug ?? ""} sourceCount={props.sources.length} lastReviewedAt={props.lastReviewedAt} publicationStatus={props.publicationStatus} /></div>
         <div class="article-body" data-reveal data-reading-detail="article"><slot /></div>
         <div data-reveal data-reading-detail="evidence"><ClaimLedger claims={props.claims} /></div>
         <div data-reveal data-reading-detail="evidence"><KnowledgeCheck claims={props.claims} /></div>

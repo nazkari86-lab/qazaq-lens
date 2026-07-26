@@ -71,9 +71,13 @@ const serializedRegistry = JSON.stringify(registry).replace(/</g, "\\u003c");
       >
         Suggest this topic
       </button>
-      <p id="suggestion-intake-note" class="suggestion-intake-note" data-suggestion-note hidden>
-        Suggestion intake is being added. Nothing has been submitted.
-      </p>
+      <form id="suggestion-intake-note" class="suggestion-intake-form" data-suggestion-form hidden>
+        <label for="suggestion-context">Optional context or link</label>
+        <textarea id="suggestion-context" name="context" maxlength="500" rows="3" placeholder="Where did you see this claim?"></textarea>
+        <label class="visually-hidden" aria-hidden="true">Leave this blank<input name="website" tabindex="-1" autocomplete="off" /></label>
+        <button class="btn btn--primary" type="submit">Send for editorial review</button>
+        <p class="suggestion-intake-note" data-suggestion-note role="status" aria-live="polite"></p>
+      </form>
     </section>
   </div>
 
@@ -104,7 +108,9 @@ const serializedRegistry = JSON.stringify(registry).replace(/</g, "\\u003c");
     const noMatch = document.querySelector<HTMLElement>("[data-no-match]");
     const registryNode = document.querySelector<HTMLScriptElement>("#ask-registry");
     const suggestButton = document.querySelector<HTMLButtonElement>("[data-suggest-topic]");
+    const suggestionForm = document.querySelector<HTMLFormElement>("[data-suggestion-form]");
     const suggestionNote = document.querySelector<HTMLElement>("[data-suggestion-note]");
+    let lookupStartedAt = Date.now();
 
     const registry = JSON.parse(registryNode?.textContent ?? "[]") as EvidenceRegistryRecord[];
     const verdictLabels: Record<Verdict, string> = {
@@ -125,6 +131,11 @@ const serializedRegistry = JSON.stringify(registry).replace(/</g, "\\u003c");
     };
     const externalUrlMessage =
       "This release cannot read external pages. Describe the claim in the page, or submit the URL for editorial review.";
+    const recordImpact = (eventType: string, articleSlug = "") => {
+      const body = JSON.stringify({ eventType, articleSlug });
+      if (navigator.sendBeacon) { navigator.sendBeacon("/api/impact/event", new Blob([body], { type: "application/json" })); return; }
+      void fetch("/api/impact/event", { method: "POST", headers: { "content-type": "application/json" }, body, keepalive: true, credentials: "same-origin" });
+    };
 
     const clearState = () => {
       if (status) status.textContent = "";
@@ -136,7 +147,8 @@ const serializedRegistry = JSON.stringify(registry).replace(/</g, "\\u003c");
       if (resultsTitle) resultsTitle.textContent = "Closest published evidence";
       if (ambiguousLabel) ambiguousLabel.hidden = true;
       if (noMatch) noMatch.hidden = true;
-      if (suggestionNote) suggestionNote.hidden = true;
+      if (suggestionNote) suggestionNote.textContent = "";
+      if (suggestionForm) suggestionForm.hidden = true;
       if (suggestButton) suggestButton.setAttribute("aria-expanded", "false");
     };
 
@@ -269,9 +281,42 @@ const serializedRegistry = JSON.stringify(registry).replace(/</g, "\\u003c");
     };
 
     suggestButton?.addEventListener("click", () => {
-      if (suggestionNote) suggestionNote.hidden = false;
+      if (suggestionForm) suggestionForm.hidden = false;
       suggestButton.setAttribute("aria-expanded", "true");
-      if (status) status.textContent = "Suggestion intake is not open yet. Nothing was submitted.";
+      if (status) status.textContent = "You can send this claim to the private editorial queue.";
+    });
+
+    suggestionForm?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!input || !suggestionForm.reportValidity()) return;
+      const submit = suggestionForm.querySelector<HTMLButtonElement>('button[type="submit"]');
+      if (submit) submit.disabled = true;
+      if (suggestionNote) suggestionNote.textContent = "Sending…";
+      try {
+        const formData = new FormData(suggestionForm);
+        const response = await fetch("/api/claim-suggestions", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            claim: input.value.trim(),
+            context: String(formData.get("context") ?? ""),
+            website: String(formData.get("website") ?? ""),
+            startedAt: lookupStartedAt,
+            locale: document.documentElement.lang || navigator.language,
+          }),
+        });
+        const data = await response.json() as { message?: string };
+        if (!response.ok) throw new Error(data.message ?? "The suggestion could not be sent.");
+        suggestionForm.reset();
+        if (suggestionNote) suggestionNote.textContent = "Sent for editorial review. Qazaq Lens has not assigned it a verdict.";
+        if (status) status.textContent = "Suggestion sent for editorial review.";
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "The suggestion could not be sent.";
+        if (suggestionNote) suggestionNote.textContent = message;
+        if (status) status.textContent = message;
+      } finally {
+        if (submit) submit.disabled = false;
+      }
     });
 
     form?.addEventListener("submit", (event) => {
@@ -280,6 +325,7 @@ const serializedRegistry = JSON.stringify(registry).replace(/</g, "\\u003c");
       clearState();
 
       const query = input.value.trim();
+      lookupStartedAt = Date.now();
       const parsedUrl = parseHttpUrl(query);
       if (parsedUrl) {
         const canonicalSlug = getCanonicalArticleSlug(query);
@@ -287,6 +333,7 @@ const serializedRegistry = JSON.stringify(registry).replace(/</g, "\\u003c");
         if (canonicalSlug) {
           const record = registry.find(({ slug }) => slug === canonicalSlug);
           if (record) {
+            recordImpact("ask_match", record.slug);
             showMatches(
               [{ record, score: 1, reasons: [] }],
               `Found the canonical article “${record.title}”.`,
@@ -302,10 +349,13 @@ const serializedRegistry = JSON.stringify(registry).replace(/</g, "\\u003c");
       }
 
       const matches = matchClaim(query, registry, 5);
-      if (matches.length === 0) {
+        if (matches.length === 0) {
+        recordImpact("ask_no_match");
         showNoMatch("No strong published evidence match was found. No verdict was assigned.");
         return;
       }
+
+      recordImpact("ask_match", matches[0].record.slug);
 
       showMatches(
         matches,

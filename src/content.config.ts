@@ -1,6 +1,7 @@
 import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
 import { z } from "astro/zod";
+import { EVIDENCE_CADENCES } from "./lib/evidence/types";
 
 import {
   CLAIM_CONFIDENCE,
@@ -63,6 +64,7 @@ const mythSchema = z
     reviewedBy: z.array(z.string()).default([]),
     featured: z.boolean().default(false),
     topics: z.array(z.string().min(2)).min(1),
+    evidenceCadence: z.enum(EVIDENCE_CADENCES).default("slow"),
     aliases: z.array(z.string().trim().min(3).max(120)).max(12).default([]),
     keyTakeaways: z.array(z.string().min(12)).min(2).max(5),
     ogImage: z.string().optional(),

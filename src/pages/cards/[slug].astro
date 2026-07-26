@@ -1,0 +1,19 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getEvidenceRegistry } from "../../lib/evidence/registry";
+import { buildCardModel, buildShortCitation } from "../../lib/evidence/cards";
+export async function getStaticPaths() { return (await getEvidenceRegistry()).map((record) => ({ params: { slug: record.slug }, props: { record } })); }
+const { record } = Astro.props;
+const card = buildCardModel(record);
+const citation = buildShortCitation(record);
+---
+<BaseLayout title={`${card.title} — Evidence card`} description={card.summary}>
+  <main class="wrap page-hero card-page"><p class="eyebrow">Reusable context</p><h1>{card.title}</h1><article class="evidence-card-preview card"><img src={card.svgUrl} alt={`${card.verdict}: ${card.myth}`} /><p class="eyebrow">Myth examined</p><p class="myth-quote">“{card.myth}”</p><p>{card.summary}</p><p class="fine-print">{card.sourceLabel} · {card.lastReviewedLabel} · {card.reviewLabel}</p><div class="button-row"><a class="btn btn--primary" href={card.articleUrl}>Read full evidence</a><a class="btn" href={card.svgUrl} download data-card-svg>Download SVG</a><button class="btn" type="button" data-card-png>Download PNG</button><button class="btn" type="button" data-copy-card-citation>Copy citation</button><button class="btn" type="button" data-copy-card-embed>Copy embed</button></div><p class="form-status" data-card-status role="status" aria-live="polite"></p></article></main>
+  <script is:inline define:vars={{ citation, card }}>
+    const status = document.querySelector("[data-card-status]"); const announce = (message) => { if (status) status.textContent = message; }; const recordDownload = () => { const body = JSON.stringify({ eventType: "card_download", articleSlug: card.slug }); if (navigator.sendBeacon) navigator.sendBeacon("/api/impact/event", new Blob([body], { type: "application/json" })); else void fetch("/api/impact/event", { method: "POST", headers: { "content-type": "application/json" }, body, keepalive: true, credentials: "same-origin" }); };
+    document.querySelector("[data-copy-card-citation]")?.addEventListener("click", async () => { try { await navigator.clipboard.writeText(citation); announce("Citation copied."); } catch { announce("Copy failed. Select the citation from the page URL."); } });
+    document.querySelector("[data-copy-card-embed]")?.addEventListener("click", async () => { const code = `<iframe src="${card.cardUrl}?embed=1" title="Qazaq Lens evidence card" loading="lazy" width="640" height="420"></iframe>`; try { await navigator.clipboard.writeText(code); announce("Embed code copied."); } catch { announce("Copy failed."); } });
+    document.querySelector("[data-card-svg]")?.addEventListener("click", recordDownload);
+    document.querySelector("[data-card-png]")?.addEventListener("click", async () => { try { const response = await fetch(card.svgUrl); if (!response.ok) throw new Error("Card unavailable"); const svg = await response.text(); const blob = new Blob([svg], { type: "image/svg+xml" }); const image = new Image(); const objectUrl = URL.createObjectURL(blob); await new Promise((resolve, reject) => { image.onload = resolve; image.onerror = reject; image.src = objectUrl; }); const canvas = document.createElement("canvas"); canvas.width = 1200; canvas.height = 630; canvas.getContext("2d")?.drawImage(image, 0, 0); URL.revokeObjectURL(objectUrl); const link = document.createElement("a"); link.href = canvas.toDataURL("image/png"); link.download = `qazaq-lens-${card.slug}.png`; link.click(); recordDownload(); announce("PNG downloaded."); } catch { announce("PNG could not be created. Download the SVG instead."); } });
+  </script>
+</BaseLayout>

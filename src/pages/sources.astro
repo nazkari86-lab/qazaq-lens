@@ -24,7 +24,7 @@ const claimsPerSource = (allClaims.length / allSources.length).toFixed(2);
   <section class="wrap-wide page-hero">
     <p class="eyebrow">Evidence dashboard</p>
     <h1>See the library behind the conclusions.</h1>
-    <p class="lead">Counts do not prove that an article is correct. They make the editorial structure visible so readers can inspect where evidence comes from and where review is still incomplete.</p>
+    <p class="lead">Counts do not prove that an article is correct. They make the editorial structure visible so readers can inspect where evidence comes from and where review is still incomplete.</p><p><a class="btn" href="/data/registry.json" download data-registry-download>Download the public registry (JSON)</a></p>
   </section>
 
   <section class="wrap-wide dashboard-stats" aria-label="Evidence totals">
@@ -103,3 +103,6 @@ const claimsPerSource = (allClaims.length / allSources.length).toFixed(2);
     </article>
   </section>
 </BaseLayout>
+<script is:inline>
+  document.querySelector("[data-registry-download]")?.addEventListener("click", () => { const body = JSON.stringify({ eventType: "data_download" }); if (navigator.sendBeacon) navigator.sendBeacon("/api/impact/event", new Blob([body], { type: "application/json" })); else void fetch("/api/impact/event", { method: "POST", headers: { "content-type": "application/json" }, body, keepalive: true, credentials: "same-origin" }); });
+</script>

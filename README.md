@@ -4,7 +4,7 @@ Qazaq Lens is a free, mobile-first evidence library that explains recurring misc
 
 ## Current product
 
-- Nineteen public-beta explainers with claim-by-claim citations
+- Thirty-three public-beta explainers with claim-by-claim citations
 - Pudding-style visual story route at `/story/`
 - Searchable evidence library with topic filters
 - Public evidence dashboard showing article, claim, source and publisher counts
@@ -14,6 +14,9 @@ Qazaq Lens is a free, mobile-first evidence library that explains recurring misc
 - Installable PWA with offline fallback and cached core explainers
 - RSS feed, sitemap, dynamic robots.txt, canonical URLs, Open Graph cards and Article JSON-LD
 - First-party correction form backed by a Cloudflare Worker route + D1
+- Ask Qazaq Lens: deterministic, local claim matching against a generated public registry
+- Dated evidence cards with canonical SVG downloads and copyable citations
+- Public impact dashboard that reports aggregate actions, corrections and editorial outcomes—not raw traffic as people
 - GitHub Actions CI, content-schema validation, function-SQL audit and built-HTML integrity audit
 
 ## Requirements
@@ -94,7 +97,7 @@ Binding name: QAZAQ_LENS_DB
 Database: qazaq-lens-feedback
 ```
 
-Redeploy and submit a real test correction. Before D1 is connected, the page still offers a copy-to-clipboard fallback so a report is not lost.
+Redeploy and submit a real test correction. The same migration workflow also creates the comment, unmatched-claim and impact tables used by `/moderate/`, `/moderate-claims/` and `/impact/`. `COMMENTS_ADMIN_TOKEN` must remain a Worker secret and is required for every moderation route.
 
 For local Function testing:
 
