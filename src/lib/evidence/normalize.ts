@@ -1,0 +1,28 @@
+const STOP_WORDS = new Set([
+  "a",
+  "an",
+  "are",
+  "does",
+  "is",
+  "of",
+  "the",
+  "to",
+  "was",
+  "were",
+]);
+
+export function normalizeText(value: string) {
+  return value
+    .normalize("NFKD")
+    .replace(/\p{M}+/gu, "")
+    .replace(/[\u2018\u2019'`]/g, "")
+    .replace(/[^\p{L}\p{N}]+/gu, " ")
+    .trim()
+    .toLocaleLowerCase("en");
+}
+
+export function tokenize(value: string) {
+  return normalizeText(value)
+    .split(" ")
+    .filter((token) => token.length > 1 && !STOP_WORDS.has(token));
+}
