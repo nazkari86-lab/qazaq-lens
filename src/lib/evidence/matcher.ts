@@ -27,7 +27,7 @@ interface ScoredField {
 }
 
 const DOMAIN_LIKE =
-  /^(?:www\.)?(?:[\p{L}\p{N}](?:[\p{L}\p{M}\p{N}-]{0,61}[\p{L}\p{M}\p{N}])?\.)+[\p{L}\p{N}](?:[\p{L}\p{M}\p{N}-]{0,61}[\p{L}\p{M}\p{N}])?\.?(?::\d{1,5})?(?:[/?#][^\s]*)?$/iu;
+  /^(?:www\.)?(?:[\p{L}\p{N}](?:[\p{L}\p{M}\p{N}-]{0,61}[\p{L}\p{M}\p{N}])?\.)+(?:xn--[a-z0-9-]{2,59}|\p{L}[\p{L}\p{M}]{1,62})\.?(?::\d{1,5})?(?:[/?#][^\s]*)?$/iu;
 const IPV4_LIKE =
   /^(?:\d{1,3}\.){3}\d{1,3}(?::\d{1,5})?(?:[/?#][^\s]*)?$/u;
 const BRACKETED_IPV6_LIKE =
@@ -53,8 +53,8 @@ function isHostLikeInput(value: string) {
     return false;
   }
 
-  if (/^https?:\/\//iu.test(candidate)) {
-    return isValidHttpUrl(candidate);
+  if (isValidHttpUrl(candidate)) {
+    return true;
   }
 
   if (candidate.startsWith("//")) {
@@ -92,12 +92,41 @@ function overlapScore(queryTokens: string[], fieldValue: string) {
   return (2 * sharedTokens.size) / (queryTokenSet.size + fieldTokens.size);
 }
 
+function containsTokenSequence(longer: string[], shorter: string[]) {
+  for (let start = 0; start <= longer.length - shorter.length; start += 1) {
+    if (
+      shorter.every((token, offset) => token === longer[start + offset])
+    ) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function isStrongTokenContainment(
+  queryTokens: string[],
+  fieldTokens: string[],
+) {
+  const [shorter, longer] =
+    queryTokens.length <= fieldTokens.length
+      ? [queryTokens, fieldTokens]
+      : [fieldTokens, queryTokens];
+
+  return (
+    shorter.length > 0 &&
+    shorter.length / longer.length >= 0.6 &&
+    containsTokenSequence(longer, shorter)
+  );
+}
+
 function scoreField(
   normalizedQuery: string,
   queryTokens: string[],
   fieldValue: string,
 ) {
   const normalizedField = normalizeText(fieldValue);
+  const fieldTokens = tokenize(fieldValue);
   if (!normalizedField) {
     return 0;
   }
@@ -106,11 +135,7 @@ function scoreField(
     return 1;
   }
 
-  if (
-    normalizedField.includes(normalizedQuery) ||
-    (tokenize(fieldValue).length >= 2 &&
-      normalizedQuery.includes(normalizedField))
-  ) {
+  if (isStrongTokenContainment(queryTokens, fieldTokens)) {
     return 0.92;
   }
 

@@ -131,6 +131,47 @@ const realisticRecords: EvidenceRegistryRecord[] = [
       },
     ],
   },
+  {
+    ...partOfRussia,
+    slug: "horse-meat-kumys",
+    title: "Kazakhstan Is Not Defined by Horse Meat and Kumys",
+    mythStatement:
+      "People in Kazakhstan eat horse meat and drink fermented mare's milk every day",
+    summary:
+      "Misleading. Horse meat, kazy and kumys are important parts of Kazakh culinary heritage, but a traditional food is not a complete description of what every person eats or drinks in contemporary Kazakhstan.",
+    canonicalUrl: "https://qazaqlens.org/myths/horse-meat-kumys/",
+    aliases: ["Kazakh horse meat", "Does everyone drink kumys"],
+    topics: ["Food", "Culture"],
+    claims: [
+      {
+        id: "C1",
+        statement:
+          "Horse meat, kazy and kumys are recognised parts of Kazakh culinary and horse-breeding heritage.",
+        significance: "critical",
+        confidence: "high",
+      },
+    ],
+  },
+  {
+    ...partOfRussia,
+    slug: "landlocked-isolated",
+    title: "Landlocked Does Not Mean Isolated",
+    mythStatement: "Kazakhstan has no sea and is cut off from the world",
+    summary:
+      "Misleading. Kazakhstan is the world's largest landlocked country, but it borders the Caspian Sea and sits at the intersection of major rail, road, energy and trade routes linking China, Russia, Central Asia and Europe.",
+    canonicalUrl: "https://qazaqlens.org/myths/landlocked-isolated/",
+    aliases: ["Is Kazakhstan isolated", "Kazakhstan sea access"],
+    topics: ["Geography", "Trade"],
+    claims: [
+      {
+        id: "C1",
+        statement:
+          "Kazakhstan is the world's largest landlocked country and also borders the Caspian Sea.",
+        significance: "critical",
+        confidence: "high",
+      },
+    ],
+  },
 ];
 
 describe("matchClaim", () => {
@@ -177,6 +218,13 @@ describe("matchClaim", () => {
     },
   );
 
+  it.each(["people in", "country with", "state or", "has no"])(
+    "does not treat short sequence %j inside a long field as containment",
+    (query) => {
+      expect(matchClaim(query, realisticRecords)).toEqual([]);
+    },
+  );
+
   it("sorts equal alias matches by slug", () => {
     expect(
       matchClaim("shared equal alias phrase", records).map(
@@ -188,10 +236,15 @@ describe("matchClaim", () => {
   it.each([
     "https://example.com/kazakhstan-part-russia",
     "https://example.com/kazakhstan part russia",
+    "http:example.com/kazakhstan-part-russia",
+    "https:example.com/kazakhstan-part-russia",
+    "https:/example.com/kazakhstan-part-russia",
     "//example.com/kazakhstan-part-russia",
     "www.example.com/kazakhstan-part-russia",
     "example.com/kazakhstan-part-russia",
+    "example.org/kazakhstan-part-russia",
     "пример.рф/kazakhstan-part-russia",
+    "example.xn--p1ai/kazakhstan-part-russia",
     "example.com:8443/kazakhstan-part-russia",
     "localhost:4321/kazakhstan-part-russia",
     "192.168.1.10/kazakhstan-part-russia",
@@ -201,6 +254,23 @@ describe("matchClaim", () => {
 
     expect(matchClaim(input, records)).toEqual([]);
     expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    "Kazakhstan-v2.0-language",
+    "20.25-million-Kazakhstanis",
+  ])("treats compact dotted prose %j as matchable text", (input) => {
+    const dottedProseRecord: EvidenceRegistryRecord = {
+      ...capitalAstana,
+      aliases: [
+        "Kazakhstan-v2.0-language",
+        "20.25-million-Kazakhstanis",
+      ],
+    };
+
+    expect(matchClaim(input, [dottedProseRecord])[0]?.record.slug).toBe(
+      "capital-astana",
+    );
   });
 
   it("rejects all Qazaq Lens URLs without fetching", () => {
