@@ -41,9 +41,18 @@ const htmlFiles = allFiles.filter((file) => file.endsWith('.html') && !path.base
 const requiredFiles = [
   'manifest.webmanifest', 'sw.js', 'robots.txt', 'sitemap-index.xml', 'rss.xml',
   'favicon.svg', 'icons/icon-192.png', 'icons/icon-512.png', '_headers', '_routes.json',
+  'ask/index.html', 'data/registry.json',
 ];
 for (const relative of requiredFiles) {
   if (!await exists(path.join(dist, relative))) errors.push(`Missing required build file: ${relative}`);
+}
+
+const askPagePath = path.join(dist, 'ask', 'index.html');
+if (await exists(askPagePath)) {
+  const askPage = await fs.readFile(askPagePath, 'utf8');
+  for (const marker of ['Ask Qazaq Lens', 'No automatic verdict']) {
+    if (!askPage.includes(marker)) errors.push(`ask/index.html: missing “${marker}”`);
+  }
 }
 
 const placeholderPatterns = [

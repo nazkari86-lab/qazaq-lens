@@ -1,0 +1,298 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getEvidenceRegistry } from "../lib/evidence/registry";
+
+const registry = await getEvidenceRegistry();
+const serializedRegistry = JSON.stringify(registry).replace(/</g, "\\u003c");
+---
+<BaseLayout
+  title="Ask Qazaq Lens"
+  description="Match a claim about Kazakhstan against the published Qazaq Lens evidence registry, privately in your browser."
+>
+  <div class="ask-page">
+    <header class="wrap page-hero ask-hero">
+      <p class="eyebrow">Search the evidence registry</p>
+      <h1>Ask Qazaq Lens.</h1>
+      <p class="lead">
+        Describe a claim about Kazakhstan. Matching happens in your browser
+        against published evidence; no AI invents a verdict.
+      </p>
+      <aside class="ask-verdict-note" aria-label="How results should be interpreted">
+        <strong>No automatic verdict.</strong>
+        <span>The page finds relevant reporting for you to read. It does not decide whether your wording is true or false.</span>
+      </aside>
+    </header>
+
+    <section class="wrap ask-lookup" aria-labelledby="ask-lookup-title">
+      <div>
+        <h2 id="ask-lookup-title">Check a claim</h2>
+        <form class="ask-form" data-ask-form>
+          <label for="claim-input">Claim or Qazaq Lens article URL</label>
+          <textarea
+            id="claim-input"
+            name="claim"
+            minlength="4"
+            maxlength="500"
+            rows="5"
+            required
+            placeholder="Is Kazakhstan part of Russia?"
+          ></textarea>
+          <button class="btn btn--primary" type="submit">Check the evidence</button>
+        </form>
+        <p class="ask-status" data-ask-status role="status" aria-live="polite"></p>
+      </div>
+      <aside class="ask-method-note">
+        <p class="eyebrow">What is checked</p>
+        <p>
+          Your wording is compared with article titles, registered claims,
+          aliases, topics and summaries. Nothing is sent from this form.
+        </p>
+      </aside>
+    </section>
+
+    <section class="wrap ask-results" data-ask-results hidden aria-labelledby="ask-results-title">
+      <p class="ambiguous-label" data-ambiguous-label hidden>Several plausible matches</p>
+      <h2 id="ask-results-title" data-results-title>Closest published evidence</h2>
+      <div class="ask-result-list" data-result-list></div>
+    </section>
+
+    <section class="wrap ask-no-match card" data-no-match hidden aria-labelledby="ask-no-match-title">
+      <p class="eyebrow">Editorial gap</p>
+      <h2 id="ask-no-match-title">No strong match yet</h2>
+      <p>
+        This means the registry is insufficient, not that the claim is true or false.
+      </p>
+      <button
+        class="btn"
+        type="button"
+        data-suggest-topic
+        aria-expanded="false"
+        aria-controls="suggestion-intake-note"
+      >
+        Suggest this topic
+      </button>
+      <p id="suggestion-intake-note" class="suggestion-intake-note" data-suggestion-note hidden>
+        Suggestion intake is being added. Nothing has been submitted.
+      </p>
+    </section>
+  </div>
+
+  <script
+    is:inline
+    id="ask-registry"
+    type="application/json"
+    data-record-count={registry.length}
+    set:html={serializedRegistry}
+  ></script>
+
+  <script>
+    import { matchClaim } from "../lib/evidence/matcher";
+    import type {
+      ClaimMatch,
+      EvidenceRegistryRecord,
+      MatchReason,
+      Verdict,
+    } from "../lib/evidence/types";
+
+    const form = document.querySelector<HTMLFormElement>("[data-ask-form]");
+    const input = document.querySelector<HTMLTextAreaElement>("#claim-input");
+    const status = document.querySelector<HTMLElement>("[data-ask-status]");
+    const results = document.querySelector<HTMLElement>("[data-ask-results]");
+    const resultsTitle = document.querySelector<HTMLElement>("[data-results-title]");
+    const ambiguousLabel = document.querySelector<HTMLElement>("[data-ambiguous-label]");
+    const resultList = document.querySelector<HTMLElement>("[data-result-list]");
+    const noMatch = document.querySelector<HTMLElement>("[data-no-match]");
+    const registryNode = document.querySelector<HTMLScriptElement>("#ask-registry");
+    const suggestButton = document.querySelector<HTMLButtonElement>("[data-suggest-topic]");
+    const suggestionNote = document.querySelector<HTMLElement>("[data-suggestion-note]");
+
+    const registry = JSON.parse(registryNode?.textContent ?? "[]") as EvidenceRegistryRecord[];
+    const verdictLabels: Record<Verdict, string> = {
+      false: "False",
+      misleading: "Misleading",
+      "partly-true": "Partly true",
+      outdated: "Outdated",
+      unverified: "Unverified",
+      disputed: "Disputed",
+    };
+    const reasonLabels: Record<MatchReason["field"], string> = {
+      myth: "Myth statement",
+      title: "Article title",
+      alias: "Related wording",
+      claim: "Registered claim",
+      topic: "Topic",
+      summary: "Article summary",
+    };
+    const externalUrlMessage =
+      "This release cannot read external pages. Describe the claim in the page, or submit the URL for editorial review.";
+
+    const clearState = () => {
+      if (status) status.textContent = "";
+      if (resultList) resultList.replaceChildren();
+      if (results) {
+        results.hidden = true;
+        results.classList.remove("ask-results--ambiguous");
+      }
+      if (resultsTitle) resultsTitle.textContent = "Closest published evidence";
+      if (ambiguousLabel) ambiguousLabel.hidden = true;
+      if (noMatch) noMatch.hidden = true;
+      if (suggestionNote) suggestionNote.hidden = true;
+      if (suggestButton) suggestButton.setAttribute("aria-expanded", "false");
+    };
+
+    const parseHttpUrl = (value: string) => {
+      try {
+        const url = new URL(value);
+        if (url.protocol !== "http:" && url.protocol !== "https:") return null;
+        return url;
+      } catch {
+        return null;
+      }
+    };
+
+    const formatReviewedDate = (date: string) => {
+      const parsed = new Date(`${date}T00:00:00Z`);
+      if (Number.isNaN(parsed.getTime())) return date;
+      return new Intl.DateTimeFormat("en-GB", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+        timeZone: "UTC",
+      }).format(parsed);
+    };
+
+    const appendText = <K extends keyof HTMLElementTagNameMap>(
+      parent: HTMLElement,
+      tagName: K,
+      text: string,
+      className?: string,
+    ) => {
+      const element = document.createElement(tagName);
+      element.textContent = text;
+      if (className) element.className = className;
+      parent.append(element);
+      return element;
+    };
+
+    const renderMatch = (match: ClaimMatch, index: number, ambiguous: boolean) => {
+      const { record, reasons } = match;
+      const article = document.createElement("article");
+      article.className = "claim-result";
+      if (index === 0 && !ambiguous) article.classList.add("claim-result--closest");
+
+      appendText(
+        article,
+        "span",
+        `Verdict: ${verdictLabels[record.verdict]}`,
+        `ask-verdict ask-verdict--${record.verdict}`,
+      );
+      appendText(article, "h3", record.title);
+      appendText(article, "p", `Claim examined: “${record.mythStatement}”`, "claim-result-myth");
+      appendText(article, "p", record.summary, "claim-result-summary");
+
+      const metadata = document.createElement("dl");
+      metadata.className = "claim-result-meta";
+      appendText(metadata, "dt", "Sources checked");
+      const dateValue = document.createElement("dd");
+      const time = document.createElement("time");
+      time.dateTime = record.lastReviewedAt;
+      time.textContent = formatReviewedDate(record.lastReviewedAt);
+      dateValue.append(time);
+      metadata.append(dateValue);
+      appendText(metadata, "dt", "Source count");
+      appendText(metadata, "dd", String(record.sourceCount));
+      article.append(metadata);
+
+      appendText(article, "h4", "Why this matched", "match-reasons-title");
+      const reasonList = document.createElement("ul");
+      reasonList.className = "match-reasons";
+      if (reasons.length === 0) {
+        appendText(reasonList, "li", "Exact canonical Qazaq Lens article URL");
+      } else {
+        reasons.forEach((reason) => {
+          appendText(reasonList, "li", `${reasonLabels[reason.field]}: ${reason.label}`);
+        });
+      }
+      article.append(reasonList);
+
+      const link = document.createElement("a");
+      link.className = "claim-result-link";
+      link.href = record.canonicalUrl;
+      link.textContent = "Read the canonical article";
+      article.append(link);
+      return article;
+    };
+
+    const showMatches = (matches: ClaimMatch[], announcement: string) => {
+      if (!results || !resultList) return;
+      const ambiguous =
+        matches.length > 1 &&
+        Math.abs(matches[0].score - matches[1].score) <= 0.04;
+      if (ambiguous) {
+        results.classList.add("ask-results--ambiguous");
+        if (resultsTitle) resultsTitle.textContent = "Several plausible matches";
+        if (ambiguousLabel) ambiguousLabel.hidden = false;
+      }
+      matches.forEach((match, index) => {
+        resultList.append(renderMatch(match, index, ambiguous));
+      });
+      results.hidden = false;
+      if (status) status.textContent = announcement;
+    };
+
+    const showNoMatch = (announcement: string) => {
+      if (noMatch) noMatch.hidden = false;
+      if (status) status.textContent = announcement;
+    };
+
+    suggestButton?.addEventListener("click", () => {
+      if (suggestionNote) suggestionNote.hidden = false;
+      suggestButton.setAttribute("aria-expanded", "true");
+      if (status) status.textContent = "Suggestion intake is not open yet. Nothing was submitted.";
+    });
+
+    form?.addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (!form.reportValidity() || !input) return;
+      clearState();
+
+      const query = input.value.trim();
+      const parsedUrl = parseHttpUrl(query);
+      if (parsedUrl) {
+        const hostname = parsedUrl.hostname.toLowerCase();
+        const isQazaqLens =
+          hostname === "qazaqlens.org" || hostname === "www.qazaqlens.org";
+        const pathMatch = parsedUrl.pathname.match(/^\/myths\/([^/]+)\/?$/);
+
+        if (isQazaqLens && pathMatch) {
+          const record = registry.find(({ slug }) => slug === pathMatch[1]);
+          if (record) {
+            showMatches(
+              [{ record, score: 1, reasons: [] }],
+              `Found the canonical article “${record.title}”.`,
+            );
+          } else {
+            showNoMatch("That Qazaq Lens article is not in the published evidence registry.");
+          }
+          return;
+        }
+
+        if (status) status.textContent = externalUrlMessage;
+        return;
+      }
+
+      const matches = matchClaim(query, registry, 5);
+      if (matches.length === 0) {
+        showNoMatch("No strong published evidence match was found. No verdict was assigned.");
+        return;
+      }
+
+      showMatches(
+        matches,
+        matches.length === 1
+          ? "Found one published evidence match. Review the article before drawing a conclusion."
+          : `Found ${matches.length} published evidence matches. Review them before drawing a conclusion.`,
+      );
+    });
+  </script>
+</BaseLayout>
