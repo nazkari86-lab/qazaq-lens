@@ -150,6 +150,30 @@ const serializedRegistry = JSON.stringify(registry).replace(/</g, "\\u003c");
       }
     };
 
+    // ask-canonical-helper:start
+    const getCanonicalArticleSlug = (value: string) => {
+      try {
+        const url = new URL(value);
+        const authority = value.match(/^https:\/\/([^/?#]+)(?:[/?#]|$)/i)?.[1];
+        if (
+          url.protocol !== "https:" ||
+          url.hostname !== "qazaqlens.org" ||
+          url.port !== "" ||
+          url.username !== "" ||
+          url.password !== "" ||
+          !authority ||
+          authority.includes(":")
+        ) {
+          return null;
+        }
+
+        return url.pathname.match(/^\/myths\/([^/]+)\/?$/)?.[1] ?? null;
+      } catch {
+        return null;
+      }
+    };
+    // ask-canonical-helper:end
+
     const formatReviewedDate = (date: string) => {
       const parsed = new Date(`${date}T00:00:00Z`);
       if (Number.isNaN(parsed.getTime())) return date;
@@ -192,7 +216,7 @@ const serializedRegistry = JSON.stringify(registry).replace(/</g, "\\u003c");
 
       const metadata = document.createElement("dl");
       metadata.className = "claim-result-meta";
-      appendText(metadata, "dt", "Sources checked");
+      appendText(metadata, "dt", "Last reviewed");
       const dateValue = document.createElement("dd");
       const time = document.createElement("time");
       time.dateTime = record.lastReviewedAt;
@@ -259,13 +283,10 @@ const serializedRegistry = JSON.stringify(registry).replace(/</g, "\\u003c");
       const query = input.value.trim();
       const parsedUrl = parseHttpUrl(query);
       if (parsedUrl) {
-        const hostname = parsedUrl.hostname.toLowerCase();
-        const isQazaqLens =
-          hostname === "qazaqlens.org" || hostname === "www.qazaqlens.org";
-        const pathMatch = parsedUrl.pathname.match(/^\/myths\/([^/]+)\/?$/);
+        const canonicalSlug = getCanonicalArticleSlug(query);
 
-        if (isQazaqLens && pathMatch) {
-          const record = registry.find(({ slug }) => slug === pathMatch[1]);
+        if (canonicalSlug) {
+          const record = registry.find(({ slug }) => slug === canonicalSlug);
           if (record) {
             showMatches(
               [{ record, score: 1, reasons: [] }],
