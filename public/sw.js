@@ -1,7 +1,7 @@
 const VERSION = "qazaq-lens-v6";
 const BUILD_ASSETS = [];
 const CORE = [
-  "/", "/start/", "/myths/", "/sources/", "/methodology/", "/about/", "/privacy/", "/offline/", "/story/", "/search/", "/compare/", "/profile/", "/paths/", "/gallery/", "/data-status/",
+  "/", "/start/", "/challenge/", "/myths/", "/sources/", "/methodology/", "/about/", "/privacy/", "/offline/", "/story/", "/search/", "/compare/", "/profile/", "/paths/", "/gallery/", "/data-status/",
   "/myths/aral-sea-gone/", "/myths/baikonur/", "/myths/borat/", "/myths/capital-astana/", "/myths/economy-oil/", "/myths/ethnic-diversity/", "/myths/giant-door/", "/myths/horse-meat-kumys/", "/myths/internet-closed/", "/myths/kazakh-and-russian/", "/myths/kazakhstan-memes/", "/myths/landlocked-isolated/", "/myths/nuclear-energy-weapons/", "/myths/nuclear-weapons/", "/myths/only-steppe/", "/myths/part-of-russia/", "/myths/secular-muslim/", "/myths/silk-roads/", "/myths/yurts/",
   "/manifest.webmanifest", "/favicon.svg", "/favicon.ico", "/icons/icon-192.png", "/icons/icon-512.png", ...BUILD_ASSETS
 ];

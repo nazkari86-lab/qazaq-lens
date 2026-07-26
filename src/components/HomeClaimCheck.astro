@@ -1,0 +1,26 @@
+<section class="home-check" aria-labelledby="home-check-title">
+  <div>
+    <p class="eyebrow">Start with what you heard</p>
+    <h2 id="home-check-title">Check a claim about Kazakhstan.</h2>
+    <p>Matching happens privately in your browser. Qazaq Lens finds relevant published evidence; it does not invent a verdict.</p>
+  </div>
+  <form class="home-check-form" data-home-check-form action="/ask/" method="get">
+    <label for="home-claim">Claim, question or Qazaq Lens link</label>
+    <div class="home-check-control">
+      <input id="home-claim" name="claim" maxlength="500" required placeholder="Is Kazakhstan part of Russia?" />
+      <button class="btn btn--primary" type="submit">Check evidence</button>
+    </div>
+    <p class="fine-print">Your text is transferred to Ask using this browser session, not placed in the URL.</p>
+  </form>
+</section>
+<script>
+  const homeCheckForm = document.querySelector<HTMLFormElement>("[data-home-check-form]");
+  homeCheckForm?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    if (!homeCheckForm.reportValidity()) return;
+    const field = homeCheckForm.elements.namedItem("claim");
+    if (!(field instanceof HTMLInputElement)) return;
+    try { sessionStorage.setItem("qazaq-lens-ask-draft", field.value.trim()); } catch {}
+    window.location.assign("/ask/");
+  });
+</script>

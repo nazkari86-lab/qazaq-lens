@@ -2,12 +2,12 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import MythCard from "../components/MythCard.astro";
 import InstallApp from "../components/InstallApp.astro";
-import VideoShowcase from "../components/VideoShowcase.astro";
 import QazaqLensBanner from "../components/QazaqLensBanner.astro";
+import HomeClaimCheck from "../components/HomeClaimCheck.astro";
 import { estimateReadingMinutes, getVisibleMyths } from "../lib/content";
 const myths = (await getVisibleMyths()).sort((a,b)=>b.data.publishedAt.valueOf()-a.data.publishedAt.valueOf());
 const featured = myths.find((entry)=>entry.data.featured) ?? myths[0];
-const recent = myths.filter((entry)=>entry.id!==featured?.id).slice(0,4);
+const recent = myths.filter((entry)=>entry.id!==featured?.id).slice(0,3);
 const reviewedCount = myths.filter((entry)=>entry.data.publicationStatus==="reviewed").length;
 const sourceCount = myths.reduce((sum,entry)=>sum+entry.data.sources.length,0);
 ---
@@ -99,13 +99,13 @@ const sourceCount = myths.reduce((sum,entry)=>sum+entry.data.sources.length,0);
         <h1>See Kazakhstan beyond the shortcut.</h1>
         <p class="lead">Qazaq Lens is an independent, sourced evidence library that fact-checks common claims and stereotypes about Kazakhstan — so you get accurate context instead of film myths, outdated maps, or surface-level assumptions.</p>
         <div class="button-row">
-          <a class="btn btn--primary" href="/start/">Understand Kazakhstan in 60 seconds</a>
-          <a class="btn" href="/myths/">Browse checked claims</a>
+          <a class="btn btn--primary" href="#check-a-claim">Check something you heard</a>
+          <a class="btn" href="/challenge/">Take the 3-minute challenge</a>
         </div>
         <dl class="hero-stats">
           <div><dt>{myths.length}</dt><dd>public explainers</dd></div>
           <div><dt>{sourceCount}</dt><dd>visible sources</dd></div>
-          <div><dt>{reviewedCount}</dt><dd>independently reviewed</dd></div>
+          <div><dt>{reviewedCount}</dt><dd>external reviews published</dd></div>
         </dl>
       </div>
       <QazaqLensBanner explainerCount={myths.length} sourceCount={sourceCount} />
@@ -114,33 +114,40 @@ const sourceCount = myths.reduce((sum,entry)=>sum+entry.data.sources.length,0);
 
   <section class="trust-strip" data-reveal><div class="wrap-wide trust-grid"><span>Claims linked to evidence</span><span>Uncertainty shown openly</span><span>Corrections accepted publicly</span><span>No ads or tracking profiles</span></div></section>
 
-  {featured && <section class="wrap-wide section-block"><div class="section-heading-row"><div><p class="eyebrow">Flagship explainer</p><h2>Start with the most common reference</h2></div><a href="/myths/">View all →</a></div><MythCard href={`/myths/${featured.data.slug}`} title={featured.data.title} mythStatement={featured.data.mythStatement} summary={featured.data.summary} verdict={featured.data.verdict} publicationStatus={featured.data.publicationStatus} lastReviewedAt={featured.data.lastReviewedAt} topics={featured.data.topics} sourceCount={featured.data.sources.length} readingMinutes={estimateReadingMinutes(featured.body ?? "")} /></section>}
-
-  <div data-reveal><VideoShowcase /></div>
+  <div id="check-a-claim" class="wrap-wide section-block home-check-wrap"><HomeClaimCheck /></div>
 
   <section class="wrap-wide section-block" data-reveal>
-    <div class="section-heading-row"><h2 class="visually-hidden">How Qazaq Lens works</h2></div>
-    <div class="principles-grid">
-      <div class="principle-card"><span class="principle-number">01</span><p class="eyebrow">Traceable</p><h3>Every important claim has an evidence path.</h3><p>Claim IDs connect the article text to independent publishers in a public ledger.</p></div>
-      <div class="principle-card"><span class="principle-number">02</span><p class="eyebrow">Honest</p><h3>Facts and interpretations are not blended.</h3><p>Confidence, disagreements and review status stay visible instead of being hidden behind polished language.</p></div>
-      <div class="principle-card"><span class="principle-number">03</span><p class="eyebrow">Correctable</p><h3>Readers can challenge the work.</h3><p>Anyone can submit a stronger source, missing context or a wording problem without creating an account.</p></div>
+    <div class="section-heading-row"><div><p class="eyebrow">Choose your way in</p><h2>Three ways to replace a shortcut with context.</h2></div></div>
+    <div class="home-path-grid">
+      <a class="home-path card" href="/challenge/"><span>01</span><p class="eyebrow">Play</p><h3>Test your picture</h3><p>Eight fast questions, immediate evidence and a result you can share.</p><strong>Start challenge →</strong></a>
+      <a class="home-path card" href="/story/"><span>02</span><p class="eyebrow">Experience</p><h3>Scroll through the myths</h3><p>One visual object follows 33 familiar claims and the patterns behind them.</p><strong>Open visual story →</strong></a>
+      <a class="home-path card" href="/start/"><span>03</span><p class="eyebrow">Learn</p><h3>Get the essentials</h3><p>A concise orientation to modern Kazakhstan before you explore deeper evidence.</p><strong>Understand in 60 seconds →</strong></a>
     </div>
   </section>
 
-  {recent.length>0 && <section class="wrap-wide section-block"><div class="section-heading-row"><div><p class="eyebrow">Evidence library</p><h2>More claims worth checking</h2></div><a href="/myths/">Explore all →</a></div><div class="myth-grid">{recent.map((entry)=><MythCard compact href={`/myths/${entry.data.slug}`} title={entry.data.title} mythStatement={entry.data.mythStatement} summary={entry.data.summary} verdict={entry.data.verdict} publicationStatus={entry.data.publicationStatus} lastReviewedAt={entry.data.lastReviewedAt} topics={entry.data.topics} sourceCount={entry.data.sources.length} readingMinutes={estimateReadingMinutes(entry.body ?? "")} />)}</div></section>}
+  <section class="wrap-wide section-block" data-reveal>
+    <div class="section-heading-row"><div><p class="eyebrow">The evidence loop</p><h2>Useful in the moment, inspectable afterwards.</h2></div></div>
+    <div class="principles-grid">
+      <div class="principle-card"><span class="principle-number">01</span><p class="eyebrow">Check</p><h3>Start with the exact claim.</h3><p>Ask matches your wording against published explainers without sending it to an AI model.</p></div>
+      <div class="principle-card"><span class="principle-number">02</span><p class="eyebrow">Inspect</p><h3>Follow the evidence path.</h3><p>Claim IDs, confidence labels, sources and unresolved limitations stay visible.</p></div>
+      <div class="principle-card"><span class="principle-number">03</span><p class="eyebrow">Carry</p><h3>Share context, not a slogan.</h3><p>Reusable evidence cards preserve the verdict, review date and canonical source link.</p></div>
+    </div>
+  </section>
 
-  <section class="wrap-wide section-block"><InstallApp /></section>
+  {featured && <section class="wrap-wide section-block"><div class="section-heading-row"><div><p class="eyebrow">Flagship explainer</p><h2>See how one word changes the whole story.</h2></div><a href="/myths/">View all →</a></div><MythCard href={`/myths/${featured.data.slug}`} title={featured.data.title} mythStatement={featured.data.mythStatement} summary={featured.data.summary} verdict={featured.data.verdict} publicationStatus={featured.data.publicationStatus} lastReviewedAt={featured.data.lastReviewedAt} topics={featured.data.topics} sourceCount={featured.data.sources.length} readingMinutes={estimateReadingMinutes(featured.body ?? "")} /></section>}
+
+  {recent.length>0 && <section class="wrap-wide section-block"><div class="section-heading-row"><div><p class="eyebrow">Latest evidence</p><h2>Recently added or rechecked.</h2></div><a href="/myths/">Explore all 33 →</a></div><div class="myth-grid myth-grid--three">{recent.map((entry)=><MythCard compact href={`/myths/${entry.data.slug}`} title={entry.data.title} mythStatement={entry.data.mythStatement} summary={entry.data.summary} verdict={entry.data.verdict} publicationStatus={entry.data.publicationStatus} lastReviewedAt={entry.data.lastReviewedAt} topics={entry.data.topics} sourceCount={entry.data.sources.length} readingMinutes={estimateReadingMinutes(entry.body ?? "")} />)}</div></section>}
 
   <section class="wrap-wide section-block" data-reveal>
     <div class="section-heading-row">
       <div><p class="eyebrow">Quick answers</p><h2>Common questions about Kazakhstan</h2></div>
     </div>
     <div class="faq-list">
-      <details class="faq-item" open>
+      <details class="faq-item">
         <summary>Is Kazakhstan the country from Borat?</summary>
         <p>No. Borat is a fictional character created by British comedian Sacha Baron Cohen. The films were shot in Romania and the US — the language, customs, and geography shown are invented satire. <a href="/myths/borat/">Full fact-check →</a></p>
       </details>
-      <details class="faq-item" open>
+      <details class="faq-item">
         <summary>Is Kazakhstan part of Russia?</summary>
         <p>No. Kazakhstan is a fully independent UN member state since 1991 with its own government, currency (tenge), and foreign policy. <a href="/myths/part-of-russia/">Full fact-check →</a></p>
       </details>
@@ -162,6 +169,8 @@ const sourceCount = myths.reduce((sum,entry)=>sum+entry.data.sources.length,0);
       </details>
     </div>
   </section>
+
+  <section class="wrap-wide section-block"><InstallApp /></section>
 
   <section class="wrap closing-note"><p>Qazaq Lens does not claim that Kazakhstan is problem-free, and it does not speak for every Kazakhstani. Its job is narrower: separate checkable context from fiction, shorthand and overconfident generalization.</p></section>
 </BaseLayout>

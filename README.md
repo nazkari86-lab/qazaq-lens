@@ -32,15 +32,12 @@ npm ci
 npm run dev
 ```
 
-### Optional privacy-friendly analytics
+### Privacy-friendly analytics
 
-To see aggregated page views and referrers in Cloudflare Web Analytics, create a Web Analytics token in the Cloudflare dashboard and provide it at build time:
-
-```bash
-Cloudflare Web Analytics Beacon is intentionally disabled in the public build so an account token is not embedded in every page. Use Cloudflare's zone analytics for aggregate traffic, or add a privacy-preserving analytics provider after reviewing its data-collection policy.
-```
-
-The analytics beacon is disabled when the variable is absent. Never commit the token to the repository.
+Cloudflare Web Analytics is enabled through Cloudflare's automatic zone injection. The
+repository does not contain the site token. The CSP permits only Cloudflare's official
+beacon host and same-origin reporting endpoint. The public token identifies the site's
+analytics stream; it is not an account or API credential.
 
 Open `http://localhost:4321`.
 

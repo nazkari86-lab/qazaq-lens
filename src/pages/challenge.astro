@@ -1,0 +1,203 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const questions = [
+  {
+    claim: "Kazakhstan is a region of Russia.",
+    options: ["True", "False", "It has no clear status"],
+    answer: 1,
+    explanation: "Kazakhstan has been a sovereign UN member state since 1991.",
+    href: "/myths/part-of-russia/",
+  },
+  {
+    claim: "Kazakh and Russian belong to the same language family.",
+    options: ["True", "False", "Only in Kazakhstan"],
+    answer: 1,
+    explanation: "Kazakh is Turkic; Russian is Indo-European.",
+    href: "/myths/kazakh-and-russian/",
+  },
+  {
+    claim: "The northern part of the Aral Sea has partially recovered.",
+    options: ["True", "False", "The whole sea fully recovered"],
+    answer: 0,
+    explanation: "The Kok-Aral Dam helped the North Aral Sea recover, while the wider basin remains severely damaged.",
+    href: "/myths/aral-sea-gone/",
+  },
+  {
+    claim: "Kazakhstan still possesses the Soviet nuclear warheads it inherited.",
+    options: ["True", "False", "Only tactical weapons"],
+    answer: 1,
+    explanation: "All inherited warheads were transferred or dismantled by 1995.",
+    href: "/myths/nuclear-weapons/",
+  },
+  {
+    claim: "Most people in Kazakhstan live in yurts.",
+    options: ["True", "False", "Only in winter"],
+    answer: 1,
+    explanation: "The yurt is living cultural heritage, not the standard home of most residents.",
+    href: "/myths/yurts/",
+  },
+  {
+    claim: "Borat was filmed as a documentary about everyday life in Kazakhstan.",
+    options: ["True", "False", "Only the first film"],
+    answer: 1,
+    explanation: "Borat is fictional satire; its invented Kazakhstan is not documentary evidence.",
+    href: "/myths/borat/",
+  },
+  {
+    claim: "Kazakhstan is the world's largest landlocked country.",
+    options: ["True", "False", "It has an ocean coast"],
+    answer: 0,
+    explanation: "It is landlocked in the technical sense, while remaining connected through the Caspian and overland routes.",
+    href: "/myths/landlocked-isolated/",
+  },
+  {
+    claim: "A viral video of a giant door proves an archaeological discovery.",
+    options: ["True", "False", "Already confirmed by UNESCO"],
+    answer: 1,
+    explanation: "The available record does not verify the video's archaeological claim.",
+    href: "/myths/giant-door/",
+  },
+] as const;
+const payload = JSON.stringify(questions).replace(/</g, "\\u003c");
+---
+<BaseLayout title="Kazakhstan Myth Challenge" description="Eight quick questions reveal where familiar shortcuts about Kazakhstan diverge from published evidence." jsonLd={{
+  "@context": "https://schema.org",
+  "@type": "Quiz",
+  "name": "Kazakhstan Myth Challenge",
+  "description": "Eight evidence-linked questions about common claims and stereotypes concerning Kazakhstan.",
+  "educationalLevel": "General public",
+  "about": { "@type": "Country", "name": "Kazakhstan" },
+  "hasPart": questions.map((question) => ({
+    "@type": "Question",
+    "name": question.claim,
+    "acceptedAnswer": { "@type": "Answer", "text": question.options[question.answer] },
+    "suggestedAnswer": question.options.map((option) => ({ "@type": "Answer", "text": option })),
+  })),
+}}>
+  <section class="challenge-hero">
+    <div class="wrap challenge-hero-inner">
+      <p class="eyebrow">Eight claims · about three minutes</p>
+      <h1>How accurate is your picture of Kazakhstan?</h1>
+      <p class="lead">Choose before the evidence appears. Nothing is stored, and the result stays in your browser unless you share it.</p>
+      <button class="btn btn--primary" type="button" data-challenge-start>Start the challenge</button>
+    </div>
+  </section>
+  <section class="wrap challenge-shell" data-challenge hidden aria-live="polite">
+    <div class="challenge-progress" aria-hidden="true"><span data-challenge-progress></span></div>
+    <p class="eyebrow" data-challenge-count>Question 1 of {questions.length}</p>
+    <article class="challenge-card card">
+      <h2 data-challenge-claim></h2>
+      <div class="challenge-options" data-challenge-options></div>
+      <div class="challenge-feedback" data-challenge-feedback hidden>
+        <strong data-challenge-verdict></strong>
+        <p data-challenge-explanation></p>
+        <a data-challenge-source>Read the evidence →</a>
+      </div>
+      <button class="btn btn--primary" type="button" data-challenge-next hidden>Next question</button>
+    </article>
+  </section>
+  <section class="wrap challenge-result card" data-challenge-result hidden aria-live="polite">
+    <p class="eyebrow">Challenge complete</p>
+    <p class="challenge-score" data-challenge-score></p>
+    <h2 data-challenge-title></h2>
+    <p data-challenge-summary></p>
+    <div class="button-row">
+      <button class="btn btn--primary" type="button" data-challenge-share>Share result</button>
+      <button class="btn" type="button" data-challenge-restart>Try again</button>
+      <a class="btn" href="/story/">Explore all 33 shortcuts</a>
+    </div>
+    <p class="form-status" data-challenge-status role="status"></p>
+  </section>
+  <script is:inline id="challenge-data" type="application/json" set:html={payload}></script>
+  <script>
+    type Question = { claim: string; options: string[]; answer: number; explanation: string; href: string };
+    const challengeData = JSON.parse(document.querySelector("#challenge-data")?.textContent ?? "[]") as Question[];
+    const challengeRoot = document.querySelector<HTMLElement>("[data-challenge]");
+    const resultRoot = document.querySelector<HTMLElement>("[data-challenge-result]");
+    const claim = document.querySelector<HTMLElement>("[data-challenge-claim]");
+    const options = document.querySelector<HTMLElement>("[data-challenge-options]");
+    const feedback = document.querySelector<HTMLElement>("[data-challenge-feedback]");
+    const verdict = document.querySelector<HTMLElement>("[data-challenge-verdict]");
+    const explanation = document.querySelector<HTMLElement>("[data-challenge-explanation]");
+    const source = document.querySelector<HTMLAnchorElement>("[data-challenge-source]");
+    const next = document.querySelector<HTMLButtonElement>("[data-challenge-next]");
+    const count = document.querySelector<HTMLElement>("[data-challenge-count]");
+    const progress = document.querySelector<HTMLElement>("[data-challenge-progress]");
+    const status = document.querySelector<HTMLElement>("[data-challenge-status]");
+    let questionIndex = 0;
+    let score = 0;
+
+    const renderQuestion = () => {
+      const question = challengeData[questionIndex];
+      if (!question || !options) return;
+      options.replaceChildren();
+      if (claim) claim.textContent = question.claim;
+      if (count) count.textContent = `Question ${questionIndex + 1} of ${challengeData.length}`;
+      if (progress) progress.style.width = `${((questionIndex + 1) / challengeData.length) * 100}%`;
+      if (feedback) feedback.hidden = true;
+      if (next) next.hidden = true;
+      question.options.forEach((label, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "challenge-option";
+        button.textContent = label;
+        button.addEventListener("click", () => answerQuestion(index, button));
+        options.append(button);
+      });
+    };
+
+    const answerQuestion = (selected: number, selectedButton: HTMLButtonElement) => {
+      const question = challengeData[questionIndex];
+      if (!question || !options) return;
+      const correct = selected === question.answer;
+      if (correct) score += 1;
+      options.querySelectorAll<HTMLButtonElement>("button").forEach((button, index) => {
+        button.disabled = true;
+        if (index === question.answer) button.classList.add("is-correct");
+      });
+      if (!correct) selectedButton.classList.add("is-wrong");
+      if (verdict) verdict.textContent = correct ? "Correct." : "Not quite.";
+      if (explanation) explanation.textContent = question.explanation;
+      if (source) source.href = question.href;
+      if (feedback) feedback.hidden = false;
+      if (next) {
+        next.hidden = false;
+        next.textContent = questionIndex === challengeData.length - 1 ? "See my result" : "Next question";
+        next.focus();
+      }
+    };
+
+    const showResult = () => {
+      if (challengeRoot) challengeRoot.hidden = true;
+      if (resultRoot) resultRoot.hidden = false;
+      const percentage = Math.round((score / challengeData.length) * 100);
+      const title = score === challengeData.length ? "You saw through every shortcut." : score >= 6 ? "You have a strong evidence lens." : score >= 4 ? "A few familiar shortcuts slipped through." : "The familiar picture needs a closer look.";
+      const scoreNode = document.querySelector<HTMLElement>("[data-challenge-score]");
+      const titleNode = document.querySelector<HTMLElement>("[data-challenge-title]");
+      const summaryNode = document.querySelector<HTMLElement>("[data-challenge-summary]");
+      if (scoreNode) scoreNode.textContent = `${score} / ${challengeData.length}`;
+      if (titleNode) titleNode.textContent = title;
+      if (summaryNode) summaryNode.textContent = `${percentage}% correct. The point is not to know everything—it is to notice when a shortcut is standing in for evidence.`;
+      resultRoot?.scrollIntoView({ behavior: "smooth", block: "center" });
+    };
+
+    const start = () => {
+      questionIndex = 0; score = 0;
+      resultRoot?.setAttribute("hidden", "");
+      if (challengeRoot) challengeRoot.hidden = false;
+      renderQuestion();
+      challengeRoot?.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+    document.querySelector("[data-challenge-start]")?.addEventListener("click", start);
+    document.querySelector("[data-challenge-restart]")?.addEventListener("click", start);
+    next?.addEventListener("click", () => { questionIndex += 1; if (questionIndex >= challengeData.length) showResult(); else renderQuestion(); });
+    document.querySelector("[data-challenge-share]")?.addEventListener("click", async () => {
+      const text = `I scored ${score}/${challengeData.length} on the Qazaq Lens Kazakhstan Myth Challenge.`;
+      try {
+        if (navigator.share) await navigator.share({ title: "Kazakhstan Myth Challenge", text, url: location.href });
+        else { await navigator.clipboard.writeText(`${text} ${location.href}`); if (status) status.textContent = "Result copied."; }
+      } catch { if (status) status.textContent = "Sharing was cancelled."; }
+    });
+  </script>
+</BaseLayout>

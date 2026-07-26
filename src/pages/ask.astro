@@ -364,5 +364,14 @@ const serializedRegistry = JSON.stringify(registry).replace(/</g, "\\u003c");
           : `Found ${matches.length} published evidence matches. Review them before drawing a conclusion.`,
       );
     });
+
+    try {
+      const draft = sessionStorage.getItem("qazaq-lens-ask-draft");
+      if (draft && input && form) {
+        sessionStorage.removeItem("qazaq-lens-ask-draft");
+        input.value = draft;
+        form.requestSubmit();
+      }
+    } catch {}
   </script>
 </BaseLayout>
