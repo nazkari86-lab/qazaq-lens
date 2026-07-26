@@ -162,7 +162,8 @@ const serializedRegistry = JSON.stringify(registry).replace(/</g, "\\u003c");
           url.username !== "" ||
           url.password !== "" ||
           !authority ||
-          authority.includes(":")
+          authority.includes(":") ||
+          authority.includes("@")
         ) {
           return null;
         }

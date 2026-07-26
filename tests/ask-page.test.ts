@@ -46,6 +46,7 @@ describe("Ask page canonical URL policy", () => {
     "https://www.qazaqlens.org/myths/part-of-russia/",
     "https://qazaqlens.org:8443/myths/part-of-russia/",
     "https://qazaqlens.org:443/myths/part-of-russia/",
+    "https://@qazaqlens.org/myths/part-of-russia/",
     "https://reader@qazaqlens.org/myths/part-of-russia/",
     "https://reader:secret@qazaqlens.org/myths/part-of-russia/",
     "https://qazaqlens.org/about/",
