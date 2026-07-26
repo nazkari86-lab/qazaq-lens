@@ -2,6 +2,13 @@ import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
 import { z } from "astro/zod";
 
+import {
+  CLAIM_CONFIDENCE,
+  CLAIM_SIGNIFICANCE,
+  PUBLICATION_STATUSES,
+  VERDICTS,
+} from "./lib/evidence/types";
+
 const sourceType = z.enum([
   "primary",
   "academic",
@@ -29,8 +36,8 @@ const claimSchema = z.object({
   id: z.string().regex(/^C\d+$/, "Claim IDs must look like C1, C2, ..."),
   statement: z.string().min(12),
   kind: z.enum(["fact", "interpretation", "reported-view", "disputed"]),
-  significance: z.enum(["critical", "supporting"]),
-  confidence: z.enum(["high", "medium", "low"]).default("high"),
+  significance: z.enum(CLAIM_SIGNIFICANCE),
+  confidence: z.enum(CLAIM_CONFIDENCE).default("high"),
   sourceIds: z.array(z.string().regex(/^S\d+$/)).min(2),
   note: z.string().optional(),
 });
@@ -46,8 +53,8 @@ const mythSchema = z
     mythStatement: z.string().min(5),
     slug: z.string().regex(/^[a-z0-9-]+$/),
     summary: z.string().min(40),
-    verdict: z.enum(["false", "misleading", "partly-true", "outdated", "unverified", "disputed"]),
-    publicationStatus: z.enum(["beta", "reviewed"]),
+    verdict: z.enum(VERDICTS),
+    publicationStatus: z.enum(PUBLICATION_STATUSES),
     draft: z.boolean().default(false),
     publishedAt: z.coerce.date(),
     lastReviewedAt: z.coerce.date(),
@@ -56,7 +63,7 @@ const mythSchema = z
     reviewedBy: z.array(z.string()).default([]),
     featured: z.boolean().default(false),
     topics: z.array(z.string().min(2)).min(1),
-    aliases: z.array(z.string().min(3).max(120)).max(12).default([]),
+    aliases: z.array(z.string().trim().min(3).max(120)).max(12).default([]),
     keyTakeaways: z.array(z.string().min(12)).min(2).max(5),
     ogImage: z.string().optional(),
     heroImage: z.string().optional(),
@@ -86,6 +93,19 @@ const mythSchema = z
         message: "Claim IDs must be unique within an article.",
       });
     }
+
+    const normalizedAliases = new Set<string>();
+    data.aliases.forEach((alias, aliasIndex) => {
+      const normalizedAlias = alias.toLowerCase();
+      if (normalizedAliases.has(normalizedAlias)) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["aliases", aliasIndex],
+          message: "Aliases must be unique within an article, ignoring case.",
+        });
+      }
+      normalizedAliases.add(normalizedAlias);
+    });
 
     if (data.lastReviewedAt < data.publishedAt) {
       ctx.addIssue({
