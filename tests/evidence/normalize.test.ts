@@ -20,8 +20,18 @@ describe("normalizeText", () => {
   });
 
   it("normalizes composed and decomposed Unicode identically", () => {
-    expect(normalizeText("Café")).toBe("cafe");
+    expect(normalizeText("Café")).toBe("café");
     expect(normalizeText("Café")).toBe(normalizeText("Cafe\u0301"));
+  });
+
+  it("preserves semantically meaningful marks across scripts", () => {
+    expect(normalizeText("Йод")).toBe("йод");
+    expect(normalizeText("Иод")).toBe("иод");
+    expect(normalizeText("Йод")).not.toBe(normalizeText("Иод"));
+    expect(normalizeText("Қазақ тілі: Ә Ө Ү Ұ І Ғ Ң Һ")).toBe(
+      "қазақ тілі ә ө ү ұ і ғ ң һ",
+    );
+    expect(normalizeText("किताब")).toBe("किताब");
   });
 });
 

@@ -69,6 +69,70 @@ const capitalAstana: EvidenceRegistryRecord = {
 
 const records = [partOfRussia, capitalAstana];
 
+const realisticRecords: EvidenceRegistryRecord[] = [
+  {
+    ...partOfRussia,
+    slug: "secular-muslim",
+    title: "Kazakhstan Is Muslim-Majority and Constitutionally Secular",
+    mythStatement:
+      "Kazakhstan is either an Islamic state or a country with no religious life",
+    summary:
+      "Misleading. Islam is important to Kazakhstan's history and population, but the constitution defines the state as secular and protects freedom of religion. Neither an Islamic-state label nor a claim that religion is absent describes the country well.",
+    canonicalUrl: "https://qazaqlens.org/myths/secular-muslim/",
+    aliases: ["Is Kazakhstan secular", "Religion in Kazakhstan"],
+    topics: ["Religion", "Society"],
+    claims: [
+      {
+        id: "C1",
+        statement:
+          "Islam is the majority religious tradition in Kazakhstan, while other religious communities also live and worship in the country.",
+        significance: "critical",
+        confidence: "high",
+      },
+    ],
+  },
+  {
+    ...partOfRussia,
+    slug: "almaty-earthquake",
+    title: "Almaty Has a Significant and Well-Documented Earthquake Risk",
+    mythStatement: "Almaty is not seriously at risk from earthquakes",
+    summary:
+      "False. Almaty is officially classified in Kazakhstan's highest seismic hazard zone. The city sits near active faults in the Tian Shan mountain system, has experienced destructive earthquakes historically, and records several hundred minor tremors per year. Authorities maintain earthquake preparedness plans and seismic monitoring systems.",
+    canonicalUrl: "https://qazaqlens.org/myths/almaty-earthquake/",
+    aliases: ["Almaty earthquake prediction", "Is Almaty earthquake safe"],
+    topics: ["Almaty", "Earthquakes", "Risk"],
+    claims: [
+      {
+        id: "C1",
+        statement:
+          "Major earthquakes struck the Almaty region in 1887 (estimated M7.3) and 1911 (estimated M8.0–8.2), causing significant casualties and destroying much of the city.",
+        significance: "critical",
+        confidence: "high",
+      },
+    ],
+  },
+  {
+    ...partOfRussia,
+    slug: "country-size",
+    title: "Kazakhstan Is the World's Ninth-Largest Country",
+    mythStatement: "Kazakhstan is a small or minor country",
+    summary:
+      "False. Kazakhstan covers 2,724,900 km² — the ninth-largest country on Earth by area and the largest landlocked country in the world. Its territory exceeds the combined area of France, Germany, Spain, Italy, the UK, Poland, and Sweden together. A population of approximately 20 million gives it a low density, which is sometimes misread as small size.",
+    canonicalUrl: "https://qazaqlens.org/myths/country-size/",
+    aliases: ["Kazakhstan land area", "How large is Kazakhstan"],
+    topics: ["Geography", "Size"],
+    claims: [
+      {
+        id: "C1",
+        statement:
+          "Kazakhstan covers 2,724,900 km², making it the ninth-largest country in the world by land area.",
+        significance: "critical",
+        confidence: "high",
+      },
+    ],
+  },
+];
+
 describe("matchClaim", () => {
   it("ranks the Russia-region myth first and explains the myth match", () => {
     const matches = matchClaim(
@@ -106,6 +170,13 @@ describe("matchClaim", () => {
     expect(matchClaim("Kazakhstan", records)).toEqual([]);
   });
 
+  it.each(["country state", "major city", "world country"])(
+    "rejects generic two-token query %j against realistic long fields",
+    (query) => {
+      expect(matchClaim(query, realisticRecords)).toEqual([]);
+    },
+  );
+
   it("sorts equal alias matches by slug", () => {
     expect(
       matchClaim("shared equal alias phrase", records).map(
@@ -114,12 +185,21 @@ describe("matchClaim", () => {
     ).toEqual(["capital-astana", "part-of-russia"]);
   });
 
-  it("rejects external URLs without attempting network behavior", () => {
+  it.each([
+    "https://example.com/kazakhstan-part-russia",
+    "https://example.com/kazakhstan part russia",
+    "//example.com/kazakhstan-part-russia",
+    "www.example.com/kazakhstan-part-russia",
+    "example.com/kazakhstan-part-russia",
+    "пример.рф/kazakhstan-part-russia",
+    "example.com:8443/kazakhstan-part-russia",
+    "localhost:4321/kazakhstan-part-russia",
+    "192.168.1.10/kazakhstan-part-russia",
+    "[2001:db8::1]:8080/kazakhstan-part-russia",
+  ])("rejects host-like pasted input %j without fetching", (input) => {
     const fetchSpy = vi.spyOn(globalThis, "fetch");
 
-    expect(
-      matchClaim("https://example.com/viral-post", records),
-    ).toEqual([]);
+    expect(matchClaim(input, records)).toEqual([]);
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
@@ -139,6 +219,22 @@ describe("matchClaim", () => {
       ),
     ).toEqual([]);
     expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("does not reject normal prose merely because it has a period", () => {
+    expect(
+      matchClaim("Kazakhstan is part of Russia. Really?", records)[0]
+        ?.record.slug,
+    ).toBe("part-of-russia");
+  });
+
+  it.each([
+    "https://",
+    "example..com/kazakhstan-part-russia",
+    "not a url.example sentence",
+    "[not-ipv6]/kazakhstan-part-russia",
+  ])("does not throw for malformed non-host input %j", (input) => {
+    expect(() => matchClaim(input, records)).not.toThrow();
   });
 
   it("defaults to five results and respects an explicit limit", () => {
@@ -178,6 +274,23 @@ describe("matchClaim", () => {
     expect(records).toEqual(before);
   });
 
+  it("accepts deeply frozen registry input without mutation", () => {
+    const frozenRecords = structuredClone(records);
+    for (const record of frozenRecords) {
+      record.claims.forEach((claim) => Object.freeze(claim));
+      Object.freeze(record.aliases);
+      Object.freeze(record.topics);
+      Object.freeze(record.claims);
+      Object.freeze(record);
+    }
+    Object.freeze(frozenRecords);
+
+    expect(
+      matchClaim("Is Kazakhstan a region of Russia?", frozenRecords)[0]
+        ?.record.slug,
+    ).toBe("part-of-russia");
+  });
+
   it("deduplicates repeated identical reason fields", () => {
     const repeated: EvidenceRegistryRecord = {
       ...partOfRussia,
@@ -198,5 +311,28 @@ describe("matchClaim", () => {
 
     expect(aliasReasons).toHaveLength(1);
     expect(match.reasons.length).toBeLessThanOrEqual(3);
+  });
+
+  it("deduplicates visibly identical reasons across different fields", () => {
+    const repeatedAcrossFields: EvidenceRegistryRecord = {
+      ...partOfRussia,
+      mythStatement: "Kazakhstan is part of Russia",
+      aliases: ["Kazakhstan is part of Russia", "shared equal alias phrase"],
+    };
+
+    const [match] = matchClaim(
+      "Kazakhstan is part of Russia",
+      [repeatedAcrossFields],
+    );
+
+    expect(match.reasons).toContainEqual({
+      field: "myth",
+      label: "Kazakhstan is part of Russia",
+    });
+    expect(
+      match.reasons.filter(
+        ({ label }) => label === "Kazakhstan is part of Russia",
+      ),
+    ).toHaveLength(1);
   });
 });

@@ -13,10 +13,9 @@ const STOP_WORDS = new Set([
 
 export function normalizeText(value: string) {
   return value
-    .normalize("NFKD")
-    .replace(/\p{M}+/gu, "")
+    .normalize("NFKC")
     .replace(/[\u2018\u2019'`]/g, "")
-    .replace(/[^\p{L}\p{N}]+/gu, " ")
+    .replace(/[^\p{L}\p{M}\p{N}]+/gu, " ")
     .trim()
     .toLocaleLowerCase("en");
 }

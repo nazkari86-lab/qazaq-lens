@@ -26,19 +26,62 @@ interface ScoredField {
   order: number;
 }
 
-function isHttpUrl(value: string) {
+const DOMAIN_LIKE =
+  /^(?:www\.)?(?:[\p{L}\p{N}](?:[\p{L}\p{M}\p{N}-]{0,61}[\p{L}\p{M}\p{N}])?\.)+[\p{L}\p{N}](?:[\p{L}\p{M}\p{N}-]{0,61}[\p{L}\p{M}\p{N}])?\.?(?::\d{1,5})?(?:[/?#][^\s]*)?$/iu;
+const IPV4_LIKE =
+  /^(?:\d{1,3}\.){3}\d{1,3}(?::\d{1,5})?(?:[/?#][^\s]*)?$/u;
+const BRACKETED_IPV6_LIKE =
+  /^\[[0-9a-f:.]+\](?::\d{1,5})?(?:[/?#][^\s]*)?$/iu;
+const LOCALHOST_WITH_PORT =
+  /^localhost:\d{1,5}(?:[/?#][^\s]*)?$/iu;
+
+function isValidHttpUrl(value: string) {
   try {
     const url = new URL(value);
-    return url.protocol === "http:" || url.protocol === "https:";
+    return (
+      (url.protocol === "http:" || url.protocol === "https:") &&
+      url.hostname.length > 0
+    );
   } catch {
     return false;
   }
 }
 
+function isHostLikeInput(value: string) {
+  const candidate = value.trim();
+  if (!candidate) {
+    return false;
+  }
+
+  if (/^https?:\/\//iu.test(candidate)) {
+    return isValidHttpUrl(candidate);
+  }
+
+  if (candidate.startsWith("//")) {
+    return isValidHttpUrl(`https:${candidate}`);
+  }
+
+  if (/\s/u.test(candidate)) {
+    return false;
+  }
+
+  if (
+    !DOMAIN_LIKE.test(candidate) &&
+    !IPV4_LIKE.test(candidate) &&
+    !BRACKETED_IPV6_LIKE.test(candidate) &&
+    !LOCALHOST_WITH_PORT.test(candidate)
+  ) {
+    return false;
+  }
+
+  return isValidHttpUrl(`http://${candidate}`);
+}
+
 function overlapScore(queryTokens: string[], fieldValue: string) {
+  const queryTokenSet = new Set(queryTokens);
   const fieldTokens = new Set(tokenize(fieldValue));
   const sharedTokens = new Set(
-    queryTokens.filter((token) => fieldTokens.has(token)),
+    [...queryTokenSet].filter((token) => fieldTokens.has(token)),
   );
 
   // A single shared word is too ambiguous for conservative evidence matching.
@@ -46,7 +89,7 @@ function overlapScore(queryTokens: string[], fieldValue: string) {
     return 0;
   }
 
-  return sharedTokens.size / new Set(queryTokens).size;
+  return (2 * sharedTokens.size) / (queryTokenSet.size + fieldTokens.size);
 }
 
 function scoreField(
@@ -115,8 +158,8 @@ function scoreRecord(
   const reasons = scoredFields
     .filter(({ score }) => score >= reasonThreshold)
     .sort((a, b) => b.score - a.score || a.order - b.order)
-    .filter(({ field, label }) => {
-      const key = `${field}\u0000${normalizeText(label)}`;
+    .filter(({ label }) => {
+      const key = normalizeText(label);
       if (seenReasons.has(key)) {
         return false;
       }
@@ -138,14 +181,14 @@ export function matchClaim(
   records: readonly EvidenceRegistryRecord[],
   limit = MAX_RESULTS,
 ): ClaimMatch[] {
+  if (isHostLikeInput(query)) {
+    return [];
+  }
+
   const normalizedQuery = normalizeText(query);
   const queryTokens = tokenize(query);
 
-  if (
-    normalizedQuery.length < 4 ||
-    queryTokens.length < 2 ||
-    isHttpUrl(query.trim())
-  ) {
+  if (normalizedQuery.length < 4 || queryTokens.length < 2) {
     return [];
   }
 
