@@ -150,7 +150,6 @@ const serializedRegistry = JSON.stringify(registry).replace(/</g, "\\u003c");
       }
     };
 
-    // ask-canonical-helper:start
     const getCanonicalArticleSlug = (value: string) => {
       try {
         const url = new URL(value);
@@ -173,7 +172,6 @@ const serializedRegistry = JSON.stringify(registry).replace(/</g, "\\u003c");
         return null;
       }
     };
-    // ask-canonical-helper:end
 
     const formatReviewedDate = (date: string) => {
       const parsed = new Date(`${date}T00:00:00Z`);
