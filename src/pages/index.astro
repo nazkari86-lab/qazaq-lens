@@ -97,15 +97,15 @@ const sourceCount = myths.reduce((sum,entry)=>sum+entry.data.sources.length,0);
       <div class="home-hero-copy">
         <p class="eyebrow">Independent evidence library</p>
         <h1>See Kazakhstan beyond the shortcut.</h1>
-        <p class="lead">Qazaq Lens is an independent, sourced evidence library that fact-checks common claims and stereotypes about Kazakhstan — so you get accurate context instead of film myths, outdated maps, or surface-level assumptions.</p>
+        <p class="lead">For international readers who encounter inaccurate claims about Kazakhstan — in films, memes, travel guides or conversation. Short, sourced explanations with evidence you can check.</p>
         <div class="button-row">
-          <a class="btn btn--primary" href="#check-a-claim">Check something you heard</a>
-          <a class="btn" href="/challenge/">Take the 3-minute challenge</a>
+          <a class="btn btn--primary" href="/start">Kazakhstan in 60 seconds</a>
+          <a class="btn" href="/myths">Browse checked claims</a>
         </div>
         <dl class="hero-stats">
           <div><dt>{myths.length}</dt><dd>public explainers</dd></div>
           <div><dt>{sourceCount}</dt><dd>visible sources</dd></div>
-          <div><dt>{reviewedCount}</dt><dd>external reviews published</dd></div>
+          <div><dt>{myths.filter(e=>e.data.claims.length>0).length}</dt><dd>claim-audited articles</dd></div>
         </dl>
       </div>
       <QazaqLensBanner explainerCount={myths.length} sourceCount={sourceCount} />
@@ -114,7 +114,21 @@ const sourceCount = myths.reduce((sum,entry)=>sum+entry.data.sources.length,0);
 
   <section class="trust-strip" data-reveal><div class="wrap-wide trust-grid"><span>Claims linked to evidence</span><span>Uncertainty shown openly</span><span>Corrections accepted publicly</span><span>No ads or tracking profiles</span></div></section>
 
-  <div id="check-a-claim" class="wrap-wide section-block home-check-wrap"><HomeClaimCheck /></div>
+  <section class="wrap-wide audience-band">
+    <div class="audience-inner">
+      <div class="audience-copy">
+        <p class="eyebrow">Who this is for</p>
+        <h2>You heard something about Kazakhstan. You want to know if it's accurate.</h2>
+        <p>Maybe a colleague mentioned it's "basically Russia." Maybe you saw a Borat reference used as a fact. Maybe a travel forum described the country as dangerous steppe with no cities. This site gives you sourced context to distinguish the shorthand from what's actually checkable.</p>
+        <p>It is not written for Kazakhstanis who already know their own country. It is written for people outside it who want to replace assumptions with evidence.</p>
+      </div>
+      <div class="audience-examples">
+        <div class="audience-example"><span class="audience-example-label">Common claim</span><p>"Kazakhstan is part of Russia."</p></div>
+        <div class="audience-example"><span class="audience-example-label">Common claim</span><p>"Everyone there lives in yurts."</p></div>
+        <div class="audience-example audience-example--answer"><span class="audience-example-label">What you get here</span><p>A short verdict + the evidence behind it, with sources you can open and check.</p></div>
+      </div>
+    </div>
+  </section>
 
   <section class="wrap-wide section-block" data-reveal>
     <div class="section-heading-row"><div><p class="eyebrow">Choose your way in</p><h2>Three ways to replace a shortcut with context.</h2></div></div>
@@ -136,7 +150,7 @@ const sourceCount = myths.reduce((sum,entry)=>sum+entry.data.sources.length,0);
 
   {featured && <section class="wrap-wide section-block"><div class="section-heading-row"><div><p class="eyebrow">Flagship explainer</p><h2>See how one word changes the whole story.</h2></div><a href="/myths/">View all →</a></div><MythCard href={`/myths/${featured.data.slug}`} title={featured.data.title} mythStatement={featured.data.mythStatement} summary={featured.data.summary} verdict={featured.data.verdict} publicationStatus={featured.data.publicationStatus} lastReviewedAt={featured.data.lastReviewedAt} topics={featured.data.topics} sourceCount={featured.data.sources.length} readingMinutes={estimateReadingMinutes(featured.body ?? "")} /></section>}
 
-  {recent.length>0 && <section class="wrap-wide section-block"><div class="section-heading-row"><div><p class="eyebrow">Latest evidence</p><h2>Recently added or rechecked.</h2></div><a href="/myths/">Explore all 33 →</a></div><div class="myth-grid myth-grid--three">{recent.map((entry)=><MythCard compact href={`/myths/${entry.data.slug}`} title={entry.data.title} mythStatement={entry.data.mythStatement} summary={entry.data.summary} verdict={entry.data.verdict} publicationStatus={entry.data.publicationStatus} lastReviewedAt={entry.data.lastReviewedAt} topics={entry.data.topics} sourceCount={entry.data.sources.length} readingMinutes={estimateReadingMinutes(entry.body ?? "")} />)}</div></section>}
+  {recent.length>0 && <section class="wrap-wide section-block"><div class="section-heading-row"><div><p class="eyebrow">Latest evidence</p><h2>Recently added or rechecked.</h2></div><a href="/myths/">Explore all →</a></div><div class="myth-grid myth-grid--three">{recent.map((entry)=><MythCard compact href={`/myths/${entry.data.slug}`} title={entry.data.title} mythStatement={entry.data.mythStatement} summary={entry.data.summary} verdict={entry.data.verdict} publicationStatus={entry.data.publicationStatus} lastReviewedAt={entry.data.lastReviewedAt} topics={entry.data.topics} sourceCount={entry.data.sources.length} readingMinutes={estimateReadingMinutes(entry.body ?? "")} />)}</div></section>}
 
   <section class="wrap-wide section-block" data-reveal>
     <div class="section-heading-row">
@@ -171,6 +185,16 @@ const sourceCount = myths.reduce((sum,entry)=>sum+entry.data.sources.length,0);
   </section>
 
   <section class="wrap-wide section-block"><InstallApp /></section>
+
+  <section class="wrap-wide founder-note">
+    <div class="founder-inner card">
+      <p class="eyebrow">Why this exists</p>
+      <blockquote class="founder-quote">"I kept seeing the same wrong claims repeated — in conversations, in travel content, in AI responses. There was no short, linkable, sourced place to send people. So I built one."</blockquote>
+      <p class="founder-attribution">— Dulat Nurlanuly, creator of Qazaq Lens</p>
+      <p class="founder-body">The project started as a personal frustration: accurate information about Kazakhstan existed, but it was scattered across academic papers, government documents and long-form journalism. None of it was optimised for the moment when someone needs a quick, honest answer to a specific claim. Qazaq Lens is an attempt to close that gap — one checked claim at a time.</p>
+      <a class="btn" href="/about">Read more about the project →</a>
+    </div>
+  </section>
 
   <section class="wrap closing-note"><p>Qazaq Lens does not claim that Kazakhstan is problem-free, and it does not speak for every Kazakhstani. Its job is narrower: separate checkable context from fiction, shorthand and overconfident generalization.</p></section>
 </BaseLayout>

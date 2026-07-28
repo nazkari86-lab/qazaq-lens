@@ -18,23 +18,43 @@ const jsonLd = {
   }
 };
 ---
-<BaseLayout title="About" description="Who maintains Qazaq Lens, why it exists and what its limitations are." jsonLd={jsonLd}>
+<BaseLayout title="About" description="Why Dulat Nurlanuly built Qazaq Lens, who it is for, and what it does and does not claim." jsonLd={jsonLd}>
   <article class="wrap article-shell">
     <p class="eyebrow">About</p><h1>About Qazaq Lens</h1>
     <div class="article-body">
-      <h2>Why this exists</h2>
-      <p>Stereotypes about Kazakhstan travel faster than context. Qazaq Lens creates short, linkable explanations for international readers who want to distinguish comedy, shorthand and assumptions from sourced information about a real country.</p>
-      <h2>Who runs it</h2>
-      <p><strong>Qazaq Lens was created and is maintained by <a href="https://www.linkedin.com/in/dulat-nurlanuly-637888424/" rel="me noopener" target="_blank">Dulat Nurlanuly</a></strong>, an independent researcher from Kazakhstan. The project is a solo-built evidence library focused on accurate public communication about the country for international audiences.</p>
-      <p>It is not a government project, tourism campaign or newsroom. That limitation is stated openly because a solo editor can miss context that a diverse editorial team would catch. The public code and issue tracker are available on <a href="https://github.com/nazkari86-lab/qazaq-lens" rel="me noopener">GitHub</a>.</p>
+
+      <h2>Why I built this</h2>
+      <p>My name is Dulat Nurlanuly. I built Qazaq Lens because I kept running into the same problem: the same inaccurate claims about Kazakhstan — repeated confidently, in different countries, by people who had no reason to know they were wrong.</p>
+      <p>Not malicious. Just uninformed. A colleague who "knew" Kazakhstan was still part of Russia. A travel forum where someone confidently stated that people "still live in yurts." A news article that treated a Borat reference as cultural documentation. An AI assistant that got the capital wrong.</p>
+      <p>Accurate information existed. It was buried in academic papers, official documents and long-form journalism — none of it designed for the moment when you need a quick, honest answer you can link to. So I built that.</p>
+
+      <h2>Who this is for</h2>
+      <p>This site is written for <strong>people outside Kazakhstan</strong> who want to distinguish accurate information from assumptions, film references and outdated maps. It is not written for Kazakhstanis — they already know their own country. It is written for people who don't, and who want to.</p>
+      <p>Specifically, this is useful if:</p>
+      <ul>
+        <li>You heard a claim about Kazakhstan and want to know if it holds up.</li>
+        <li>You want a sourced reference to share in a conversation where a myth is being stated as fact.</li>
+        <li>You are researching Kazakhstan and want a starting point that shows its evidence, not just its conclusions.</li>
+        <li>You use AI tools and want to double-check what they say about Kazakhstan, since they have documented gaps in this area.</li>
+      </ul>
+
       <h2>What it does not claim</h2>
-      <p>Qazaq Lens does not speak for Kazakhstan's government, every citizen, every ethnic community or every Kazakh person abroad. It also does not treat criticism of Kazakhstan as automatically false. The project addresses specific checkable claims and labels interpretation separately.</p>
+      <p>Qazaq Lens does not speak for Kazakhstan's government, every citizen, every ethnic community or every Kazakh person abroad. It does not treat criticism of Kazakhstan as automatically false, and it does not present the country as problem-free.</p>
+      <p>Its job is narrower: take specific checkable claims and separate the accurate from the false, the misleading and the outdated — and show the evidence either way.</p>
+
       <h2>How trust is earned</h2>
-      <p>Every substantial article exposes its claim ledger, source IDs, review status, last source-review date and change history. Public-beta material is not presented as independently reviewed.</p>
+      <p>Every substantial article exposes its claim ledger, source IDs, review status, last source-review date and full change history. Public-beta material has passed an internal claim-by-claim audit but has not yet received independent external review.</p>
+      <p>The <a href="/methodology">methodology page</a> explains how sources are classified, what claim types mean, and how corrections work.</p>
+
+      <h2>Limitations</h2>
+      <p>This is a solo project. A single editor will miss context that a diverse editorial team would catch. The focus is primarily on English-language international misconceptions, which means the framing may not capture every domestic or regional perspective. These limitations are stated openly rather than hidden behind authoritative language.</p>
+      <p>If you find something wrong — a factual error, a weak source, missing context or unfair wording — please use the <a href="/report-error">correction form</a>. Reports can be submitted without creating an account.</p>
+
       <h2>Editorial identity and conflicts</h2>
       <p>The editor is <a href="https://www.linkedin.com/in/dulat-nurlanuly-637888424/" rel="me noopener" target="_blank">Dulat Nurlanuly</a> — a researcher and developer based in Kazakhstan. Qazaq Lens is currently unfunded and has no government, political-party or commercial sponsor. Any future funding, institutional relationship or conflict that could affect editorial judgment will be disclosed on this page. Independent reviewers will be named or identified by stable pseudonym when they formally review an article.</p>
+
       <h2>Contact and corrections</h2>
-      <p>Use the <a href="/report-error">correction form</a> to report a factual error, a weak source, missing context or unfair wording. For public project discussions, use the <a href="https://github.com/nazkari86-lab/qazaq-lens/issues" rel="noopener">GitHub issue tracker</a>.</p>
+      <p>Use the <a href="/report-error">correction form</a> to report a factual error, a weak source, missing context or unfair wording. All substantive corrections are added to the public change history of the relevant article. For public project discussions, use the <a href="https://github.com/nazkari86-lab/qazaq-lens/issues" rel="noopener">GitHub issue tracker</a>.</p>
     </div>
   </article>
 </BaseLayout>
