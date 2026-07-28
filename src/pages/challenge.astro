@@ -221,7 +221,7 @@ const payload = JSON.stringify(questions).replace(/</g, "\\u003c");
       if (challengeRoot) challengeRoot.hidden = true;
       if (resultRoot) resultRoot.hidden = false;
       const percentage = Math.round((score / challengeData.length) * 100);
-      const title = score === challengeData.length ? "You saw through every shortcut." : score >= 6 ? "You have a strong evidence lens." : score >= 4 ? "A few familiar shortcuts slipped through." : "The familiar picture needs a closer look.";
+      const title = score === challengeData.length ? "You saw through every shortcut." : score >= 12 ? "You have a strong evidence lens." : score >= 8 ? "A few familiar shortcuts slipped through." : "The familiar picture needs a closer look.";
       const scoreNode = document.querySelector<HTMLElement>("[data-challenge-score]");
       const titleNode = document.querySelector<HTMLElement>("[data-challenge-title]");
       const summaryNode = document.querySelector<HTMLElement>("[data-challenge-summary]");

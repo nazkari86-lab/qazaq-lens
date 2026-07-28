@@ -1,0 +1,123 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getVisibleMyths } from "../lib/content";
+const myths = await getVisibleMyths();
+const sources = myths.reduce((s, m) => s + m.data.sources.length, 0);
+const claims = myths.reduce((s, m) => s + m.data.claims.length, 0);
+
+const keyFacts = [
+  { stat: `${myths.length}`, label: "fact-checked explainers on common claims about Kazakhstan" },
+  { stat: `${sources}`, label: "source records — each claim cites ≥ 2 independent publishers" },
+  { stat: `${claims}`, label: "individual claims checked and rated by confidence level" },
+  { stat: "4", label: "UNESCO World Heritage inscriptions — cultural, archaeological, and natural" },
+  { stat: "9th", label: "Kazakhstan's rank by total area — the world's largest landlocked country" },
+  { stat: "1991", label: "year Kazakhstan became an independent UN member state" },
+  { stat: "1995", label: "year Kazakhstan became nuclear-weapon-free, transferring all Soviet warheads" },
+  { stat: "130+", label: "nationalities recorded by the Kazakhstan national census" },
+];
+
+const topicGroups = [
+  { topic: "Sovereignty & politics", slugs: ["part-of-russia","kazakh-statehood","nuclear-weapons","economy-oil"] },
+  { topic: "Geography & environment", slugs: ["country-size","only-steppe","climate-seasons","aral-sea-gone","landlocked-isolated","almaty-earthquake"] },
+  { topic: "Language & identity", slugs: ["kazakh-and-russian","latin-alphabet","ethnic-diversity","secular-muslim"] },
+  { topic: "History & culture", slugs: ["borat","yurts","horse-meat-kumys","world-heritage","silk-roads","tomyris","kazakh-statehood"] },
+  { topic: "Safety & travel", slugs: ["safety-tourism","semipalatinsk-safe","internet-closed","capital-astana"] },
+];
+---
+<BaseLayout
+  title="Press resources — Qazaq Lens"
+  description="Key facts, sourced statistics and citation resources for journalists writing about Kazakhstan."
+>
+  <article class="wrap-wide">
+    <header class="page-hero">
+      <p class="eyebrow">For journalists and researchers</p>
+      <h1>Press resources</h1>
+      <p class="lead">Sourced facts, statistics and citation tools for anyone writing about Kazakhstan. Every figure links to a primary source.</p>
+      <p class="fine-print">Questions or clarifications: <a href="mailto:rinatamankos6@gmail.com">contact Dulat Nurlanuly</a></p>
+    </header>
+
+    <section class="section-block">
+      <h2>About Qazaq Lens</h2>
+      <p>Qazaq Lens is an independent, non-commercial evidence library that fact-checks common myths and stereotypes about Kazakhstan. It is maintained by Dulat Nurlanuly and publishes claim-by-claim source audits with visible citations. The project does not represent the Kazakhstani government, any political party, or any national institution.</p>
+      <dl class="press-stats">
+        {keyFacts.map(({ stat, label }) => (
+          <div class="press-stat">
+            <dt>{stat}</dt>
+            <dd>{label}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    <section class="section-block">
+      <h2>Quick-reference facts by topic</h2>
+      <p class="fine-print">Each fact links to the full evidence check with sources.</p>
+      {topicGroups.map(({ topic, slugs }) => {
+        const entries = slugs.map(s => myths.find(m => m.data.slug === s)).filter(Boolean);
+        return entries.length > 0 && (
+          <div class="press-topic">
+            <h3>{topic}</h3>
+            <ul class="press-links">
+              {entries.map(e => e && (
+                <li>
+                  <a href={`/myths/${e.data.slug}/`}>
+                    <strong class={`verdict verdict--${e.data.verdict}`}>{e.data.verdict.toUpperCase()}</strong>
+                    {e.data.mythStatement}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        );
+      })}
+    </section>
+
+    <section class="section-block">
+      <h2>How to cite Qazaq Lens</h2>
+      <p>Articles may be quoted with attribution and a direct link. The standard citation format:</p>
+      <div class="press-cite-example">
+        <p><strong>APA:</strong> Nurlanuly, D. (Year). <em>Article title</em>. Qazaq Lens. Retrieved [date], from https://qazaqlens.org/myths/[slug]/</p>
+        <p><strong>MLA:</strong> Nurlanuly, Dulat. "Article title." <em>Qazaq Lens</em>, date, URL. Accessed [date].</p>
+        <p>Each article page also has a one-click citation tool in APA, MLA, and Chicago formats.</p>
+      </div>
+    </section>
+
+    <section class="section-block">
+      <h2>What Qazaq Lens is and is not</h2>
+      <ul>
+        <li>It is independent and non-commercial — no advertising, no government funding.</li>
+        <li>It is not an official government or tourism resource, and does not speak for Kazakhstan.</li>
+        <li>Articles carry verdicts (False / Misleading / Partly true / Disputed) based on traceable sources.</li>
+        <li>Uncertainty is shown openly: confidence levels and unresolved limitations are visible on every article.</li>
+        <li>Corrections are accepted publicly via the <a href="/corrections/">corrections page</a>.</li>
+      </ul>
+    </section>
+
+    <section class="section-block">
+      <h2>Contact</h2>
+      <p>For media enquiries, correction submissions, or permission to reproduce content beyond standard quotation rights:</p>
+      <p><a class="btn btn--primary" href="mailto:rinatamankos6@gmail.com">Email Dulat Nurlanuly</a></p>
+      <p class="fine-print">Response time: typically within 48 hours.</p>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .press-stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; margin: 2rem 0; }
+  .press-stat { padding: 1.25rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+  .press-stat dt { font: 700 2rem var(--font-display); color: var(--brand); line-height: 1; margin-bottom: .35rem; }
+  .press-stat dd { font-size: .88rem; color: var(--muted); }
+  .press-topic { margin: 1.5rem 0; }
+  .press-topic h3 { font-size: 1rem; margin-bottom: .5rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; font-size: .75rem; }
+  .press-links { list-style: none; padding: 0; display: grid; gap: .4rem; }
+  .press-links a { display: flex; align-items: baseline; gap: .6rem; text-decoration: none; color: var(--ink); font-size: .9rem; padding: .5rem .75rem; border: 1px solid var(--line); border-radius: var(--radius-sm); transition: border-color .2s; }
+  .press-links a:hover { border-color: var(--brand); }
+  .verdict { font: 700 .62rem var(--font-mono); padding: .15rem .45rem; border-radius: 2px; flex-shrink: 0; }
+  .verdict--false { background: #d94f3522; color: #d94f35; }
+  .verdict--misleading { background: #e07a3522; color: #e07a35; }
+  .verdict--partly-true { background: #68b48622; color: #68b486; }
+  .verdict--disputed { background: #a0a0a022; color: #a0a0a0; }
+  .press-cite-example { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin: 1rem 0; }
+  .press-cite-example p { margin: .5rem 0; font-size: .9rem; color: var(--muted); }
+  @media (max-width: 600px) { .press-stats { grid-template-columns: 1fr 1fr; } }
+</style>

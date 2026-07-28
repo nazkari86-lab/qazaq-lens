@@ -1,0 +1,79 @@
+---
+interface Props {
+  title: string;
+  slug: string;
+  publishedAt: Date;
+  lastReviewedAt: Date;
+  author: string;
+}
+const { title, slug, publishedAt, lastReviewedAt } = Astro.props;
+const site = Astro.site ?? new URL("https://qazaqlens.org");
+const url = new URL(`/myths/${slug}/`, site).toString();
+const year = lastReviewedAt.getFullYear();
+const accessDate = lastReviewedAt.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+const publishYear = publishedAt.getFullYear();
+
+const apa = `Nurlanuly, D. (${publishYear}). ${title}. Qazaq Lens. Retrieved ${accessDate}, from ${url}`;
+const mla = `Nurlanuly, Dulat. "${title}." Qazaq Lens, ${publishedAt.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}, ${url}. Accessed ${accessDate}.`;
+const chicago = `Nurlanuly, Dulat. "${title}." Qazaq Lens. Last modified ${lastReviewedAt.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}. ${url}.`;
+---
+<aside class="cite-this">
+  <p class="eyebrow">Cite this article</p>
+  <div class="cite-tabs" role="tablist">
+    <button class="cite-tab is-active" role="tab" aria-selected="true" data-cite-tab="apa">APA</button>
+    <button class="cite-tab" role="tab" aria-selected="false" data-cite-tab="mla">MLA</button>
+    <button class="cite-tab" role="tab" aria-selected="false" data-cite-tab="chicago">Chicago</button>
+  </div>
+  <div class="cite-panels">
+    <div class="cite-panel is-active" data-cite-panel="apa">
+      <code>{apa}</code>
+      <button class="cite-copy" data-cite-copy={apa} aria-label="Copy APA citation">Copy</button>
+    </div>
+    <div class="cite-panel" data-cite-panel="mla" hidden>
+      <code>{mla}</code>
+      <button class="cite-copy" data-cite-copy={mla} aria-label="Copy MLA citation">Copy</button>
+    </div>
+    <div class="cite-panel" data-cite-panel="chicago" hidden>
+      <code>{chicago}</code>
+      <button class="cite-copy" data-cite-copy={chicago} aria-label="Copy Chicago citation">Copy</button>
+    </div>
+  </div>
+  <p class="cite-note">Last verified {accessDate}. If citing for academic use, check this page's sources directly.</p>
+</aside>
+<script>
+  document.querySelectorAll<HTMLElement>(".cite-this").forEach((block) => {
+    block.querySelectorAll<HTMLButtonElement>("[data-cite-tab]").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        const key = tab.dataset.citeTab!;
+        block.querySelectorAll("[data-cite-tab]").forEach((t) => { (t as HTMLButtonElement).classList.remove("is-active"); (t as HTMLButtonElement).setAttribute("aria-selected","false"); });
+        block.querySelectorAll<HTMLElement>("[data-cite-panel]").forEach((p) => { p.hidden = true; p.classList.remove("is-active"); });
+        tab.classList.add("is-active");
+        tab.setAttribute("aria-selected","true");
+        const panel = block.querySelector<HTMLElement>(`[data-cite-panel="${key}"]`);
+        if (panel) { panel.hidden = false; panel.classList.add("is-active"); }
+      });
+    });
+    block.querySelectorAll<HTMLButtonElement>("[data-cite-copy]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(btn.dataset.citeCopy!);
+          const orig = btn.textContent;
+          btn.textContent = "Copied";
+          setTimeout(() => { btn.textContent = orig; }, 1800);
+        } catch { btn.textContent = "Select and copy manually"; }
+      });
+    });
+  });
+</script>
+<style>
+  .cite-this { margin: 2.5rem 0; padding: 1.5rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+  .cite-this .eyebrow { margin-bottom: .75rem; }
+  .cite-tabs { display: flex; gap: .35rem; margin-bottom: .75rem; }
+  .cite-tab { border: 1px solid var(--line); background: transparent; color: var(--muted); padding: .3rem .8rem; border-radius: var(--radius-sm); cursor: pointer; font: 700 .72rem var(--font-mono); transition: border-color .2s, color .2s; }
+  .cite-tab.is-active { border-color: var(--brand); color: var(--ink); }
+  .cite-panel { display: flex; align-items: flex-start; gap: .75rem; }
+  .cite-panel code { flex: 1; font: .82rem/1.6 var(--font-mono); color: var(--muted); word-break: break-all; white-space: pre-wrap; }
+  .cite-copy { flex-shrink: 0; border: 1px solid var(--line); background: transparent; color: var(--muted); padding: .3rem .7rem; border-radius: var(--radius-sm); cursor: pointer; font: 700 .7rem var(--font-mono); transition: border-color .2s, color .2s; }
+  .cite-copy:hover { border-color: var(--brand); color: var(--ink); }
+  .cite-note { margin-top: .75rem; font-size: .78rem; color: var(--muted); margin-bottom: 0; }
+</style>

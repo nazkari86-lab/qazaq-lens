@@ -19,6 +19,7 @@ import EvidenceVisual from "../components/EvidenceVisual.astro";
 import EvidenceHealth from "../components/EvidenceHealth.astro";
 import KnowledgeCheck from "../components/KnowledgeCheck.astro";
 import EvidenceCard from "../components/EvidenceCard.astro";
+import CiteThis from "../components/CiteThis.astro";
 import SelectionAnnotation from "../components/SelectionAnnotation.astro";
 import type { MythEntry } from "../lib/content";
 
@@ -190,6 +191,7 @@ const image = new URL(props.ogImage ?? "/og/default.png", site).toString();
         <div data-reveal data-reading-detail="evidence"><SourceList sources={props.sources} /></div>
         <LastReviewed publishedAt={props.publishedAt} lastReviewedAt={props.lastReviewedAt} author={props.author} reviewStatus={props.reviewStatus} reviewedBy={props.reviewedBy} readingMinutes={props.readingMinutes} />
         <Changelog entries={props.changelog} />
+        <CiteThis title={props.title} slug={props.slug ?? Astro.params.slug ?? ""} publishedAt={props.publishedAt} lastReviewedAt={props.lastReviewedAt} author={props.author} />
         <ReportError pageUrl={Astro.url.pathname} />
         <Comments slug={props.slug ?? Astro.params.slug ?? ""} title={props.title} />
         <RelatedMyths entries={props.related} />
