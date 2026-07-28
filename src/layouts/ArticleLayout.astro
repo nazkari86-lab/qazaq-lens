@@ -168,7 +168,7 @@ const image = new URL(props.ogImage ?? "/og/default.png", site).toString();
           <p class="eyebrow">Myth vs. reality</p>
           <p class="myth-quote">“{props.mythStatement}”</p>
           <h1>{props.title}</h1>
-          <div class="article-actions"><ShareTools title={props.title} summary={props.summary} /><BookmarkButton slug={props.slug ?? Astro.params.slug ?? ""} title={props.title} /></div>
+          <div class="article-actions"><ShareTools title={props.title} summary={props.summary} verdict={props.verdict} mythStatement={props.mythStatement} /><BookmarkButton slug={props.slug ?? Astro.params.slug ?? ""} title={props.title} /></div>
           <ReadingMode />
         </div>
         <VerdictBox verdict={props.verdict} summary={props.summary} publicationStatus={props.publicationStatus} />
