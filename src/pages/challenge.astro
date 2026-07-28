@@ -58,6 +58,55 @@ const questions = [
     explanation: "The available record does not verify the video's archaeological claim.",
     href: "/myths/giant-door/",
   },
+  {
+    claim: "Kazakhstan has no UNESCO World Heritage Sites.",
+    options: ["True", "False", "Only natural sites"],
+    answer: 1,
+    explanation: "Kazakhstan has four UNESCO inscriptions: the Mausoleum of Khoja Ahmed Yasawi (2003), Petroglyphs of Tamgaly (2004), Silk Roads (2014), and Saryarka natural heritage (2008).",
+    href: "/myths/world-heritage/",
+  },
+  {
+    claim: "Almaty is the capital of Kazakhstan.",
+    options: ["True", "False", "It depends on the year"],
+    answer: 1,
+    explanation: "The capital is Astana. Kazakhstan moved its capital from Almaty to a new northern city in 1997.",
+    href: "/myths/capital-astana/",
+  },
+  {
+    claim: "Kazakhstan was part of Russia (not just the Soviet Union).",
+    options: ["True", "False", "Only before 1936"],
+    answer: 1,
+    explanation: "Kazakhstan was a separate Soviet republic — not a province of the Russian Soviet Federative Socialist Republic. Both were distinct republics within the USSR.",
+    href: "/myths/part-of-russia/",
+  },
+  {
+    claim: "Kazakhstan is always very cold — it has no warm seasons.",
+    options: ["True", "False", "Only in the south"],
+    answer: 1,
+    explanation: "Kazakhstan has four distinct seasons. Southern cities like Almaty average 24–26°C in July. The north is cold in winter, but summers are warm to hot across the country.",
+    href: "/myths/climate-seasons/",
+  },
+  {
+    claim: "The Silk Road trade routes passed through Kazakhstan.",
+    options: ["True", "False", "Only briefly"],
+    answer: 0,
+    explanation: "Kazakhstan's territory was a core section of the Silk Roads for centuries. UNESCO recognized the Chang'an-Tianshan Corridor (including Kazakh sections) as World Heritage in 2014.",
+    href: "/myths/silk-roads/",
+  },
+  {
+    claim: "Kazakhstan is the world's ninth-largest country by area.",
+    options: ["True", "False", "It is in the top 5"],
+    answer: 0,
+    explanation: "At about 2.7 million km², Kazakhstan is the ninth-largest country in the world and the largest landlocked country.",
+    href: "/myths/country-size/",
+  },
+  {
+    claim: "The first horses were domesticated somewhere in Kazakhstan.",
+    options: ["True", "False", "Evidence is disputed"],
+    answer: 2,
+    explanation: "Current evidence from sites like Botai (northern Kazakhstan) strongly suggests early horse domestication in the Kazakh steppe, but the scientific debate continues as new sites are discovered.",
+    href: "/myths/horse-domestication/",
+  },
 ] as const;
 const payload = JSON.stringify(questions).replace(/</g, "\\u003c");
 ---

@@ -1,13 +1,13 @@
 {
   "schema_version": "1.1",
-  "generated_at": "2026-07-26",
+  "generated_at": "2026-07-28",
   "license": "CC-BY-4.0",
   "publisher": {
     "name": "Qazaq Lens",
     "url": "https://qazaqlens.org",
     "author": "Dulat Nurlanuly"
   },
-  "total_articles": 33,
+  "total_articles": 35,
   "claims": [
     {
       "claim_id": "QL-AIACCURACYKAZAKHSTAN-001",
@@ -37,20 +37,21 @@
       "claim": "Almaty is not seriously at risk from earthquakes",
       "normalized_claim": "Almaty is not seriously at risk from earthquakes",
       "verdict": "false",
-      "summary": "False. Almaty is officially classified in Kazakhstan's highest seismic hazard zone. The city sits near active faults in the Tian Shan mountain system, has experienced destructive earthquakes historically, and records several hundred minor tremors per year. Authorities maintain earthquake preparedness plans and seismic monitoring systems.",
+      "summary": "False. Almaty is officially classified in Kazakhstan's highest seismic hazard zone. The city sits near active faults in the Tian Shan mountain system, was largely destroyed by earthquakes in 1887 and 1911, and records hundreds of minor tremors per year. Authorities maintain earthquake preparedness plans and seismic monitoring systems.",
       "article_url": "https://qazaqlens.org/myths/almaty-earthquake/",
       "language": "en",
       "topics": [
         "Geography",
         "Science",
         "Cities",
-        "Safety"
+        "Safety",
+        "History"
       ],
       "published_at": "2026-07-25",
-      "updated_at": "2026-07-25",
+      "updated_at": "2026-07-28",
       "review_status": "Claim-by-claim source audit completed; independent human review pending",
-      "source_count": 5,
-      "claim_count": 5,
+      "source_count": 6,
+      "claim_count": 6,
       "evidence_strength": "strong"
     },
     {
@@ -204,6 +205,28 @@
       "source_count": 5,
       "claim_count": 4,
       "evidence_strength": "moderate"
+    },
+    {
+      "claim_id": "QL-CLIMATESEASONS-001",
+      "slug": "climate-seasons",
+      "claim": "Kazakhstan is always freezing and uninhabitable",
+      "normalized_claim": "Kazakhstan is always freezing and uninhabitable",
+      "verdict": "misleading",
+      "summary": "Misleading. Kazakhstan has a strongly continental climate with hot summers and cold winters, but conditions vary enormously by region and season. The south has mild winters and warm springs; the north has extreme winters; the mountains support skiing; the steppe heats above 30°C in July. No single climate label fits the whole country.",
+      "article_url": "https://qazaqlens.org/myths/climate-seasons/",
+      "language": "en",
+      "topics": [
+        "Geography",
+        "Climate",
+        "Travel",
+        "Nature"
+      ],
+      "published_at": "2026-07-28",
+      "updated_at": "2026-07-28",
+      "review_status": "Claim-by-claim source audit completed; independent human review pending",
+      "source_count": 5,
+      "claim_count": 5,
+      "evidence_strength": "strong"
     },
     {
       "claim_id": "QL-COUNTRYSIZE-001",
@@ -586,9 +609,9 @@
       "published_at": "2026-07-20",
       "updated_at": "2026-07-20",
       "review_status": "Claim-by-claim source audit completed; independent human review pending",
-      "source_count": 4,
-      "claim_count": 3,
-      "evidence_strength": "moderate"
+      "source_count": 5,
+      "claim_count": 5,
+      "evidence_strength": "strong"
     },
     {
       "claim_id": "QL-SAFETYTOURISM-001",
@@ -631,7 +654,7 @@
       "updated_at": "2026-07-22",
       "review_status": "Claim-by-claim source audit completed; independent human review pending",
       "source_count": 3,
-      "claim_count": 3,
+      "claim_count": 5,
       "evidence_strength": "moderate"
     },
     {
@@ -701,6 +724,28 @@
       "evidence_strength": "strong"
     },
     {
+      "claim_id": "QL-WORLDHERITAGE-001",
+      "slug": "world-heritage",
+      "claim": "Kazakhstan has no notable world heritage or recognized cultural traditions",
+      "normalized_claim": "Kazakhstan has no notable world heritage or recognized cultural traditions",
+      "verdict": "false",
+      "summary": "False. Kazakhstan has four UNESCO World Heritage inscriptions — three cultural and one natural — plus multiple UNESCO Intangible Cultural Heritage items. Its cultural traditions include a distinct musical heritage, a written literary tradition dating to the 15th century, and living nomadic practices recognized internationally.",
+      "article_url": "https://qazaqlens.org/myths/world-heritage/",
+      "language": "en",
+      "topics": [
+        "Culture",
+        "History",
+        "UNESCO",
+        "Identity"
+      ],
+      "published_at": "2026-07-28",
+      "updated_at": "2026-07-28",
+      "review_status": "Claim-by-claim source audit completed; independent human review pending",
+      "source_count": 6,
+      "claim_count": 5,
+      "evidence_strength": "strong"
+    },
+    {
       "claim_id": "QL-YURTS-001",
       "slug": "yurts",
       "claim": "People in Kazakhstan mostly live in yurts",
@@ -718,7 +763,7 @@
       "updated_at": "2026-07-21",
       "review_status": "Claim-by-claim source audit completed; independent human review pending",
       "source_count": 4,
-      "claim_count": 3,
+      "claim_count": 5,
       "evidence_strength": "moderate"
     }
   ]
