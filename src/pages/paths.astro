@@ -3,10 +3,13 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import { getVisibleMyths } from "../lib/content";
 const myths = await getVisibleMyths();
 const paths = [
-  { title:"Kazakhstan in 5 minutes", intro:"A compact route through statehood, language, geography and everyday life.", slugs:["part-of-russia","kazakh-and-russian","only-steppe","yurts","capital-astana"] },
-  { title:"History and memory", intro:"Follow sovereignty, the Silk Roads, Baikonur and the nuclear legacy.", slugs:["part-of-russia","silk-roads","baikonur","nuclear-weapons","aral-sea-gone"] },
-  { title:"Culture without shortcuts", intro:"Separate food, religion, ethnicity, language and media from one-dimensional stereotypes.", slugs:["kazakh-and-russian","ethnic-diversity","secular-muslim","horse-meat-kumys","borat"] },
-  { title:"Media literacy route", intro:"Study how viral images, comedy, memes and online restrictions shape a country’s image.", slugs:["borat","kazakhstan-memes","giant-door","internet-closed"] },
+  { title:"Kazakhstan in 5 minutes", intro:"A compact route through statehood, language, geography and everyday life. Start here if you know nothing.", slugs:["part-of-russia","kazakh-and-russian","country-size","only-steppe","yurts","capital-astana"] },
+  { title:"History and deep time", intro:"From the Kazakh Khanate and Silk Roads to Soviet nuclear testing and 1991 independence.", slugs:["kazakh-statehood","silk-roads","tomyris","nuclear-weapons","semipalatinsk-safe","part-of-russia"] },
+  { title:"Culture without shortcuts", intro:"Separate food, religion, ethnicity, language and heritage from one-dimensional stereotypes.", slugs:["kazakh-and-russian","ethnic-diversity","secular-muslim","horse-meat-kumys","world-heritage","borat"] },
+  { title:"Geography and nature", intro:"A country of 2.7 million km² — steppe, mountains, canyons, the Aral Sea, and four seasons.", slugs:["country-size","only-steppe","climate-seasons","aral-sea-gone","landlocked-isolated","charyn-canyon"] },
+  { title:"Media literacy route", intro:"Viral claims, comedy, memes, AI errors and internet restrictions — how information shapes perception.", slugs:["borat","kazakhstan-memes","giant-door","internet-closed","ai-accuracy-kazakhstan"] },
+  { title:"For the curious traveller", intro:"Safety, climate, capital city, earthquake risk, cultural expectations — practical context before you go.", slugs:["safety-tourism","capital-astana","climate-seasons","almaty-earthquake","horse-meat-kumys","bride-kidnapping"] },
+  { title:"Science and discovery", intro:"Horse domestication, the apple’s wild ancestor, the Baikonur cosmodrome, and nuclear energy.", slugs:["horse-domestication","apple-origins","baikonur","nuclear-energy-weapons","latin-alphabet"] },
 ];
 ---
 <BaseLayout title="Reading paths" description="Guided reading paths through Qazaq Lens explainers about Kazakhstan.">
