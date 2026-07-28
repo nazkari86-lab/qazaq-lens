@@ -653,9 +653,9 @@
       "published_at": "2026-07-22",
       "updated_at": "2026-07-22",
       "review_status": "Claim-by-claim source audit completed; independent human review pending",
-      "source_count": 3,
+      "source_count": 5,
       "claim_count": 5,
-      "evidence_strength": "moderate"
+      "evidence_strength": "strong"
     },
     {
       "claim_id": "QL-SEMIPALATINSKSAFE-001",

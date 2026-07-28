@@ -10,8 +10,9 @@ interface Props {
   type?: "website" | "article";
   noindex?: boolean;
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  lang?: "en" | "ru";
 }
-const { title, description, ogImage = "/og/default.png", type = "website", noindex = false, jsonLd } = Astro.props;
+const { title, description, ogImage = "/og/default.png", type = "website", noindex = false, jsonLd, lang = "en" } = Astro.props;
 const site = Astro.site ?? new URL("https://qazaqlens.org");
 const canonicalURL = new URL(Astro.url.pathname, site);
 const ogImageURL = new URL(ogImage, site);
@@ -50,7 +51,7 @@ const websiteJsonLd = {
 };
 ---
 <!doctype html>
-<html lang="en" data-theme="system">
+<html lang={lang} data-theme="system">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -63,6 +64,10 @@ const websiteJsonLd = {
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="alternate" type="application/rss+xml" title="Qazaq Lens" href="/rss.xml" />
     <link rel="canonical" href={canonicalURL} />
+    {lang === "ru" && <link rel="alternate" hreflang="ru" href={canonicalURL} />}
+    {lang === "ru" && <link rel="alternate" hreflang="en" href={new URL(Astro.url.pathname.replace(/^\/ru(\/|$)/, "/"), site)} />}
+    {lang === "en" && <link rel="alternate" hreflang="en" href={canonicalURL} />}
+    {lang === "en" && <link rel="alternate" hreflang="ru" href={new URL(`/ru${Astro.url.pathname}`, site)} />}
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <meta name="author" content="Dulat Nurlanuly" />
@@ -96,9 +101,9 @@ const websiteJsonLd = {
     </script>
   </head>
   <body>
-    <Header />
+    <Header lang={lang} />
     <main id="main-content" tabindex="-1"><slot /></main>
-    <Footer />
+    <Footer lang={lang} />
     <script>
       const revealItems = document.querySelectorAll("[data-reveal]");
       if ("IntersectionObserver" in window && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {

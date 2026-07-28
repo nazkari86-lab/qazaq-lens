@@ -1,0 +1,37 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getVisibleMyths } from "../../lib/content";
+import { mythsRu } from "../../i18n/myths-ru";
+const myths = await getVisibleMyths();
+const paths = [
+  { title: "Казахстан за 5 минут", intro: "Компактный маршрут через государственность, язык, географию и повседневную жизнь. Начните здесь, если знаете о стране мало.", slugs: ["part-of-russia","kazakh-and-russian","country-size","only-steppe","yurts","capital-astana"] },
+  { title: "История и глубокое прошлое", intro: "От Казахского ханства и Шёлкового пути до советских ядерных испытаний и независимости 1991 года.", slugs: ["kazakh-statehood","silk-roads","tomyris","nuclear-weapons","semipalatinsk-safe","part-of-russia"] },
+  { title: "Культура без упрощений", intro: "Еда, религия, этничность, язык и наследие без одномерных стереотипов.", slugs: ["kazakh-and-russian","ethnic-diversity","secular-muslim","horse-meat-kumys","world-heritage","borat"] },
+  { title: "География и природа", intro: "Страна в 2,7 млн км² — степи, горы, каньоны, Аральское море и четыре сезона.", slugs: ["country-size","only-steppe","climate-seasons","aral-sea-gone","landlocked-isolated","charyn-canyon"] },
+  { title: "Медиаграмотность", intro: "Вирусные утверждения, комедия, мемы, ошибки ИИ и ограничения интернета — как информация формирует восприятие.", slugs: ["borat","kazakhstan-memes","giant-door","internet-closed","ai-accuracy-kazakhstan"] },
+  { title: "Для любопытного путешественника", intro: "Безопасность, климат, столица, сейсмический риск, культурные ожидания — практический контекст до поездки.", slugs: ["safety-tourism","capital-astana","climate-seasons","almaty-earthquake","horse-meat-kumys","bride-kidnapping"] },
+  { title: "Наука и открытия", intro: "Одомашнивание лошади, дикий предок яблони, космодром Байконур и ядерная энергетика.", slugs: ["horse-domestication","apple-origins","baikonur","nuclear-energy-weapons","latin-alphabet"] },
+];
+---
+<BaseLayout lang="ru" title="Маршруты чтения" description="Тематические маршруты по статьям Qazaq Lens о Казахстане.">
+  <main class="wrap-wide page-hero"><p class="eyebrow">Тематическое чтение</p><h1>Выберите маршрут, а не кроличью нору.</h1><p class="lead">Каждый маршрут ведёт от знакомого упрощения к доказательствам, которые его усложняют.</p></main>
+  <section class="wrap-wide path-grid">
+    {paths.map((path, index) => (
+      <article class="path-card card">
+        <span class="path-number">{String(index + 1).padStart(2, "0")}</span>
+        <p class="eyebrow">{path.slugs.length} статей</p>
+        <h2>{path.title}</h2>
+        <p>{path.intro}</p>
+        <ol>
+          {path.slugs.map((slug) => {
+            const myth = myths.find((m) => m.data.slug === slug);
+            const ruMeta = mythsRu[slug];
+            return myth && (
+              <li><a href={`/ru/myths/${slug}/`}>{ruMeta?.title ?? myth.data.title}</a></li>
+            );
+          })}
+        </ol>
+      </article>
+    ))}
+  </section>
+</BaseLayout>

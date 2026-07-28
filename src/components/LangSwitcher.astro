@@ -1,0 +1,46 @@
+---
+interface Props { lang: "en" | "ru" }
+const { lang } = Astro.props;
+const pathname = Astro.url.pathname;
+
+function getOtherLangUrl(currentPath: string, currentLang: "en" | "ru"): string {
+  if (currentLang === "ru") {
+    // /ru/... → /...
+    const stripped = currentPath.replace(/^\/ru(\/|$)/, "/");
+    return stripped || "/";
+  } else {
+    // /... → /ru/...
+    if (currentPath === "/") return "/ru/";
+    return `/ru${currentPath}`;
+  }
+}
+
+const otherUrl = getOtherLangUrl(pathname, lang);
+const otherLang = lang === "en" ? "ru" : "en";
+---
+<a
+  class="lang-switch"
+  href={otherUrl}
+  hreflang={otherLang}
+  aria-label={lang === "en" ? "Переключить на русский язык" : "Switch to English"}
+  title={lang === "en" ? "Русская версия" : "English version"}
+>
+  {lang === "en" ? "RU" : "EN"}
+</a>
+<style>
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: .25rem .55rem;
+    font: 700 .72rem var(--font-mono);
+    color: var(--muted);
+    text-decoration: none;
+    transition: border-color .2s, color .2s;
+    letter-spacing: .04em;
+    white-space: nowrap;
+  }
+  .lang-switch:hover { border-color: var(--brand); color: var(--ink); }
+</style>

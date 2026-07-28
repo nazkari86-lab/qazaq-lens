@@ -1,21 +1,41 @@
 ---
 import Logo from "./Logo.astro";
+interface Props { lang?: "en" | "ru" }
+const { lang = "en" } = Astro.props;
 const year = new Date().getFullYear();
+const isRu = lang === "ru";
 ---
 <footer class="site-footer">
   <div class="wrap-wide footer-layout">
     <div class="footer-brand">
-      <a href="/" class="logo" aria-label="Qazaq Lens home"><Logo compact /></a>
-      <p>Independent, sourced cultural context about Kazakhstan. Created by <a href="/about">Dulat Nurlanuly</a>.</p>
+      <a href={isRu ? "/ru/" : "/"} class="logo" aria-label="Qazaq Lens home"><Logo compact /></a>
+      <p>{isRu
+        ? <span>Независимый источник подтверждённой информации о Казахстане. Создан <a href="/ru/about/">Дулатом Нурланулы</a>.</span>
+        : <span>Independent, sourced cultural context about Kazakhstan. Created by <a href="/about">Dulat Nurlanuly</a>.</span>
+      }</p>
     </div>
-    <div class="footer-links" aria-label="Footer navigation">
-      <div><strong>Start</strong><a href="/ask/">Ask a claim</a><a href="/challenge/">Myth challenge</a><a href="/story/">Visual story</a><a href="/myths/">Evidence library</a><a href="/topics/">Browse by topic</a><a href="/paths/">Reading paths</a><a href="/start/">Kazakhstan in 60 seconds</a></div>
-      <div><strong>Inspect</strong><a href="/sources/">Evidence dashboard</a><a href="/compare/">Compare explainers</a><a href="/glossary/">Glossary</a><a href="/data-status/">Data status</a><a href="/methodology/">Methodology</a><a href="/impact/">Impact</a><a href="/rss.xml">RSS feed</a></div>
-      <div><strong>Project</strong><a href="/about/">About</a><a href="/press/">Press resources</a><a href="/suggest/">Suggest a myth</a><a href="/report-error/">Report an error</a><a href="/corrections/">Corrections</a><a href="/accessibility/">Accessibility</a><a href="/privacy/">Privacy</a></div>
-    </div>
+    {isRu
+      ? (
+        <div class="footer-links" aria-label="Навигация по сайту">
+          <div><strong>Начало</strong><a href="/ask/">Проверить утверждение</a><a href="/ru/challenge/">Викторина о мифах</a><a href="/story/">Визуальная история</a><a href="/ru/myths/">Библиотека</a><a href="/ru/topics/">По теме</a><a href="/ru/paths/">Маршруты чтения</a></div>
+          <div><strong>Изучить</strong><a href="/sources/">Источники</a><a href="/ru/glossary/">Глоссарий</a><a href="/methodology/">Методология</a><a href="/rss.xml">RSS</a></div>
+          <div><strong>Проект</strong><a href="/ru/about/">О проекте</a><a href="/press/">Для прессы</a><a href="/suggest/">Предложить тему</a><a href="/report-error/">Сообщить об ошибке</a><a href="/corrections/">Исправления</a><a href="/privacy/">Конфиденциальность</a></div>
+        </div>
+      )
+      : (
+        <div class="footer-links" aria-label="Footer navigation">
+          <div><strong>Start</strong><a href="/ask/">Ask a claim</a><a href="/challenge/">Myth challenge</a><a href="/story/">Visual story</a><a href="/myths/">Evidence library</a><a href="/topics/">Browse by topic</a><a href="/paths/">Reading paths</a><a href="/start/">Kazakhstan in 60 seconds</a></div>
+          <div><strong>Inspect</strong><a href="/sources/">Evidence dashboard</a><a href="/compare/">Compare explainers</a><a href="/glossary/">Glossary</a><a href="/data-status/">Data status</a><a href="/methodology/">Methodology</a><a href="/impact/">Impact</a><a href="/rss.xml">RSS feed</a></div>
+          <div><strong>Project</strong><a href="/about/">About</a><a href="/press/">Press resources</a><a href="/suggest/">Suggest a myth</a><a href="/report-error/">Report an error</a><a href="/corrections/">Corrections</a><a href="/accessibility/">Accessibility</a><a href="/privacy/">Privacy</a></div>
+        </div>
+      )
+    }
   </div>
   <div class="wrap-wide footer-bottom">
-    <p>© {year} Qazaq Lens · Created by <a href="/about">Dulat Nurlanuly</a>. Unofficial and independent; not a government or tourism website.</p>
-    <p>Text may be quoted with attribution and a link.</p>
+    {isRu
+      ? <p>© {year} Qazaq Lens · Создан <a href="/ru/about/">Дулатом Нурланулы</a>. Независимый проект; не является официальным правительственным или туристическим ресурсом.</p>
+      : <p>© {year} Qazaq Lens · Created by <a href="/about">Dulat Nurlanuly</a>. Unofficial and independent; not a government or tourism website.</p>
+    }
+    <p>{isRu ? "Цитирование допустимо с атрибуцией и ссылкой." : "Text may be quoted with attribution and a link."}</p>
   </div>
 </footer>

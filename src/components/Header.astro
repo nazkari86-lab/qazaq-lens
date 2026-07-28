@@ -1,36 +1,63 @@
 ---
 import Logo from "./Logo.astro";
+import LangSwitcher from "./LangSwitcher.astro";
+
+interface Props { lang?: "en" | "ru" }
+const { lang = "en" } = Astro.props;
 const pathname = Astro.url.pathname;
+const base = lang === "ru" ? "/ru" : "";
 const isCurrent = (href: string) => pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
-const more = [
+
+const navEn = {
+  start: "Start", ask: "Ask", story: "Story", library: "Library", challenge: "Challenge",
+  more: "More", search: "Search", theme: "Theme",
+};
+const navRu = {
+  start: "Начало", ask: "Спросить", story: "История", library: "Библиотека", challenge: "Викторина",
+  more: "Ещё", search: "Поиск", theme: "Тема",
+};
+const t = lang === "ru" ? navRu : navEn;
+
+const moreEn = [
   { href: "/profile", label: "Country profile" }, { href: "/paths", label: "Reading paths" },
-  { href: "/gallery", label: "Visual archive" }, { href: "/compare", label: "Compare explainers" },
-  { href: "/sources", label: "Source dashboard" }, { href: "/impact", label: "Impact" },
-  { href: "/methodology", label: "Methodology" }, { href: "/about", label: "About" },
+  { href: "/topics", label: "Browse by topic" }, { href: "/gallery", label: "Visual archive" },
+  { href: "/compare", label: "Compare explainers" }, { href: "/sources", label: "Source dashboard" },
+  { href: "/impact", label: "Impact" }, { href: "/methodology", label: "Methodology" },
+  { href: "/about", label: "About" },
 ];
+const moreRu = [
+  { href: "/ru/paths", label: "Маршруты чтения" },
+  { href: "/ru/topics", label: "По теме" },
+  { href: "/ru/glossary", label: "Глоссарий" },
+  { href: "/ru/about", label: "О проекте" },
+  { href: "/sources", label: "Источники" },
+  { href: "/methodology", label: "Методология" },
+];
+const more = lang === "ru" ? moreRu : moreEn;
 const groupCurrent = (items: { href: string }[]) => items.some((item) => isCurrent(item.href));
 ---
-<a class="skip-link" href="#main-content">Skip to content</a>
+<a class="skip-link" href="#main-content">{lang === "ru" ? "Перейти к содержимому" : "Skip to content"}</a>
 <header class="site-header" data-header>
   <div class="wrap-wide header-inner">
-    <a href="/" class="logo" aria-label="Qazaq Lens home"><Logo /></a>
+    <a href={lang === "ru" ? "/ru/" : "/"} class="logo" aria-label="Qazaq Lens home"><Logo /></a>
     <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" data-nav-toggle>
-      <span class="nav-toggle-label">Menu</span>
+      <span class="nav-toggle-label">{t.more}</span>
       <span class="nav-toggle-icon" aria-hidden="true"></span>
     </button>
     <nav id="primary-nav" class="primary-nav" aria-label="Primary navigation" data-nav>
-      <a href="/start/" aria-current={isCurrent("/start") ? "page" : undefined}>Start</a>
-      <a class="nav-ask-link" href="/ask/" aria-current={isCurrent("/ask") ? "page" : undefined}>Ask</a>
-      <a href="/story/" aria-current={isCurrent("/story") ? "page" : undefined}>Story</a>
-      <a href="/myths/" aria-current={isCurrent("/myths") ? "page" : undefined}>Library</a>
-      <a href="/challenge/" aria-current={isCurrent("/challenge") ? "page" : undefined}>Challenge</a>
+      <a href={`${base}/start/`} aria-current={isCurrent(`${base}/start`) ? "page" : undefined}>{t.start}</a>
+      <a class="nav-ask-link" href={lang === "ru" ? "/ask/" : "/ask/"} aria-current={isCurrent("/ask") ? "page" : undefined}>{t.ask}</a>
+      <a href={lang === "ru" ? "/story/" : "/story/"} aria-current={isCurrent("/story") ? "page" : undefined}>{t.story}</a>
+      <a href={`${base}/myths/`} aria-current={isCurrent(`${base}/myths`) ? "page" : undefined}>{t.library}</a>
+      <a href={`${base}/challenge/`} aria-current={isCurrent(`${base}/challenge`) ? "page" : undefined}>{t.challenge}</a>
       <details class="nav-group" open={groupCurrent(more)}>
-        <summary class:list={[groupCurrent(more) && "is-current"]}>More</summary>
+        <summary class:list={[groupCurrent(more) && "is-current"]}>{t.more}</summary>
         <div class="nav-dropdown">{more.map((item) => <a href={item.href} aria-current={isCurrent(item.href) ? "page" : undefined}>{item.label}</a>)}</div>
       </details>
-      <a class="nav-search-link" href="/search/" aria-current={isCurrent("/search") ? "page" : undefined} aria-label="Search evidence">Search</a>
+      <a class="nav-search-link" href="/search/" aria-current={isCurrent("/search") ? "page" : undefined} aria-label={lang === "ru" ? "Поиск" : "Search evidence"}>{t.search}</a>
+      <LangSwitcher lang={lang} />
       <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme">
-        <span class="theme-icon" aria-hidden="true" data-theme-icon>◐</span><span class="theme-label" data-theme-label>Theme</span>
+        <span class="theme-icon" aria-hidden="true" data-theme-icon>◐</span><span class="theme-label" data-theme-label>{t.theme}</span>
       </button>
     </nav>
   </div>

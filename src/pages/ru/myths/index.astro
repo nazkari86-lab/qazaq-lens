@@ -1,0 +1,66 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { getVisibleMyths } from "../../../lib/content";
+import { mythsRu } from "../../../i18n/myths-ru";
+
+const myths = (await getVisibleMyths()).sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
+const verdictRu: Record<string, string> = {
+  false: "ЛОЖЬ", misleading: "ВВОДИТ В ЗАБЛУЖДЕНИЕ", "partly-true": "ЧАСТИЧНО ВЕРНО",
+  outdated: "УСТАРЕЛО", unverified: "НЕ ПОДТВЕРЖДЕНО", disputed: "СПОРНО",
+};
+---
+<BaseLayout
+  lang="ru"
+  title="Библиотека мифов о Казахстане"
+  description={`${myths.length} проверенных утверждений о Казахстане с источниками — от истории и географии до культуры и политики.`}
+>
+  <main class="wrap-wide">
+    <header class="page-hero">
+      <p class="eyebrow">Библиотека</p>
+      <h1>Мифы о Казахстане: {myths.length} проверок</h1>
+      <p class="lead">Каждое утверждение проверено по источникам. Вердикт подкреплён доказательствами.</p>
+    </header>
+
+    <div class="myths-grid">
+      {myths.map((myth) => {
+        const ru = mythsRu[myth.data.slug];
+        return (
+          <a href={`/ru/myths/${myth.data.slug}/`} class="myth-row card">
+            <span class={`verdict-tag verdict-tag--${myth.data.verdict}`}>{verdictRu[myth.data.verdict] ?? myth.data.verdict.toUpperCase()}</span>
+            <div class="myth-row-body">
+              <h2>{ru?.title ?? myth.data.title}</h2>
+              <p class="myth-claim">«{ru?.mythStatement ?? myth.data.mythStatement}»</p>
+              <p class="myth-summary">{ru?.summary?.slice(0, 160) ?? myth.data.summary?.slice(0, 160)}…</p>
+            </div>
+            <div class="myth-row-meta">
+              {myth.data.topics.slice(0, 2).map((t) => <span class="topic-chip">{t}</span>)}
+              <span class="myth-sources">{myth.data.sources.length} ист.</span>
+            </div>
+          </a>
+        );
+      })}
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .page-hero { padding: 3rem 0 2rem; }
+  .myths-grid { display: grid; gap: 1rem; padding-bottom: 4rem; }
+  .myth-row { display: grid; grid-template-columns: 140px 1fr auto; gap: 1.25rem; align-items: start; padding: 1.25rem; text-decoration: none; color: var(--ink); border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); transition: border-color .2s; }
+  .myth-row:hover { border-color: var(--brand); }
+  .verdict-tag { font: 700 .6rem var(--font-mono); padding: .18rem .5rem; border-radius: 2px; white-space: nowrap; align-self: start; }
+  .verdict-tag--false { background: #d94f3522; color: #d94f35; }
+  .verdict-tag--misleading { background: #e07a3522; color: #e07a35; }
+  .verdict-tag--partly-true { background: #68b48622; color: #68b486; }
+  .verdict-tag--disputed, .verdict-tag--unverified { background: #88888822; color: #888; }
+  .myth-row-body h2 { font-size: .95rem; margin: 0 0 .35rem; }
+  .myth-claim { font-style: italic; font-size: .82rem; color: var(--muted); margin: 0 0 .35rem; }
+  .myth-summary { font-size: .82rem; color: var(--muted); margin: 0; }
+  .myth-row-meta { display: flex; flex-direction: column; gap: .35rem; align-items: flex-end; }
+  .topic-chip { font: .7rem var(--font-mono); padding: .15rem .45rem; border: 1px solid var(--line); border-radius: 100px; color: var(--muted); white-space: nowrap; }
+  .myth-sources { font: .7rem var(--font-mono); color: var(--muted); }
+  @media (max-width: 680px) {
+    .myth-row { grid-template-columns: 1fr; }
+    .myth-row-meta { flex-direction: row; align-items: center; }
+  }
+</style>

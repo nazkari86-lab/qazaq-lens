@@ -1,0 +1,115 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { getVisibleMyths } from "../../../lib/content";
+import { mythsRu } from "../../../i18n/myths-ru";
+
+const myths = await getVisibleMyths();
+
+const topicMap = new Map<string, typeof myths>();
+for (const myth of myths) {
+  for (const topic of myth.data.topics) {
+    if (!topicMap.has(topic)) topicMap.set(topic, []);
+    topicMap.get(topic)!.push(myth);
+  }
+}
+const topics = [...topicMap.entries()].sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]));
+
+const verdictRu: Record<string, string> = {
+  false: "ЛОЖЬ", misleading: "ВВОДИТ В ЗАБЛУЖДЕНИЕ", "partly-true": "ЧАСТИЧНО ВЕРНО",
+  outdated: "УСТАРЕЛО", unverified: "НЕ ПОДТВЕРЖДЕНО", disputed: "СПОРНО",
+};
+---
+<BaseLayout lang="ru" title="По теме — Qazaq Lens" description={`Просматривайте ${myths.length} проверенных статей о Казахстане по ${topics.length} темам.`}>
+  <main class="wrap-wide topics-page">
+    <header class="page-hero">
+      <p class="eyebrow">Тематический поиск</p>
+      <h1>Все статьи по темам</h1>
+      <p class="lead">{myths.length} статей по {topics.length} темам. Найдите нужное или исследуйте категорию.</p>
+      <label class="topics-search-wrap">
+        <span class="visually-hidden">Фильтр по темам</span>
+        <input class="topics-search" type="search" placeholder="Поиск по теме или названию статьи…" data-topics-search />
+      </label>
+    </header>
+
+    <section class="topics-index" aria-label="Указатель тем">
+      <div class="topics-overview" role="list">
+        {topics.map(([topic, entries]) => (
+          <a class="topic-chip" href={`#topic-${topic.toLowerCase().replace(/\s+/g, "-")}`} role="listitem" data-topic-chip data-topic-name={topic.toLowerCase()}>
+            {topic}<span class="topic-chip-count">{entries.length}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="topics-groups" data-topics-groups>
+      {topics.map(([topic, entries]) => (
+        <div class="topic-group" id={`topic-${topic.toLowerCase().replace(/\s+/g, "-")}`} data-topic-group data-topic-label={topic.toLowerCase()}>
+          <header class="topic-group-header">
+            <h2>{topic}</h2>
+            <span class="topic-count">{entries.length} {entries.length === 1 ? "статья" : entries.length < 5 ? "статьи" : "статей"}</span>
+          </header>
+          <ul class="topic-articles">
+            {entries.sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf()).map((myth) => (
+              <li data-topic-article data-article-text={`${myth.data.title} ${mythsRu[myth.data.slug]?.title ?? ""} ${topic}`.toLowerCase()}>
+                <a href={`/ru/myths/${myth.data.slug}/`} class="topic-article-link">
+                  <span class={`verdict-tag verdict-tag--${myth.data.verdict}`}>{verdictRu[myth.data.verdict] ?? myth.data.verdict.toUpperCase()}</span>
+                  <span class="topic-article-title">{mythsRu[myth.data.slug]?.title ?? myth.data.title}</span>
+                  <span class="topic-article-sources">{myth.data.sources.length} ист.</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </section>
+    <p class="topics-empty" data-topics-empty hidden>По вашему запросу ничего не найдено. Попробуйте другой термин.</p>
+  </main>
+  <script>
+    const search = document.querySelector<HTMLInputElement>("[data-topics-search]");
+    const groups = [...document.querySelectorAll<HTMLElement>("[data-topic-group]")];
+    const chips = [...document.querySelectorAll<HTMLAnchorElement>("[data-topic-chip]")];
+    const empty = document.querySelector<HTMLElement>("[data-topics-empty]");
+    search?.addEventListener("input", () => {
+      const q = search.value.trim().toLowerCase(); let visible = 0;
+      groups.forEach((group) => {
+        const label = group.dataset.topicLabel ?? "";
+        const articles = [...group.querySelectorAll<HTMLElement>("[data-topic-article]")];
+        if (!q) { group.hidden = false; articles.forEach((a) => { a.hidden = false; }); visible++; return; }
+        const topicMatch = label.includes(q); let articleVisible = 0;
+        articles.forEach((a) => { const show = (a.dataset.articleText ?? "").includes(q); a.hidden = !show; if (show) articleVisible++; });
+        const show = topicMatch || articleVisible > 0; group.hidden = !show;
+        if (topicMatch && articleVisible === 0) articles.forEach((a) => { a.hidden = false; });
+        if (show) visible++;
+      });
+      chips.forEach((chip) => { chip.style.opacity = !q || (chip.dataset.topicName ?? "").includes(q) ? "1" : "0.35"; });
+      if (empty) empty.hidden = visible > 0;
+    });
+  </script>
+</BaseLayout>
+<style>
+  .topics-page { padding-bottom: 4rem; }
+  .topics-search-wrap { display: block; margin-top: 1.5rem; max-width: 560px; }
+  .topics-search { width: 100%; border: 1px solid var(--line); border-radius: var(--radius-sm); padding: .9rem 1rem; background: var(--surface); color: var(--ink); font: 1rem var(--font-display); }
+  .topics-search:focus { outline: none; border-color: var(--brand); }
+  .topics-index { margin: 2rem 0 3rem; }
+  .topics-overview { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .topic-chip { display: flex; align-items: center; gap: .45rem; border: 1px solid var(--line); border-radius: 100px; padding: .3rem .85rem; font-size: .82rem; color: var(--muted); text-decoration: none; transition: border-color .2s, color .2s; }
+  .topic-chip:hover { border-color: var(--brand); color: var(--ink); }
+  .topic-chip-count { font: 700 .7rem var(--font-mono); background: var(--surface-2, var(--line)); padding: .1rem .4rem; border-radius: 100px; color: var(--muted); }
+  .topics-groups { display: grid; gap: 2.5rem; }
+  .topic-group { scroll-margin-top: 5rem; }
+  .topic-group-header { display: flex; align-items: baseline; gap: 1rem; margin-bottom: .75rem; border-bottom: 1px solid var(--line); padding-bottom: .5rem; }
+  .topic-group-header h2 { font-size: 1.15rem; margin: 0; }
+  .topic-count { font: .72rem var(--font-mono); color: var(--muted); }
+  .topic-articles { list-style: none; padding: 0; display: grid; gap: .35rem; }
+  .topic-article-link { display: flex; align-items: center; gap: .75rem; padding: .55rem .75rem; border: 1px solid var(--line); border-radius: var(--radius-sm); text-decoration: none; color: var(--ink); transition: border-color .2s, background .2s; }
+  .topic-article-link:hover { border-color: var(--brand); background: var(--surface); }
+  .topic-article-title { flex: 1; font-size: .92rem; }
+  .topic-article-sources { font: .7rem var(--font-mono); color: var(--muted); flex-shrink: 0; }
+  .verdict-tag { font: 700 .6rem var(--font-mono); padding: .15rem .45rem; border-radius: 2px; flex-shrink: 0; white-space: nowrap; }
+  .verdict-tag--false { background: #d94f3522; color: #d94f35; }
+  .verdict-tag--misleading { background: #e07a3522; color: #e07a35; }
+  .verdict-tag--partly-true { background: #68b48622; color: #68b486; }
+  .verdict-tag--disputed, .verdict-tag--unverified { background: #80808022; color: #888; }
+  .topics-empty { text-align: center; padding: 3rem; color: var(--muted); }
+</style>

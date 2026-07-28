@@ -1,0 +1,182 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getVisibleMyths } from "../../lib/content";
+import { mythsRu } from "../../i18n/myths-ru";
+
+const myths = (await getVisibleMyths()).sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
+const featured = myths.find((e) => e.data.featured) ?? myths[0];
+const recent = myths.filter((e) => e.id !== featured?.id).slice(0, 3);
+const sourceCount = myths.reduce((s, e) => s + e.data.sources.length, 0);
+const claimCount = myths.reduce((s, e) => s + e.data.claims.length, 0);
+
+const verdictRu: Record<string, string> = {
+  false: "ЛОЖЬ", misleading: "ВВОДИТ В ЗАБЛУЖДЕНИЕ", "partly-true": "ЧАСТИЧНО ВЕРНО",
+  outdated: "УСТАРЕЛО", unverified: "НЕ ПОДТВЕРЖДЕНО", disputed: "СПОРНО",
+};
+
+const featuredRu = featured ? mythsRu[featured.data.slug] : undefined;
+---
+<BaseLayout
+  lang="ru"
+  title="Qazaq Lens — факт-чек о Казахстане"
+  description="Qazaq Lens проверяет распространённые мифы о Казахстане — от Бората до ядерного оружия — с подтверждёнными источниками для международной аудитории."
+>
+  <main>
+    <!-- Hero -->
+    <section class="ru-hero wrap-wide">
+      <div class="ru-hero-text">
+        <p class="eyebrow">Факт-чек о Казахстане</p>
+        <h1>Настоящий Казахстан.<br>С источниками.</h1>
+        <p class="lead">{myths.length} проверенных утверждений · {sourceCount} источников · {claimCount} отдельных фактов с оценкой достоверности.</p>
+        <div class="ru-hero-actions">
+          <a href="/ru/myths/" class="btn btn--primary">Библиотека статей</a>
+          <a href="/ru/challenge/" class="btn btn--outline">Викторина о мифах</a>
+        </div>
+      </div>
+      <div class="ru-hero-stats">
+        <div class="ru-stat"><span class="ru-stat-n">{myths.length}</span><span class="ru-stat-l">проверенных утверждений</span></div>
+        <div class="ru-stat"><span class="ru-stat-n">{sourceCount}</span><span class="ru-stat-l">источников</span></div>
+        <div class="ru-stat"><span class="ru-stat-n">9-я</span><span class="ru-stat-l">по площади страна мира</span></div>
+        <div class="ru-stat"><span class="ru-stat-n">1991</span><span class="ru-stat-l">год независимости</span></div>
+      </div>
+    </section>
+
+    <!-- Featured article -->
+    {featured && (
+      <section class="wrap-wide ru-section">
+        <p class="eyebrow">Главная статья</p>
+        <article class="ru-featured card">
+          {featured.data.heroImage && (
+            <img src={featured.data.heroImage} alt={featured.data.heroImageAlt ?? ""} class="ru-featured-img" loading="lazy" />
+          )}
+          <div class="ru-featured-body">
+            <span class={`verdict-tag verdict-tag--${featured.data.verdict}`}>{verdictRu[featured.data.verdict] ?? featured.data.verdict.toUpperCase()}</span>
+            <h2>{featuredRu?.title ?? featured.data.title}</h2>
+            <p class="myth-claim">«{featuredRu?.mythStatement ?? featured.data.mythStatement}»</p>
+            <p>{featuredRu?.summary ?? featured.data.summary}</p>
+            <a href={`/ru/myths/${featured.data.slug}/`} class="btn btn--primary">Читать статью →</a>
+          </div>
+        </article>
+      </section>
+    )}
+
+    <!-- Recent articles -->
+    <section class="wrap-wide ru-section">
+      <p class="eyebrow">Последние статьи</p>
+      <h2>Свежие проверки</h2>
+      <div class="ru-cards">
+        {recent.map((myth) => {
+          const ru = mythsRu[myth.data.slug];
+          return (
+            <a href={`/ru/myths/${myth.data.slug}/`} class="ru-card card">
+              <span class={`verdict-tag verdict-tag--${myth.data.verdict}`}>{verdictRu[myth.data.verdict] ?? myth.data.verdict.toUpperCase()}</span>
+              <h3>{ru?.title ?? myth.data.title}</h3>
+              <p>{ru?.summary?.slice(0, 140) ?? myth.data.summary?.slice(0, 140)}…</p>
+              <span class="ru-card-link">Читать →</span>
+            </a>
+          );
+        })}
+      </div>
+      <div class="ru-section-footer">
+        <a href="/ru/myths/" class="btn btn--outline">Все {myths.length} статей →</a>
+      </div>
+    </section>
+
+    <!-- Quick facts -->
+    <section class="wrap-wide ru-section ru-facts-section">
+      <p class="eyebrow">Ключевые факты</p>
+      <h2>Что нужно знать о Казахстане</h2>
+      <dl class="ru-facts">
+        <div class="ru-fact"><dt>Столица</dt><dd>Астана (до 2022 года — Нур-Султан; до 1997 — Алматы)</dd></div>
+        <div class="ru-fact"><dt>Площадь</dt><dd>2,72 млн км² — 9-е место в мире, крупнейшая страна без выхода к морю</dd></div>
+        <div class="ru-fact"><dt>Население</dt><dd>Около 19–20 млн человек, более 130 этнических групп</dd></div>
+        <div class="ru-fact"><dt>Языки</dt><dd>Казахский (государственный) и русский (официальный)</dd></div>
+        <div class="ru-fact"><dt>Независимость</dt><dd>16 декабря 1991 года, полноправный член ООН</dd></div>
+        <div class="ru-fact"><dt>Ядерное оружие</dt><dd>Передано России к 1995 году; безъядерное государство</dd></div>
+        <div class="ru-fact"><dt>ЮНЕСКО</dt><dd>4 объекта Всемирного наследия; 2 объекта нематериального наследия</dd></div>
+        <div class="ru-fact"><dt>Шёлковый путь</dt><dd>Исторические маршруты проходили через Казахстан, признаны ЮНЕСКО (2014)</dd></div>
+      </dl>
+    </section>
+
+    <!-- Reading paths -->
+    <section class="wrap-wide ru-section">
+      <p class="eyebrow">Маршруты чтения</p>
+      <h2>С чего начать?</h2>
+      <div class="ru-paths">
+        <a href="/ru/myths/?topic=history" class="ru-path-card card">
+          <span class="ru-path-num">01</span>
+          <h3>История и государство</h3>
+          <p>Казахское ханство, советский период, независимость и ядерное разоружение.</p>
+        </a>
+        <a href="/ru/paths/" class="ru-path-card card">
+          <span class="ru-path-num">02</span>
+          <h3>Культура без стереотипов</h3>
+          <p>Религия, язык, этничность и наследие — без упрощений.</p>
+        </a>
+        <a href="/ru/myths/?topic=geography" class="ru-path-card card">
+          <span class="ru-path-num">03</span>
+          <h3>География и природа</h3>
+          <p>2,7 млн км² — степи, горы, каньоны, Аральское море.</p>
+        </a>
+      </div>
+      <div class="ru-section-footer"><a href="/ru/paths/" class="btn btn--outline">Все маршруты →</a></div>
+    </section>
+
+    <!-- CTA -->
+    <section class="wrap ru-cta-section">
+      <div class="ru-cta card">
+        <h2>Проверьте свои знания</h2>
+        <p>15 вопросов раскроют, где привычные представления о Казахстане расходятся с задокументированными фактами.</p>
+        <a href="/ru/challenge/" class="btn btn--primary">Пройти викторину</a>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .ru-hero { display: grid; grid-template-columns: 1fr auto; gap: 3rem; align-items: start; padding: 4rem 0 3rem; }
+  .ru-hero h1 { font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.1; margin-bottom: 1rem; }
+  .ru-hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1.5rem; }
+  .ru-hero-stats { display: grid; gap: 1rem; }
+  .ru-stat { border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem 1.25rem; background: var(--surface); min-width: 160px; }
+  .ru-stat-n { display: block; font: 700 2rem var(--font-display); color: var(--brand); line-height: 1; }
+  .ru-stat-l { font-size: .8rem; color: var(--muted); }
+  .ru-section { padding: 3rem 0; border-top: 1px solid var(--line); }
+  .ru-section-footer { margin-top: 2rem; text-align: center; }
+  .ru-featured { display: grid; grid-template-columns: 1fr 1.5fr; gap: 2rem; overflow: hidden; }
+  .ru-featured-img { width: 100%; height: 280px; object-fit: cover; border-radius: var(--radius); }
+  .ru-featured-body { padding: 1rem 0; }
+  .ru-featured-body h2 { font-size: 1.5rem; margin: .75rem 0 .5rem; }
+  .myth-claim { font-style: italic; color: var(--muted); font-size: .95rem; margin-bottom: .75rem; }
+  .ru-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+  .ru-card { display: flex; flex-direction: column; padding: 1.25rem; text-decoration: none; color: var(--ink); border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); transition: border-color .2s, transform .2s; }
+  .ru-card:hover { border-color: var(--brand); transform: translateY(-2px); }
+  .ru-card h3 { font-size: 1rem; margin: .75rem 0 .5rem; }
+  .ru-card p { font-size: .87rem; color: var(--muted); flex: 1; }
+  .ru-card-link { margin-top: 1rem; font: 700 .8rem var(--font-mono); color: var(--brand); }
+  .ru-facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+  .ru-fact { border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 1rem 1.25rem; background: var(--surface); }
+  .ru-fact dt { font: 700 .75rem var(--font-mono); color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: .35rem; }
+  .ru-fact dd { font-size: .9rem; }
+  .ru-paths { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+  .ru-path-card { display: block; padding: 1.5rem; text-decoration: none; color: var(--ink); border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); transition: border-color .2s; }
+  .ru-path-card:hover { border-color: var(--brand); }
+  .ru-path-num { font: 700 .7rem var(--font-mono); color: var(--muted); }
+  .ru-path-card h3 { font-size: 1.1rem; margin: .5rem 0; }
+  .ru-path-card p { font-size: .87rem; color: var(--muted); margin: 0; }
+  .ru-cta-section { padding-bottom: 4rem; }
+  .ru-cta { text-align: center; padding: 3rem; }
+  .ru-cta h2 { font-size: 1.75rem; margin-bottom: 1rem; }
+  .ru-cta p { color: var(--muted); max-width: 560px; margin: 0 auto 1.5rem; }
+  .verdict-tag { font: 700 .62rem var(--font-mono); padding: .18rem .5rem; border-radius: 2px; display: inline-block; margin-bottom: .5rem; }
+  .verdict-tag--false { background: #d94f3522; color: #d94f35; }
+  .verdict-tag--misleading { background: #e07a3522; color: #e07a35; }
+  .verdict-tag--partly-true { background: #68b48622; color: #68b486; }
+  .verdict-tag--disputed, .verdict-tag--unverified { background: #88888822; color: #888; }
+  @media (max-width: 840px) {
+    .ru-hero { grid-template-columns: 1fr; }
+    .ru-hero-stats { grid-template-columns: repeat(2, 1fr); }
+    .ru-featured { grid-template-columns: 1fr; }
+    .ru-featured-img { height: 200px; }
+  }
+</style>

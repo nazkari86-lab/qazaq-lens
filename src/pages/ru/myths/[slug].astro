@@ -1,0 +1,173 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { getVisibleMyths } from "../../../lib/content";
+import { mythsRu } from "../../../i18n/myths-ru";
+
+export async function getStaticPaths() {
+  const myths = await getVisibleMyths();
+  return myths.map((myth) => ({ params: { slug: myth.data.slug }, props: { myth } }));
+}
+
+const { myth } = Astro.props;
+const ru = mythsRu[myth.data.slug];
+
+const verdictRu: Record<string, string> = {
+  false: "ЛОЖЬ", misleading: "ВВОДИТ В ЗАБЛУЖДЕНИЕ", "partly-true": "ЧАСТИЧНО ВЕРНО",
+  outdated: "УСТАРЕЛО", unverified: "НЕ ПОДТВЕРЖДЕНО", disputed: "СПОРНО",
+};
+const verdictDescRu: Record<string, string> = {
+  false: "Утверждение не соответствует задокументированным фактам.",
+  misleading: "Утверждение содержит часть правды, но вводит в заблуждение.",
+  "partly-true": "Утверждение частично верно, но требует существенных оговорок.",
+  outdated: "Утверждение было верным, но устарело.",
+  disputed: "Достоверные источники расходятся во мнениях.",
+  unverified: "Утверждение не нашло документального подтверждения.",
+};
+
+const title = ru?.title ?? myth.data.title;
+const mythStatement = ru?.mythStatement ?? myth.data.mythStatement;
+const summary = ru?.summary ?? myth.data.summary;
+const keyTakeaways = ru?.keyTakeaways ?? myth.data.keyTakeaways;
+const verdictLabel = verdictRu[myth.data.verdict] ?? myth.data.verdict.toUpperCase();
+const verdictDesc = verdictDescRu[myth.data.verdict] ?? "";
+---
+<BaseLayout
+  lang="ru"
+  title={title}
+  description={summary}
+  ogImage={myth.data.ogImage}
+  type="article"
+>
+  <article class="wrap article-shell">
+    <!-- Breadcrumb -->
+    <nav class="ru-breadcrumb" aria-label="Навигация">
+      <a href="/ru/">Главная</a> › <a href="/ru/myths/">Библиотека</a> › <span>{title}</span>
+    </nav>
+
+    <!-- Header -->
+    <header class="ru-article-header">
+      <div class={`ru-verdict-banner ru-verdict-banner--${myth.data.verdict}`}>
+        <span class="ru-verdict-label">{verdictLabel}</span>
+        <span class="ru-verdict-desc">{verdictDesc}</span>
+      </div>
+
+      <p class="ru-myth-statement">«{mythStatement}»</p>
+      <h1>{title}</h1>
+
+      <div class="ru-article-meta">
+        <span>{myth.data.topics.join(" · ")}</span>
+        <span>{myth.data.sources.length} источников</span>
+        <a href={`/myths/${myth.data.slug}/`} class="ru-en-link">English version →</a>
+      </div>
+    </header>
+
+    <!-- Hero image -->
+    {myth.data.heroImage && (
+      <figure class="ru-hero-figure">
+        <img src={myth.data.heroImage} alt={myth.data.heroImageAlt ?? ""} class="ru-hero-img" />
+        {myth.data.heroImageCredit && (
+          <figcaption>
+            <a href={myth.data.heroImageCreditUrl} target="_blank" rel="noopener">{myth.data.heroImageCredit}</a>
+          </figcaption>
+        )}
+      </figure>
+    )}
+
+    <!-- Summary -->
+    <section class="ru-summary-block">
+      <h2>Краткий ответ</h2>
+      <p class="ru-summary-text">{summary}</p>
+    </section>
+
+    <!-- Key takeaways -->
+    {keyTakeaways && keyTakeaways.length > 0 && (
+      <section class="ru-takeaways">
+        <h2>Главное</h2>
+        <ul>
+          {keyTakeaways.map((t) => <li>{t}</li>)}
+        </ul>
+      </section>
+    )}
+
+    <!-- Sources overview -->
+    <section class="ru-sources-block">
+      <h2>Источники ({myth.data.sources.length})</h2>
+      <ul class="ru-sources-list">
+        {myth.data.sources.map((s) => (
+          <li>
+            <a href={s.url} target="_blank" rel="noopener noreferrer">{s.title}</a>
+            <span class="ru-source-pub">— {s.publisher}</span>
+            <span class="ru-source-lang">[{s.language}]</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- CTA to English -->
+    <section class="ru-full-article-cta">
+      <div class="ru-cta-card">
+        <h2>Полная статья на английском</h2>
+        <p>Подробный анализ с разбором каждого утверждения, ссылками на источники и историей правок доступен на английском языке.</p>
+        <a href={`/myths/${myth.data.slug}/`} class="btn btn--primary">Читать полную статью (English) →</a>
+      </div>
+    </section>
+
+    <!-- Topics -->
+    <div class="ru-topics">
+      {myth.data.topics.map((t) => (
+        <a href={`/ru/topics/#topic-${t.toLowerCase().replace(/\s+/g, "-")}`} class="topic-chip">{t}</a>
+      ))}
+    </div>
+
+    <!-- Navigation -->
+    <nav class="ru-article-nav">
+      <a href="/ru/myths/" class="btn btn--outline">← Все статьи</a>
+      <a href="/ru/challenge/" class="btn btn--outline">Викторина →</a>
+    </nav>
+  </article>
+</BaseLayout>
+
+<style>
+  .ru-breadcrumb { font-size: .82rem; color: var(--muted); margin-bottom: 1.5rem; padding-top: 1.5rem; }
+  .ru-breadcrumb a { color: var(--muted); text-decoration: none; }
+  .ru-breadcrumb a:hover { color: var(--ink); }
+  .ru-article-header { margin-bottom: 2rem; }
+  .ru-verdict-banner { padding: 1rem 1.25rem; border-radius: var(--radius); margin-bottom: 1.25rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  .ru-verdict-banner--false { background: #d94f3514; border-left: 3px solid #d94f35; }
+  .ru-verdict-banner--misleading { background: #e07a3514; border-left: 3px solid #e07a35; }
+  .ru-verdict-banner--partly-true { background: #68b48614; border-left: 3px solid #68b486; }
+  .ru-verdict-banner--disputed, .ru-verdict-banner--unverified { background: #88888814; border-left: 3px solid #888; }
+  .ru-verdict-label { font: 700 .72rem var(--font-mono); letter-spacing: .08em; }
+  .ru-verdict-desc { font-size: .88rem; color: var(--muted); }
+  .ru-myth-statement { font: italic 1.1rem/1.5 var(--font-display); color: var(--muted); margin-bottom: .75rem; }
+  .ru-article-header h1 { font-size: clamp(1.4rem, 3.5vw, 2.25rem); margin: 0 0 1rem; }
+  .ru-article-meta { display: flex; gap: 1rem; flex-wrap: wrap; font-size: .8rem; color: var(--muted); align-items: center; }
+  .ru-en-link { font: 700 .8rem var(--font-mono); color: var(--brand); text-decoration: none; }
+  .ru-en-link:hover { text-decoration: underline; }
+  .ru-hero-figure { margin: 0 0 2rem; }
+  .ru-hero-img { width: 100%; max-height: 380px; object-fit: cover; border-radius: var(--radius); }
+  .ru-hero-figure figcaption { font-size: .75rem; color: var(--muted); margin-top: .5rem; }
+  .ru-hero-figure figcaption a { color: var(--muted); }
+  .ru-summary-block { margin: 2rem 0; padding: 1.5rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+  .ru-summary-block h2 { font-size: 1rem; margin: 0 0 .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; font-size: .78rem; }
+  .ru-summary-text { font-size: 1.05rem; line-height: 1.65; margin: 0; }
+  .ru-takeaways { margin: 2rem 0; padding: 1.5rem; border: 1px solid var(--line); border-radius: var(--radius); }
+  .ru-takeaways h2 { font-size: .82rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin: 0 0 1rem; }
+  .ru-takeaways ul { list-style: none; padding: 0; display: grid; gap: .65rem; margin: 0; }
+  .ru-takeaways li { padding-left: 1.5rem; position: relative; font-size: .92rem; line-height: 1.5; }
+  .ru-takeaways li::before { content: "✓"; position: absolute; left: 0; color: var(--brand); font-weight: 700; }
+  .ru-sources-block { margin: 2rem 0; }
+  .ru-sources-block h2 { font-size: 1rem; margin-bottom: .75rem; }
+  .ru-sources-list { list-style: none; padding: 0; display: grid; gap: .5rem; }
+  .ru-sources-list li { font-size: .87rem; }
+  .ru-sources-list a { color: var(--brand); }
+  .ru-source-pub, .ru-source-lang { color: var(--muted); font-size: .82rem; }
+  .ru-full-article-cta { margin: 2.5rem 0; }
+  .ru-cta-card { padding: 2rem; background: var(--surface); border: 2px dashed var(--line); border-radius: var(--radius); text-align: center; }
+  .ru-cta-card h2 { font-size: 1.25rem; margin-bottom: .75rem; }
+  .ru-cta-card p { color: var(--muted); margin-bottom: 1.25rem; }
+  .ru-topics { display: flex; flex-wrap: wrap; gap: .4rem; margin: 1.5rem 0; }
+  .topic-chip { font-size: .75rem; padding: .2rem .6rem; border: 1px solid var(--line); border-radius: 100px; color: var(--muted); text-decoration: none; }
+  .topic-chip:hover { border-color: var(--brand); }
+  .ru-article-nav { display: flex; justify-content: space-between; padding: 2rem 0 4rem; gap: 1rem; }
+</style>

@@ -1,0 +1,222 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const questions = [
+  {
+    claim: "Казахстан входит в состав России.",
+    options: ["Верно", "Неверно", "Статус неясен"],
+    answer: 1,
+    explanation: "Казахстан — независимое государство — член ООН с 1991 года.",
+    href: "/ru/myths/part-of-russia/",
+  },
+  {
+    claim: "Казахский и русский языки принадлежат к одной языковой семье.",
+    options: ["Верно", "Неверно", "Только в Казахстане"],
+    answer: 1,
+    explanation: "Казахский — тюркский язык; русский — индоевропейский. Они не родственны.",
+    href: "/ru/myths/kazakh-and-russian/",
+  },
+  {
+    claim: "Северная часть Аральского моря частично восстановилась.",
+    options: ["Верно", "Неверно", "Море полностью восстановилось"],
+    answer: 0,
+    explanation: "Плотина Кок-Арал помогла Северному Аралу восстановиться, хотя в целом проблема сохраняется.",
+    href: "/ru/myths/aral-sea-gone/",
+  },
+  {
+    claim: "Казахстан по-прежнему обладает унаследованным советским ядерным оружием.",
+    options: ["Верно", "Неверно", "Только тактическое"],
+    answer: 1,
+    explanation: "Все унаследованные боеголовки переданы или уничтожены к 1995 году.",
+    href: "/ru/myths/nuclear-weapons/",
+  },
+  {
+    claim: "Большинство казахстанцев живёт в юртах.",
+    options: ["Верно", "Неверно", "Только зимой"],
+    answer: 1,
+    explanation: "Юрта — памятник культурного наследия, а не стандартное современное жильё.",
+    href: "/ru/myths/yurts/",
+  },
+  {
+    claim: "Бората снимался как документальный фильм о жизни в Казахстане.",
+    options: ["Верно", "Неверно", "Только первый фильм"],
+    answer: 1,
+    explanation: "Бората — вымышленная сатира; придуманный Казахстан — не документальное свидетельство.",
+    href: "/ru/myths/borat/",
+  },
+  {
+    claim: "Казахстан — крупнейшая в мире страна, не имеющая выхода к морю.",
+    options: ["Верно", "Неверно", "У него есть морское побережье"],
+    answer: 0,
+    explanation: "Казахстан не имеет выхода к открытому морю и является крупнейшей такой страной в мире.",
+    href: "/ru/myths/landlocked-isolated/",
+  },
+  {
+    claim: "Вирусное видео с гигантскими воротами доказывает крупное открытие.",
+    options: ["Верно", "Неверно", "Уже подтверждено ЮНЕСКО"],
+    answer: 1,
+    explanation: "Задокументированные сведения не подтверждают археологические заявления из этого видео.",
+    href: "/ru/myths/giant-door/",
+  },
+  {
+    claim: "У Казахстана нет объектов Всемирного наследия ЮНЕСКО.",
+    options: ["Верно", "Неверно", "Только природные"],
+    answer: 1,
+    explanation: "Казахстан имеет четыре объекта ЮНЕСКО: мавзолей Ясави (2003), петроглифы Тамгалы (2004), Шёлковые пути (2014) и Сарыарка (2008).",
+    href: "/ru/myths/world-heritage/",
+  },
+  {
+    claim: "Алматы — столица Казахстана.",
+    options: ["Верно", "Неверно", "Зависит от года"],
+    answer: 1,
+    explanation: "Столица — Астана. Казахстан перенёс столицу из Алматы в 1997 году.",
+    href: "/ru/myths/capital-astana/",
+  },
+  {
+    claim: "Казахстан был частью России (а не только СССР).",
+    options: ["Верно", "Неверно", "Только до 1936 года"],
+    answer: 1,
+    explanation: "Казахстан был отдельной советской республикой — не провинцией России. Обе республики входили в СССР как отдельные субъекты.",
+    href: "/ru/myths/part-of-russia/",
+  },
+  {
+    claim: "В Казахстане всегда очень холодно — тёплых сезонов нет.",
+    options: ["Верно", "Неверно", "Только на юге"],
+    answer: 1,
+    explanation: "В Казахстане четыре сезона. В Алматы летом бывает +24–26°C. Север холодный зимой, но лето тёплое по всей стране.",
+    href: "/ru/myths/climate-seasons/",
+  },
+  {
+    claim: "Маршруты Шёлкового пути проходили через Казахстан.",
+    options: ["Верно", "Неверно", "Лишь частично"],
+    answer: 0,
+    explanation: "Территория Казахстана была ключевым участком Шёлкового пути. ЮНЕСКО признало это наследием в 2014 году.",
+    href: "/ru/myths/silk-roads/",
+  },
+  {
+    claim: "Казахстан — девятая по площади страна в мире.",
+    options: ["Верно", "Неверно", "Входит в пятёрку"],
+    answer: 0,
+    explanation: "Площадь Казахстана — около 2,7 млн кв. км: 9-е место в мире, крупнейшая страна без выхода к морю.",
+    href: "/ru/myths/country-size/",
+  },
+  {
+    claim: "Первые лошади были одомашнены в Казахстане.",
+    options: ["Верно", "Неверно", "Данные оспариваются"],
+    answer: 2,
+    explanation: "Данные стоянки Ботай на севере Казахстана — одни из наиболее весомых свидетельств раннего одомашнивания. Научная дискуссия продолжается.",
+    href: "/ru/myths/horse-domestication/",
+  },
+] as const;
+
+const payload = JSON.stringify(questions).replace(/</g, "\\u003c");
+---
+<BaseLayout lang="ru" title="Викторина о мифах: Казахстан" description="15 вопросов раскроют, где привычные представления о Казахстане расходятся с задокументированными фактами.">
+  <main class="wrap challenge-page">
+    <header class="page-hero">
+      <p class="eyebrow">Викторина</p>
+      <h1>Мифы о Казахстане: что вы знаете?</h1>
+      <p class="lead">15 вопросов · около пяти минут · подтверждённые ответы из источников.</p>
+    </header>
+
+    <div class="quiz-shell" id="quiz" data-questions={payload}>
+      <div class="quiz-progress-bar" id="progress-bar"></div>
+      <div id="quiz-content">
+        <div class="quiz-start-screen">
+          <p>Каждый вопрос — это распространённое утверждение о Казахстане. Выберите правильный ответ.</p>
+          <button id="start-btn" class="btn btn--primary">Начать викторину</button>
+          <a href="/ru/myths/" class="btn btn--outline">Сначала изучить библиотеку</a>
+        </div>
+      </div>
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  const shell = document.getElementById("quiz") as HTMLElement;
+  const content = document.getElementById("quiz-content") as HTMLElement;
+  const progressBar = document.getElementById("progress-bar") as HTMLElement;
+  const questions: readonly { claim: string; options: readonly string[]; answer: number; explanation: string; href: string }[] = JSON.parse(shell.dataset.questions ?? "[]");
+
+  let current = 0;
+  let score = 0;
+  let answered = false;
+
+  const render = () => {
+    if (current >= questions.length) return showResult();
+    const q = questions[current];
+    progressBar.style.width = `${(current / questions.length) * 100}%`;
+    content.innerHTML = `
+      <div class="quiz-question">
+        <p class="quiz-progress">${current + 1} / ${questions.length}</p>
+        <p class="quiz-claim">${q.claim}</p>
+        <div class="quiz-options">
+          ${q.options.map((opt, i) => `<button class="quiz-opt" data-idx="${i}">${opt}</button>`).join("")}
+        </div>
+        <div class="quiz-explanation" hidden></div>
+        <div class="quiz-nav" hidden>
+          <button id="next-btn" class="btn btn--primary">${current < questions.length - 1 ? "Следующий вопрос →" : "Посмотреть результат"}</button>
+          <a href="${q.href}" class="btn btn--outline" target="_blank">Читать статью</a>
+        </div>
+      </div>`;
+    answered = false;
+    content.querySelectorAll(".quiz-opt").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        if (answered) return;
+        answered = true;
+        const i = Number((btn as HTMLElement).dataset.idx);
+        const correct = i === q.answer;
+        if (correct) score++;
+        content.querySelectorAll(".quiz-opt").forEach((b, bi) => {
+          (b as HTMLElement).disabled = true;
+          if (bi === q.answer) b.classList.add("is-correct");
+          else if (bi === i) b.classList.add("is-wrong");
+        });
+        const exp = content.querySelector(".quiz-explanation") as HTMLElement;
+        exp.textContent = q.explanation;
+        exp.hidden = false;
+        const nav = content.querySelector(".quiz-nav") as HTMLElement;
+        nav.hidden = false;
+      });
+    });
+    document.getElementById("next-btn")?.addEventListener("click", () => { current++; render(); });
+  };
+
+  const showResult = () => {
+    progressBar.style.width = "100%";
+    const pct = Math.round((score / questions.length) * 100);
+    const msg = score >= 12 ? "Отличный результат! Вы хорошо знаете Казахстан." : score >= 8 ? "Хороший результат — но несколько расхожих мифов вас ещё обходят." : "Стоит узнать Казахстан получше. Библиотека поможет.";
+    content.innerHTML = `
+      <div class="quiz-result">
+        <p class="quiz-score-num">${score}/${questions.length}</p>
+        <p class="quiz-score-pct">${pct}% верных ответов</p>
+        <p class="quiz-result-msg">${msg}</p>
+        <a href="/ru/myths/" class="btn btn--primary">Изучить все статьи →</a>
+        <button onclick="location.reload()" class="btn btn--outline">Пройти снова</button>
+      </div>`;
+  };
+
+  document.getElementById("start-btn")?.addEventListener("click", () => { current = 0; score = 0; render(); });
+</script>
+
+<style>
+  .challenge-page { max-width: 700px; padding-bottom: 4rem; }
+  .quiz-shell { margin-top: 2rem; }
+  .quiz-progress-bar { height: 3px; background: var(--brand); width: 0; transition: width .4s; border-radius: 2px; margin-bottom: 2rem; }
+  .quiz-start-screen { display: flex; flex-direction: column; gap: 1rem; align-items: flex-start; }
+  .quiz-progress { font: .75rem var(--font-mono); color: var(--muted); margin: 0; }
+  .quiz-claim { font-size: 1.2rem; font-weight: 700; line-height: 1.4; margin: .5rem 0 1.5rem; }
+  .quiz-options { display: grid; gap: .6rem; }
+  .quiz-opt { padding: .85rem 1.1rem; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface); color: var(--ink); text-align: left; cursor: pointer; font: 1rem var(--font-display); transition: border-color .2s; }
+  .quiz-opt:hover:not(:disabled) { border-color: var(--brand); }
+  .quiz-opt.is-correct { border-color: #68b486; background: #68b48614; }
+  .quiz-opt.is-wrong { border-color: #d94f35; background: #d94f3514; }
+  .quiz-opt:disabled { cursor: default; }
+  .quiz-explanation { margin-top: 1rem; padding: 1rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm); font-size: .92rem; color: var(--muted); }
+  .quiz-nav { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: 1.5rem; }
+  .quiz-result { text-align: center; padding: 2rem 0; }
+  .quiz-score-num { font: 700 3.5rem var(--font-display); color: var(--brand); margin: 0; line-height: 1; }
+  .quiz-score-pct { font: .9rem var(--font-mono); color: var(--muted); margin: .35rem 0 1rem; }
+  .quiz-result-msg { font-size: 1.1rem; margin-bottom: 1.5rem; max-width: 420px; margin-inline: auto; }
+  .quiz-result .btn { margin: .35rem; }
+</style>
