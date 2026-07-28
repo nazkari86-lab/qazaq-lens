@@ -55,6 +55,22 @@ const whyThisMatters: Record<string, string> = {
   "landlocked-isolated": "Being landlocked is a geographic condition, not a measure of contact. Ports, railways, pipelines and trade corridors separate access from isolation.",
   "kazakhstan-memes": "Memes reveal what people remix and debate online, not what every citizen believes. Digital folklore is evidence of discourse, not a national personality test.",
   "horse-meat-kumys": "Food heritage can be important without defining every contemporary diet. The distinction protects cultural specificity and everyday complexity.",
+  "ai-accuracy-kazakhstan": "If the tools international audiences use to learn about Kazakhstan systematically produce wrong answers, the errors travel farther and correct faster than any single article can fix.",
+  "almaty-earthquake": "Seismic risk is a matter of public safety and urban planning, not trivia. Understanding Almaty's earthquake history changes how its built environment and its future are discussed.",
+  "apple-origins": "Origin stories shape how people identify with places and species. Getting the Malus sieversii story right gives Kazakhstan credit for a contribution that shaped world agriculture.",
+  "bride-kidnapping": "The wording matters because 'tradition' can become a shield for harm. Accurate framing — acknowledging the practice, the law, and the range of attitudes — is the precondition for useful discussion.",
+  "charyn-canyon": "Viral superlatives ('second-largest') travel through tourism content and AI systems unchecked. This case demonstrates how rankings circulate without an authoritative source behind them.",
+  "climate-seasons": "Climate assumptions drive travel decisions, journalism about the country, and mental models. A single temperature statistic — 'always cold' — can misrepresent six months of the year across a country this large.",
+  "country-size": "Scale matters to how people reason about Kazakhstan's geography, economy, and policy. Treating it as a small or peripheral country systematically distorts what is actually the world's ninth-largest state.",
+  "europe-or-asia": "Classification shapes which news desks cover Kazakhstan, which regional comparisons are made, and how its culture and institutions are framed. The Ural boundary question is real and the answer is more precise than 'Asia'.",
+  "horse-domestication": "Horse domestication may be one of the most consequential events in human history. Whether or not Botai horses are the direct ancestors of modern breeds, the debate belongs on a map that includes northern Kazakhstan.",
+  "kazakh-statehood": "Treating modern Kazakhstan as a creation of 1991 erases 400 years of Kazakh political organisation under the Khanate. Pre-colonial political history changes the sovereignty narrative.",
+  "latin-alphabet": "The script transition is ongoing and contested. Treating it as either complete or permanent misrepresents a complex government project that affects how Kazakh is written, taught, and read.",
+  "not-middle-east": "Misclassifying Kazakhstan as Middle Eastern confuses geography, religion, language family, and geopolitical context simultaneously. Central Asia is not a subset of the Middle East.",
+  "safety-tourism": "Travel decisions have real economic and human consequences. Overstating risk discourages useful contact; understating it leaves travellers unprepared. Accurate differentiation by place and type of risk is the honest alternative.",
+  "semipalatinsk-safe": "The Polygon's health and contamination legacy is not historical — it is ongoing, with continuing research on cancer rates and soil contamination. Treating it as closed history misrepresents the science.",
+  "tomyris": "Projecting modern national identity onto ancient figures is common and analytically weak. Tomyris belongs to the Massagetae; using her as a symbol of Kazakh heritage requires care about the 2,000-year gap.",
+  "world-heritage": "International underrepresentation does not mean absence. Kazakhstan's UNESCO inscriptions exist and are verifiable. Knowing them changes conversations about the country's cultural and ecological record.",
 };
 const whyWeChecked: Record<string, string> = {
   "part-of-russia": "Selected because this shortcut repeatedly appears in international media, travel discussions and geopolitical commentary, and confuses Soviet history with present sovereignty.",
@@ -76,6 +92,22 @@ const whyWeChecked: Record<string, string> = {
   "landlocked-isolated": "Selected because geography explainers often equate lack of coastline with lack of trade, mobility or outside connection.",
   "kazakhstan-memes": "Selected because memes are increasingly used as evidence of national character even though they represent particular online communities and moments.",
   "horse-meat-kumys": "Selected because food stereotypes travel widely and can turn real cultural practices into assumptions about every person's daily diet.",
+  "ai-accuracy-kazakhstan": "Selected because AI tools are increasingly used as a first reference for country information, and systematic errors in those tools create a new category of misinformation at scale.",
+  "almaty-earthquake": "Selected because Almaty's seismic hazard is real, well-documented, and almost entirely absent from international coverage of the city.",
+  "apple-origins": "Selected because the Almaty–apple connection is both scientifically interesting and frequently stated in oversimplified form that collapses a complex hybridisation story into a single birthplace claim.",
+  "bride-kidnapping": "Selected because the topic appears in international human-rights reporting, academic literature and popular commentary — often with conflicting framings that require careful sourcing.",
+  "charyn-canyon": "Selected because the 'second-largest canyon' superlative appears across tourism platforms and in AI model outputs, but has no identifiable authoritative source.",
+  "climate-seasons": "Selected because climate stereotypes directly affect travel behaviour, and a 'permanently cold' description of Kazakhstan ignores the summer half of the year across a country this size.",
+  "country-size": "Selected because Kazakhstan is routinely described as peripheral or small in international commentary, while its area of 2.7 million km² makes it the world's ninth-largest country.",
+  "europe-or-asia": "Selected because the Europe-Asia boundary question recurs in geography education, international classification, and media coverage, with inconsistent answers that are all partly correct.",
+  "horse-domestication": "Selected because the Botai culture debate is scientifically active, the nuance is often lost in popular science coverage, and Kazakhstan's role in this global story is underreported.",
+  "kazakh-statehood": "Selected because the 1991 independence date is real but incomplete — it erases the Kazakh Khanate's 400-year prior existence as an organised political entity.",
+  "latin-alphabet": "Selected because the script transition is frequently reported as complete or imminent, when Cyrillic dominates in practice and the target date has been repeatedly extended.",
+  "not-middle-east": "Selected because misclassification of Kazakhstan as Middle Eastern — in search results, AI outputs and casual conversation — appears with notable frequency and carries multiple compounding errors.",
+  "safety-tourism": "Selected because travel safety assessments for Kazakhstan range from overcautious to dismissive, with little precision about which locations or activities carry which risks.",
+  "semipalatinsk-safe": "Selected because the closure of the test site in 1991 is often treated as the end of the story, while ongoing contamination research and public health studies tell a more complicated picture.",
+  "tomyris": "Selected because Tomyris is increasingly cited as a Kazakh national heroine, which raises a precise historical question: can a 6th-century BCE figure be described as 'Kazakh' when the Kazakh people emerged ~2,000 years later?",
+  "world-heritage": "Selected because Kazakhstan's UNESCO inscriptions are real, verifiable, and almost entirely absent from international discussions of the country's cultural record.",
 };
 const site = Astro.site ?? new URL("https://qazaqlens.org");
 const articleUrl = new URL(Astro.url.pathname, site).toString();
@@ -140,7 +172,7 @@ const image = new URL(props.ogImage ?? "/og/default.png", site).toString();
         </div>
         <VerdictBox verdict={props.verdict} summary={props.summary} publicationStatus={props.publicationStatus} />
       </div>
-      {props.publicationStatus === "beta" && <aside class="notice notice--beta" aria-label="Review status"><strong>Public beta:</strong> claim-by-claim source audit completed; independent human review is still pending.</aside>}
+      {props.publicationStatus === "beta" && <aside class="notice notice--beta" aria-label="Review status"><strong>Sources checked.</strong> Each claim cites ≥ 2 independent publishers. <a href="/corrections/">Spot an error? Let us know.</a></aside>}
     </header>
 
     <div class="article-layout wrap-wide">

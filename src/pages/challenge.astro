@@ -110,11 +110,11 @@ const questions = [
 ] as const;
 const payload = JSON.stringify(questions).replace(/</g, "\\u003c");
 ---
-<BaseLayout title="Kazakhstan Myth Challenge" description="Eight quick questions reveal where familiar shortcuts about Kazakhstan diverge from published evidence." jsonLd={{
+<BaseLayout title="Kazakhstan Myth Challenge" description="15 questions reveal where familiar shortcuts about Kazakhstan diverge from published evidence." jsonLd={{
   "@context": "https://schema.org",
   "@type": "Quiz",
   "name": "Kazakhstan Myth Challenge",
-  "description": "Eight evidence-linked questions about common claims and stereotypes concerning Kazakhstan.",
+  "description": "15 evidence-linked questions about common claims and stereotypes concerning Kazakhstan.",
   "educationalLevel": "General public",
   "about": { "@type": "Country", "name": "Kazakhstan" },
   "hasPart": questions.map((question) => ({
@@ -126,7 +126,7 @@ const payload = JSON.stringify(questions).replace(/</g, "\\u003c");
 }}>
   <section class="challenge-hero">
     <div class="wrap challenge-hero-inner">
-      <p class="eyebrow">Eight claims · about three minutes</p>
+      <p class="eyebrow">15 questions · about five minutes</p>
       <h1>How accurate is your picture of Kazakhstan?</h1>
       <p class="lead">Choose before the evidence appears. Nothing is stored, and the result stays in your browser unless you share it.</p>
       <button class="btn btn--primary" type="button" data-challenge-start>Start the challenge</button>
@@ -154,7 +154,7 @@ const payload = JSON.stringify(questions).replace(/</g, "\\u003c");
     <div class="button-row">
       <button class="btn btn--primary" type="button" data-challenge-share>Share result</button>
       <button class="btn" type="button" data-challenge-restart>Try again</button>
-      <a class="btn" href="/story/">Explore all 33 shortcuts</a>
+      <a class="btn" href="/story/">Explore all 35 myths</a>
     </div>
     <p class="form-status" data-challenge-status role="status"></p>
   </section>
