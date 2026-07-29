@@ -20,7 +20,7 @@ const verdictRu: Record<string, string> = {
 };
 ---
 <BaseLayout lang="ru" title="По теме — Qazaq Lens" description={`Просматривайте ${myths.length} проверенных статей о Казахстане по ${topics.length} темам.`}>
-  <main class="wrap-wide topics-page">
+  <div class="wrap-wide topics-page">
     <header class="page-hero">
       <p class="eyebrow">Тематический поиск</p>
       <h1>Все статьи по темам</h1>
@@ -63,7 +63,7 @@ const verdictRu: Record<string, string> = {
       ))}
     </section>
     <p class="topics-empty" data-topics-empty hidden>По вашему запросу ничего не найдено. Попробуйте другой термин.</p>
-  </main>
+  </div>
   <script>
     const search = document.querySelector<HTMLInputElement>("[data-topics-search]");
     const groups = [...document.querySelectorAll<HTMLElement>("[data-topic-group]")];

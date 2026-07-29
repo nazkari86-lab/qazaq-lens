@@ -8,7 +8,6 @@ import { estimateReadingMinutes, getVisibleMyths } from "../lib/content";
 const myths = (await getVisibleMyths()).sort((a,b)=>b.data.publishedAt.valueOf()-a.data.publishedAt.valueOf());
 const featured = myths.find((entry)=>entry.data.featured) ?? myths[0];
 const recent = myths.filter((entry)=>entry.id!==featured?.id).slice(0,3);
-const reviewedCount = myths.filter((entry)=>entry.data.publicationStatus==="reviewed").length;
 const sourceCount = myths.reduce((sum,entry)=>sum+entry.data.sources.length,0);
 ---
 <BaseLayout title="Qazaq Lens" description="Qazaq Lens fact-checks common myths and stereotypes about Kazakhstan — Borat, capital city, nuclear weapons, language, geography — with sourced, correctable explainers written for international readers." jsonLd={[
@@ -86,7 +85,7 @@ const sourceCount = myths.reduce((sum,entry)=>sum+entry.data.sources.length,0);
       "name": "Does Kazakhstan have UNESCO World Heritage Sites?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes. Kazakhstan has four UNESCO World Heritage inscriptions: the Mausoleum of Khoja Ahmed Yasawi (2003), the Petroglyphs of Tamgaly (2004), the Silk Roads Chang'an-Tianshan Corridor (2014), and the Saryarka steppe and lake system (2008). Source: https://qazaqlens.org/myths/world-heritage/"
+        "text": "Yes. As of July 2026, UNESCO records seven World Heritage properties in Kazakhstan: four cultural and three natural. The newest is the Rock Mosques and Associated Sacred Sites of Mangystau, inscribed in 2026. Source: https://qazaqlens.org/myths/world-heritage/"
       }
     },
     {
@@ -137,6 +136,8 @@ const sourceCount = myths.reduce((sum,entry)=>sum+entry.data.sources.length,0);
   </section>
 
   <section class="trust-strip" data-reveal><div class="wrap-wide trust-grid"><span>Claims linked to evidence</span><span>Uncertainty shown openly</span><span>Corrections accepted publicly</span><span>No ads or tracking profiles</span></div></section>
+
+  <section class="wrap-wide section-block home-check-wrap"><HomeClaimCheck /></section>
 
   <section class="wrap-wide audience-band">
     <div class="audience-inner">
@@ -189,7 +190,7 @@ const sourceCount = myths.reduce((sum,entry)=>sum+entry.data.sources.length,0);
         <summary>Is Kazakhstan part of Russia?</summary>
         <p>No. Kazakhstan is a fully independent UN member state since 1991 with its own government, currency (tenge), and foreign policy. <a href="/myths/part-of-russia/">Full fact-check →</a></p>
       </details>
-      <details class="faq-item" open>
+      <details class="faq-item">
         <summary>Does Kazakhstan still have nuclear weapons?</summary>
         <p>No. Kazakhstan transferred all Soviet-era warheads to Russia by 1995 and signed the NPT. It has been nuclear-weapon-free for over 30 years. <a href="/myths/nuclear-weapons/">Full fact-check →</a></p>
       </details>
@@ -207,7 +208,7 @@ const sourceCount = myths.reduce((sum,entry)=>sum+entry.data.sources.length,0);
       </details>
       <details class="faq-item">
         <summary>Does Kazakhstan have UNESCO World Heritage Sites?</summary>
-        <p>Yes — four of them. The Mausoleum of Khoja Ahmed Yasawi (2003), the Petroglyphs of Tamgaly (2004), the Silk Roads Chang'an-Tianshan Corridor (2014), and Saryarka steppe ecosystem (2008). <a href="/myths/world-heritage/">Full fact-check →</a></p>
+        <p>Yes — seven as of July 2026: four cultural and three natural properties. The newest is the Rock Mosques and Associated Sacred Sites of Mangystau. <a href="/myths/world-heritage/">Full fact-check →</a></p>
       </details>
       <details class="faq-item">
         <summary>Is Kazakhstan always very cold?</summary>

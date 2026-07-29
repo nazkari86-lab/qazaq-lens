@@ -47,7 +47,7 @@ const jsonLd = {
   description={`Browse ${myths.length} evidence-checked explainers about Kazakhstan grouped by ${topics.length} topics — geography, history, culture, language, safety, and more.`}
   jsonLd={jsonLd}
 >
-  <main class="wrap-wide topics-page">
+  <div class="wrap-wide topics-page">
     <header class="page-hero">
       <p class="eyebrow">Browse by topic</p>
       <h1>Every explainer, organized.</h1>
@@ -108,7 +108,7 @@ const jsonLd = {
     </section>
 
     <p class="topics-empty" data-topics-empty hidden>No matching topics or articles. Try a different term.</p>
-  </main>
+  </div>
 
   <script>
     const search = document.querySelector<HTMLInputElement>("[data-topics-search]");

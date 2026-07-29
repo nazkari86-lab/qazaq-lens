@@ -62,7 +62,7 @@ const questions = [
     claim: "У Казахстана нет объектов Всемирного наследия ЮНЕСКО.",
     options: ["Верно", "Неверно", "Только природные"],
     answer: 1,
-    explanation: "Казахстан имеет четыре объекта ЮНЕСКО: мавзолей Ясави (2003), петроглифы Тамгалы (2004), Шёлковые пути (2014) и Сарыарка (2008).",
+    explanation: "По состоянию на июль 2026 года ЮНЕСКО указывает семь объектов Всемирного наследия Казахстана: четыре культурных и три природных.",
     href: "/ru/myths/world-heritage/",
   },
   {
@@ -112,7 +112,7 @@ const questions = [
 const payload = JSON.stringify(questions).replace(/</g, "\\u003c");
 ---
 <BaseLayout lang="ru" title="Викторина о мифах: Казахстан" description="15 вопросов раскроют, где привычные представления о Казахстане расходятся с задокументированными фактами.">
-  <main class="wrap challenge-page">
+  <div class="wrap challenge-page">
     <header class="page-hero">
       <p class="eyebrow">Викторина</p>
       <h1>Мифы о Казахстане: что вы знаете?</h1>
@@ -129,7 +129,7 @@ const payload = JSON.stringify(questions).replace(/</g, "\\u003c");
         </div>
       </div>
     </div>
-  </main>
+  </div>
 </BaseLayout>
 
 <script>
@@ -167,8 +167,8 @@ const payload = JSON.stringify(questions).replace(/</g, "\\u003c");
         const i = Number((btn as HTMLElement).dataset.idx);
         const correct = i === q.answer;
         if (correct) score++;
-        content.querySelectorAll(".quiz-opt").forEach((b, bi) => {
-          (b as HTMLElement).disabled = true;
+        content.querySelectorAll<HTMLButtonElement>(".quiz-opt").forEach((b, bi) => {
+          b.disabled = true;
           if (bi === q.answer) b.classList.add("is-correct");
           else if (bi === i) b.classList.add("is-wrong");
         });

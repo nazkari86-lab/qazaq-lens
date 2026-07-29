@@ -2,6 +2,11 @@
 interface Props { lang: "en" | "ru" }
 const { lang } = Astro.props;
 const pathname = Astro.url.pathname;
+const englishPath = lang === "ru" ? pathname.replace(/^\/ru(?=\/|$)/, "") || "/" : pathname;
+const hasRussianEquivalent =
+  englishPath === "/" ||
+  ["/about/", "/challenge/", "/glossary/", "/myths/", "/paths/", "/topics/"].includes(englishPath) ||
+  /^\/myths\/[a-z0-9-]+\/$/.test(englishPath);
 
 function getOtherLangUrl(currentPath: string, currentLang: "en" | "ru"): string {
   if (currentLang === "ru") {
@@ -9,8 +14,8 @@ function getOtherLangUrl(currentPath: string, currentLang: "en" | "ru"): string 
     const stripped = currentPath.replace(/^\/ru(\/|$)/, "/");
     return stripped || "/";
   } else {
-    // /... → /ru/...
-    if (currentPath === "/") return "/ru/";
+    // Link to the translated page when it exists; otherwise use the Russian home.
+    if (!hasRussianEquivalent || currentPath === "/") return "/ru/";
     return `/ru${currentPath}`;
   }
 }
@@ -23,7 +28,7 @@ const otherLang = lang === "en" ? "ru" : "en";
   href={otherUrl}
   hreflang={otherLang}
   aria-label={lang === "en" ? "Переключить на русский язык" : "Switch to English"}
-  title={lang === "en" ? "Русская версия" : "English version"}
+  title={lang === "en" ? (hasRussianEquivalent ? "Русская версия" : "Русская главная — эта страница ещё не переведена") : "English version"}
 >
   {lang === "en" ? "RU" : "EN"}
 </a>

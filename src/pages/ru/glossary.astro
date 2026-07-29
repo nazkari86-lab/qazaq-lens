@@ -28,7 +28,7 @@ const terms = [
 ];
 ---
 <BaseLayout lang="ru" title="Глоссарий" description="Понятный глоссарий для понимания Казахстана, его народа, истории и институтов.">
-  <main class="wrap page-hero glossary-page">
+  <div class="wrap page-hero glossary-page">
     <p class="eyebrow">Контекст прежде выводов</p>
     <h1>Глоссарий</h1>
     <p class="lead">Термины, которые часто переводятся неточно, упрощаются или неправильно понимаются в разговорах о Казахстане.</p>
@@ -41,7 +41,7 @@ const terms = [
       ))}
     </div>
     <p class="empty-state" data-glossary-empty hidden>Нет совпадений. Попробуйте другое написание.</p>
-  </main>
+  </div>
   <script>
     const input = document.querySelector<HTMLInputElement>("[data-glossary-search]");
     const cards = [...document.querySelectorAll<HTMLElement>("[data-glossary-card]")];

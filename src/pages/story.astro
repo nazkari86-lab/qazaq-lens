@@ -112,7 +112,7 @@ const mythMeta: Record<string, { stat: string; statLabel: string; lead: string; 
   "tomyris": { stat: "~530 BCE", statLabel: "Approximate period of Tomyris, according to Herodotus", lead: "Tomyris was queen of the Massagetae in territory overlapping modern Kazakhstan. Calling her 'Kazakh' applies a 21st-century identity to a 6th-century BCE context — the Kazakh people emerged 2,000 years later.", arc: "The anachronism" },
   "country-size": { stat: "9th", statLabel: "Largest country in the world by total area", lead: "Kazakhstan covers about 2.7 million square kilometres. Population size and international visibility do not make its territory small.", arc: "The scale" },
   "safety-tourism": { stat: "Context", statLabel: "Travel risk varies by place, activity and current conditions", lead: "Kazakhstan is not accurately described as universally dangerous or universally risk-free. A useful assessment separates ordinary travel conditions from specific hazards and current advisories.", arc: "The risk" },
-  "world-heritage": { stat: "4", statLabel: "UNESCO World Heritage inscriptions — including Timurid architecture, Bronze Age petroglyphs, Silk Road sections, and steppe ecosystems", lead: "Kazakhstan has four UNESCO World Heritage sites and multiple Intangible Cultural Heritage items. International underrepresentation does not mean absence.", arc: "The recognition" },
+  "world-heritage": { stat: "7", statLabel: "UNESCO World Heritage properties — four cultural and three natural, as of July 2026", lead: "Kazakhstan has seven World Heritage properties and 14 elements on UNESCO's Intangible Cultural Heritage lists. International underrepresentation does not mean absence.", arc: "The recognition" },
   "climate-seasons": { stat: "30°C+", statLabel: "Typical July maximum across southern and central steppe — alongside Astana's −15°C January average in the north", lead: "Kazakhstan has a strongly continental climate: extreme winters in the north, hot summers across most of the country, and mild winters in the south. One temperature does not describe it.", arc: "The seasons" },
 };
 
@@ -171,7 +171,7 @@ const storyData = storyMyths.map(entry => {
         <span class="sw-progress-fill" data-story-progress></span>
         <span class="sw-progress-label" data-story-progress-label>01 / {storyData.length} · {storyData.length - 1} left</span>
       </div>
-      <nav class="sw-chapters" aria-label="Story chapters">
+      <nav class="sw-chapters is-collapsed" aria-label="Story chapters">
         <button class="sw-chapters-toggle" type="button" aria-expanded="false" aria-controls="sw-chapter-links">Chapters <span aria-hidden="true">+</span></button>
         <span class="sw-chapters-title">Chapters</span>
         <div class="sw-chapter-links" id="sw-chapter-links">

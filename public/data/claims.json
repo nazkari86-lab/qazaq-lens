@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1",
-  "generated_at": "2026-07-28",
+  "generated_at": "2026-07-29",
   "license": "CC-BY-4.0",
   "publisher": {
     "name": "Qazaq Lens",
@@ -729,7 +729,7 @@
       "claim": "Kazakhstan has no notable world heritage or recognized cultural traditions",
       "normalized_claim": "Kazakhstan has no notable world heritage or recognized cultural traditions",
       "verdict": "false",
-      "summary": "False. Kazakhstan has four UNESCO World Heritage inscriptions — three cultural and one natural — plus multiple UNESCO Intangible Cultural Heritage items. Its cultural traditions include a distinct musical heritage, a written literary tradition dating to the 15th century, and living nomadic practices recognized internationally.",
+      "summary": "False. As of July 2026, Kazakhstan has seven UNESCO World Heritage properties — four cultural and three natural — and 14 elements on UNESCO's Intangible Cultural Heritage lists. The record spans Timurid architecture, rock art, Silk Road archaeology, steppe and mountain ecosystems, desert landscapes, sacred sites and living traditions.",
       "article_url": "https://qazaqlens.org/myths/world-heritage/",
       "language": "en",
       "topics": [
@@ -739,10 +739,10 @@
         "Identity"
       ],
       "published_at": "2026-07-28",
-      "updated_at": "2026-07-28",
+      "updated_at": "2026-07-29",
       "review_status": "Claim-by-claim source audit completed; independent human review pending",
-      "source_count": 6,
-      "claim_count": 5,
+      "source_count": 11,
+      "claim_count": 8,
       "evidence_strength": "strong"
     },
     {

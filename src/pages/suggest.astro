@@ -2,7 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 <BaseLayout title="Suggest a myth" description="Suggest a Kazakhstan stereotype, meme or claim for a future evidence check." noindex={true}>
-  <main class="wrap page-hero suggest-page">
+  <div class="wrap page-hero suggest-page">
     <p class="eyebrow">Help shape the library</p>
     <h1>Suggest a myth or meme</h1>
     <p class="lead">Send a claim you have seen about Kazakhstan. The editor will assess whether it is widespread, verifiable and distinct from existing articles.</p>
@@ -15,7 +15,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       <p class="form-status" data-suggest-status role="status" aria-live="polite"></p>
     </form>
     <p class="section-note">Suggestions are editorial leads, not automatic publications. Please do not send sensitive personal information.</p>
-  </main>
+  </div>
   <script>
     const form = document.querySelector<HTMLFormElement>("[data-suggest-form]");
     const status = document.querySelector<HTMLElement>("[data-suggest-status]");

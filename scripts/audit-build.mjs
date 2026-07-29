@@ -61,10 +61,16 @@ const placeholderPatterns = [
   /example\.com/i,
   /YOUR_[A-Z_]+/,
 ];
+const staleEditorialPatterns = [
+  /Kazakhstan has four UNESCO World Heritage/i,
+  /Казахстан имеет четыре объекта Всемирного наследия/i,
+  /rinatamankos6@gmail\.com/i,
+];
 
 for (const file of htmlFiles) {
   const relative = path.relative(dist, file);
   const html = await fs.readFile(file, 'utf8');
+  const markup = html.replace(/<script\b[\s\S]*?<\/script>/gi, '');
 
   const inlineScripts = [...html.matchAll(/<script\s+[^>]*is:inline[^>]*>([\s\S]*?)<\/script>/gi)].map((match) => match[1]);
   if (inlineScripts.some((script) => /querySelector(All)?\s*<|getElementById\s*</.test(script))) {
@@ -78,6 +84,8 @@ for (const file of htmlFiles) {
 
   const h1Count = (html.match(/<h1(?:\s|>)/gi) ?? []).length;
   if (h1Count !== 1) errors.push(`${relative}: expected exactly one h1, found ${h1Count}`);
+  const mainCount = (html.match(/<main(?:\s|>)/gi) ?? []).length;
+  if (mainCount !== 1) errors.push(`${relative}: expected exactly one main landmark, found ${mainCount}`);
 
   const ids = [...html.matchAll(/\sid=["']([^"']+)["']/gi)].map((match) => match[1]);
   const duplicateIds = [...new Set(ids.filter((id, index) => ids.indexOf(id) !== index))];
@@ -85,6 +93,9 @@ for (const file of htmlFiles) {
 
   for (const pattern of placeholderPatterns) {
     if (pattern.test(html)) errors.push(`${relative}: contains placeholder matching ${pattern}`);
+  }
+  for (const pattern of staleEditorialPatterns) {
+    if (pattern.test(html)) errors.push(`${relative}: contains stale editorial content matching ${pattern}`);
   }
 
   const canonical = html.match(/<link\s+[^>]*rel=["']canonical["'][^>]*href=["']([^"']+)["']/i)?.[1]
@@ -97,7 +108,7 @@ for (const file of htmlFiles) {
     } catch { errors.push(`${relative}: invalid canonical URL`); }
   }
 
-  for (const match of html.matchAll(/<a\s+[^>]*href=["']([^"']+)["']/gi)) {
+  for (const match of markup.matchAll(/<a\s+[^>]*href=["']([^"']+)["']/gi)) {
     const href = match[1].trim();
     if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('javascript:')) continue;
     let url;
@@ -108,7 +119,7 @@ for (const file of htmlFiles) {
     if (!await exists(target)) errors.push(`${relative}: broken internal link ${href} → ${path.relative(dist, target)}`);
   }
 
-  for (const match of html.matchAll(/<(?:img|source)\s+[^>]*(?:src|srcset)=["']([^"']+)["']/gi)) {
+  for (const match of markup.matchAll(/<(?:img|source)\s+[^>]*(?:src|srcset)=["']([^"']+)["']/gi)) {
     const raw = match[1].split(',')[0].trim().split(/\s+/)[0];
     if (!raw || raw.startsWith('data:') || /^https?:\/\//i.test(raw)) continue;
     let url;
@@ -123,6 +134,15 @@ for (const file of htmlFiles) {
       if (!html.includes(marker)) errors.push(`${relative}: article missing “${marker}”`);
     }
     if (!html.includes('application/ld+json')) errors.push(`${relative}: article missing JSON-LD`);
+  }
+}
+
+const sitemapIndexPath = path.join(dist, 'sitemap-index.xml');
+if (await exists(sitemapIndexPath)) {
+  const sitemapFiles = allFiles.filter((file) => /^sitemap-\d+\.xml$/.test(path.basename(file)));
+  const sitemap = (await Promise.all(sitemapFiles.map((file) => fs.readFile(file, 'utf8')))).join('\n');
+  for (const privateRoute of ['/moderate/', '/moderate-claims/', '/moderate-corrections/', '/report-error/', '/offline/', '/ru/404/']) {
+    if (sitemap.includes(privateRoute)) errors.push(`Sitemap exposes excluded route: ${privateRoute}`);
   }
 }
 

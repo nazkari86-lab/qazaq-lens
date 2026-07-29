@@ -28,6 +28,6 @@ const jsonLd = {
 };
 ---
 <BaseLayout title="Reading paths" description="Guided reading paths through Qazaq Lens explainers about Kazakhstan." jsonLd={jsonLd}>
-  <main class="wrap-wide page-hero"><p class="eyebrow">Guided reading</p><h1>Choose a route, not a rabbit hole.</h1><p class="lead">Each path moves from a memorable shortcut to the evidence needed to complicate it.</p></main>
+  <div class="wrap-wide page-hero"><p class="eyebrow">Guided reading</p><h1>Choose a route, not a rabbit hole.</h1><p class="lead">Each path moves from a memorable shortcut to the evidence needed to complicate it.</p></div>
   <section class="wrap-wide path-grid">{paths.map((path,index)=><article class="path-card card"><span class="path-number">{String(index+1).padStart(2,"0")}</span><p class="eyebrow">{path.slugs.length} stops</p><h2>{path.title}</h2><p>{path.intro}</p><ol>{path.slugs.map((slug)=>{const myth=myths.find((m)=>m.data.slug===slug); return myth && <li><a href={`/myths/${slug}`}>{myth.data.title}</a></li>})}</ol></article>)}</section>
 </BaseLayout>

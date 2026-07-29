@@ -45,7 +45,7 @@ const groupCurrent = (items: { href: string }[]) => items.some((item) => isCurre
       <span class="nav-toggle-icon" aria-hidden="true"></span>
     </button>
     <nav id="primary-nav" class="primary-nav" aria-label="Primary navigation" data-nav>
-      <a href={`${base}/start/`} aria-current={isCurrent(`${base}/start`) ? "page" : undefined}>{t.start}</a>
+      <a href={lang === "ru" ? "/ru/" : "/start/"} aria-current={isCurrent(lang === "ru" ? "/ru" : "/start") ? "page" : undefined}>{t.start}</a>
       <a class="nav-ask-link" href={lang === "ru" ? "/ask/" : "/ask/"} aria-current={isCurrent("/ask") ? "page" : undefined}>{t.ask}</a>
       <a href={lang === "ru" ? "/story/" : "/story/"} aria-current={isCurrent("/story") ? "page" : undefined}>{t.story}</a>
       <a href={`${base}/myths/`} aria-current={isCurrent(`${base}/myths`) ? "page" : undefined}>{t.library}</a>

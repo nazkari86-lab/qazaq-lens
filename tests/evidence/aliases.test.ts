@@ -96,18 +96,18 @@ function extractAliases(source: string, filename: string): string[] {
 }
 
 describe("curated myth aliases", () => {
-  test("all 33 explainers have two trimmed, globally unique aliases", () => {
+  test("every published explainer has multiple trimmed, globally unique aliases", () => {
     const filenames = readdirSync(mythsDirectory)
       .filter((filename) => extname(filename) === ".mdx")
       .sort();
-    expect(filenames).toHaveLength(33);
+    expect(filenames.length).toBeGreaterThanOrEqual(35);
 
     const globalAliases = new Map<string, string>();
 
     for (const filename of filenames) {
       const source = readFileSync(join(mythsDirectory, filename), "utf8");
       const aliases = extractAliases(source, filename);
-      expect(aliases, filename).toHaveLength(2);
+      expect(aliases.length, `${filename} should have at least two search aliases`).toBeGreaterThanOrEqual(2);
 
       const normalizedAliases = aliases.map((alias) => alias.trim().toLowerCase());
       expect(new Set(normalizedAliases).size, filename).toBe(aliases.length);
@@ -125,6 +125,6 @@ describe("curated myth aliases", () => {
       });
     }
 
-    expect(globalAliases.size).toBe(66);
+    expect(globalAliases.size).toBeGreaterThanOrEqual(filenames.length * 2);
   });
 });

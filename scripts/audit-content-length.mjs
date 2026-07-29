@@ -28,6 +28,8 @@ const rules = {
   "tomyris": [650, 950, 6, 4, 4, ["Tomyris", "Kazakh", "Massagetae"]],
   "safety-tourism": [550, 900, 5, 4, 4, ["Kazakhstan", "safety", "precautions"]],
   "country-size": [600, 900, 5, 4, 4, ["Kazakhstan", "largest", "landlocked"]],
+  "climate-seasons": [600, 900, 8, 5, 5, ["continental", "summer", "Astana"]],
+  "world-heritage": [700, 1050, 9, 7, 10, ["UNESCO", "Mangystau", "intangible"]],
 };
 const words = (text) => (text.match(/\b[\p{L}\p{N}]+(?:[-’'][\p{L}\p{N}]+)*\b/gu) ?? []).length;
 const body = (raw) => raw.split(/^---\s*$/m).slice(-1)[0].replace(/<[^>]*>/g, " ").replace(/\[[^\]]*\]\([^)]*\)/g, " ").replace(/[#*_`>|]/g, " ");

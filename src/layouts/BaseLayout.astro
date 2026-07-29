@@ -16,6 +16,14 @@ const { title, description, ogImage = "/og/default.png", type = "website", noind
 const site = Astro.site ?? new URL("https://qazaqlens.org");
 const canonicalURL = new URL(Astro.url.pathname, site);
 const ogImageURL = new URL(ogImage, site);
+const englishPath = lang === "ru" ? Astro.url.pathname.replace(/^\/ru(?=\/|$)/, "") || "/" : Astro.url.pathname;
+const russianPath = `/ru${englishPath === "/" ? "/" : englishPath}`;
+const russianAlternateAvailable =
+  englishPath === "/" ||
+  ["/about/", "/challenge/", "/glossary/", "/myths/", "/paths/", "/topics/"].includes(englishPath) ||
+  /^\/myths\/[a-z0-9-]+\/$/.test(englishPath);
+const englishURL = new URL(englishPath, site);
+const russianURL = new URL(russianPath, site);
 const fullTitle = title === "Qazaq Lens" ? "Qazaq Lens — Kazakhstan Fact-Check & Evidence Library" : `${title} · Qazaq Lens`;
 const orgJsonLd = {
   "@context": "https://schema.org",
@@ -36,16 +44,17 @@ const orgJsonLd = {
     "https://huggingface.co/datasets/okak67692281488/kazakhstan-facts"
   ],
   knowsAbout: ["Kazakhstan", "Central Asia", "Fact-checking", "Misinformation"],
-  inLanguage: "en",
+  inLanguage: lang,
 };
 const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   name: "Qazaq Lens",
   url: site.toString(),
+  inLanguage: lang,
   potentialAction: {
     "@type": "SearchAction",
-    target: { "@type": "EntryPoint", urlTemplate: `${site.toString()}myths?q={search_term_string}` },
+    target: { "@type": "EntryPoint", urlTemplate: `${site.toString()}${lang === "ru" ? "ru/myths" : "myths"}?q={search_term_string}` },
     "query-input": "required name=search_term_string",
   },
 };
@@ -64,10 +73,9 @@ const websiteJsonLd = {
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="alternate" type="application/rss+xml" title="Qazaq Lens" href="/rss.xml" />
     <link rel="canonical" href={canonicalURL} />
-    {lang === "ru" && <link rel="alternate" hreflang="ru" href={canonicalURL} />}
-    {lang === "ru" && <link rel="alternate" hreflang="en" href={new URL(Astro.url.pathname.replace(/^\/ru(\/|$)/, "/"), site)} />}
-    {lang === "en" && <link rel="alternate" hreflang="en" href={canonicalURL} />}
-    {lang === "en" && <link rel="alternate" hreflang="ru" href={new URL(`/ru${Astro.url.pathname}`, site)} />}
+    <link rel="alternate" hreflang="en" href={englishURL} />
+    {russianAlternateAvailable && <link rel="alternate" hreflang="ru" href={russianURL} />}
+    <link rel="alternate" hreflang="x-default" href={englishURL} />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <meta name="author" content="Dulat Nurlanuly" />
@@ -85,7 +93,7 @@ const websiteJsonLd = {
     <meta property="og:type" content={type} />
     <meta property="og:site_name" content="Qazaq Lens" />
     <meta property="og:url" content={canonicalURL} />
-    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale" content={lang === "ru" ? "ru_RU" : "en_US"} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />

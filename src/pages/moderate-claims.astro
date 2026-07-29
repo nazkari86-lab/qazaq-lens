@@ -6,7 +6,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     <p class="eyebrow">Private workspace</p>
     <h1>Claim suggestions.</h1>
     <p class="lead">Review unmatched claims before they enter the editorial roadmap. The admin token stays only in this page session.</p>
-    <form class="moderation-login" data-claim-login>
+    <form class="moderation-login" method="post" data-claim-login>
       <label>Admin token<input type="password" name="token" autocomplete="off" required /></label>
       <button class="btn btn--primary" type="submit">Load suggestions</button>
       <p class="form-status" data-claim-status role="status" aria-live="polite"></p>

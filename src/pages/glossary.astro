@@ -40,7 +40,7 @@ const terms = [
     "inDefinedTermSet": "https://qazaqlens.org/glossary/",
   })),
 }}>
-  <main class="wrap page-hero glossary-page">
+  <div class="wrap page-hero glossary-page">
     <p class="eyebrow">Context before conclusions</p>
     <h1>Glossary</h1>
     <p class="lead">Terms that are often translated, simplified or misunderstood in conversations about Kazakhstan.</p>
@@ -49,7 +49,7 @@ const terms = [
       {terms.map(([term, definition]) => <article class="glossary-card" data-glossary-card data-glossary-text={`${term} ${definition}`.toLowerCase()}><h2>{term}</h2><p>{definition}</p></article>)}
     </div>
     <p class="empty-state" data-glossary-empty hidden>No matching terms. Try a different spelling.</p>
-  </main>
+  </div>
   <script>
     const input = document.querySelector<HTMLInputElement>("[data-glossary-search]");
     const cards = [...document.querySelectorAll<HTMLElement>("[data-glossary-card]")];

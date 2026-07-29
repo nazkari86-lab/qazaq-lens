@@ -9,7 +9,6 @@ interface Props {
 const { title, slug, publishedAt, lastReviewedAt } = Astro.props;
 const site = Astro.site ?? new URL("https://qazaqlens.org");
 const url = new URL(`/myths/${slug}/`, site).toString();
-const year = lastReviewedAt.getFullYear();
 const accessDate = lastReviewedAt.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 const publishYear = publishedAt.getFullYear();
 

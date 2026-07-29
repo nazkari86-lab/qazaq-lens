@@ -5,7 +5,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   <section class="wrap page-hero moderation-page">
     <p class="eyebrow">Private workspace</p><h1>Correction moderation.</h1>
     <p class="lead">Review source reports before changing a published article. The admin token stays in this browser session and is never rendered into the page.</p>
-    <form class="moderation-login" data-correction-login><label>Admin token<input type="password" name="token" autocomplete="off" required /></label><button class="btn btn--primary" type="submit">Load reports</button><p class="form-status" data-correction-status role="status" aria-live="polite"></p></form>
+    <form class="moderation-login" method="post" data-correction-login><label>Admin token<input type="password" name="token" autocomplete="off" required /></label><button class="btn btn--primary" type="submit">Load reports</button><p class="form-status" data-correction-status role="status" aria-live="polite"></p></form>
     <section class="moderation-list" data-correction-list hidden aria-live="polite"></section>
   </section>
 </BaseLayout>

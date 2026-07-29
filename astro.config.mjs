@@ -3,6 +3,15 @@ import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 
 const site = process.env.PUBLIC_SITE_URL ?? "https://qazaqlens.org";
+const excludedSitemapRoutes = [
+  "/404/",
+  "/offline/",
+  "/report-error/",
+  "/moderate/",
+  "/moderate-claims/",
+  "/moderate-corrections/",
+  "/ru/404/",
+];
 
 export default defineConfig({
   site,
@@ -11,7 +20,7 @@ export default defineConfig({
   integrations: [
     mdx(),
     sitemap({
-      filter: (page) => !page.endsWith("/report-error/") && !page.endsWith("/offline/"),
+      filter: (page) => !excludedSitemapRoutes.some((route) => page.endsWith(route)),
     }),
   ],
   markdown: {
