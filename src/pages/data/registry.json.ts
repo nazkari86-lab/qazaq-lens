@@ -5,7 +5,7 @@ export async function GET() {
   return new Response(
     JSON.stringify(
       {
-        schemaVersion: 1,
+        schemaVersion: 2,
         generatedAt: new Date().toISOString(),
         records,
       },

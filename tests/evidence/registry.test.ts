@@ -98,9 +98,13 @@ test("toRegistryRecord projects normalized evidence metadata without article bod
         statement: "The film was not shot as a documentary.",
         significance: "critical",
         confidence: "high",
+        sourceIds: ["S1", "S2"],
       },
     ],
-    sources: [{ id: "S1" }, { id: "S2" }],
+    sources: [
+      { id: "S1", title: "Film credits", publisher: "Studio", url: "https://example.test/one", type: "primary" },
+      { id: "S2", title: "Production history", publisher: "Archive", url: "https://example.test/two", type: "academic" },
+    ],
     body: "must not leak",
   } satisfies Parameters<typeof toRegistryRecord>[0] & { body: string };
 
@@ -122,6 +126,7 @@ test("toRegistryRecord projects normalized evidence metadata without article bod
     "topics",
     "aliases",
     "claims",
+    "topSources",
     "sourceCount",
   ]);
 });
@@ -137,13 +142,14 @@ test("getEvidenceRegistry sorts and deeply projects visible myth entries", async
   expect(records[0]).not.toHaveProperty("body");
   expect(records[0]).not.toHaveProperty("sources");
   expect(records[0].sourceCount).toBe(2);
-  expect(JSON.stringify(records)).not.toContain("https://sources.example/");
-  expect(JSON.stringify(records)).not.toContain('"S1"');
+  expect(records[0].topSources).toHaveLength(2);
+  expect(records[0].topSources[0]).toMatchObject({ id: "S1", type: "primary" });
 
   expect(records[0].topics).not.toBe(alphaEntry.data.topics);
   expect(records[0].aliases).not.toBe(alphaEntry.data.aliases);
   expect(records[0].claims).not.toBe(alphaEntry.data.claims);
   expect(records[0].claims[0]).not.toBe(alphaEntry.data.claims[0]);
+  expect(records[0].topSources[0]).not.toBe(alphaEntry.data.sources[0]);
 
   records[0].topics.push("result-only topic");
   records[0].claims[0].statement = "Result-only claim mutation.";

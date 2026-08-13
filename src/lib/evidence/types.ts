@@ -33,6 +33,14 @@ export interface RegistryClaim {
   confidence: ClaimConfidence;
 }
 
+export interface RegistrySource {
+  id: string;
+  title: string;
+  publisher: string;
+  url: string;
+  type: "primary" | "academic" | "official" | "journalistic" | "background";
+}
+
 export interface EvidenceRegistryRecord {
   slug: string;
   title: string;
@@ -45,6 +53,7 @@ export interface EvidenceRegistryRecord {
   topics: string[];
   aliases: string[];
   claims: RegistryClaim[];
+  topSources: RegistrySource[];
   sourceCount: number;
 }
 

@@ -32,6 +32,22 @@ const partOfRussia: EvidenceRegistryRecord = {
       confidence: "high",
     },
   ],
+  topSources: [
+    {
+      id: "S1",
+      title: "Constitution of Kazakhstan",
+      publisher: "Adilet",
+      url: "https://example.test/constitution",
+      type: "official",
+    },
+    {
+      id: "S2",
+      title: "United Nations member states",
+      publisher: "United Nations",
+      url: "https://example.test/un-members",
+      type: "official",
+    },
+  ],
   sourceCount: 4,
 };
 
@@ -64,6 +80,7 @@ const capitalAstana: EvidenceRegistryRecord = {
       confidence: "high",
     },
   ],
+  topSources: partOfRussia.topSources,
   sourceCount: 3,
 };
 
@@ -219,6 +236,14 @@ const nuclearWeapons: EvidenceRegistryRecord = {
 };
 
 describe("matchClaim", () => {
+  it.each([
+    ["Казахстан часть России", "part-of-russia"],
+    ["Қазақстан Ресейдің бөлігі ме", "part-of-russia"],
+    ["Столица Казахстана Алматы", "capital-astana"],
+  ])("matches controlled Russian and Kazakh wording %j", (query, slug) => {
+    expect(matchClaim(query, records)[0]?.record.slug).toBe(slug);
+  });
+
   it("ranks the Russia-region myth first and explains the myth match", () => {
     const matches = matchClaim(
       "Is Kazakhstan a region of Russia?",

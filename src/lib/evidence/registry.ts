@@ -23,11 +23,43 @@ type RegistryInput = Omit<
   claims: ReadonlyArray<
     Pick<
       MythData["claims"][number],
-      "id" | "statement" | "significance" | "confidence"
+      "id" | "statement" | "significance" | "confidence" | "sourceIds"
     >
   >;
-  sources: ReadonlyArray<Pick<MythData["sources"][number], "id">>;
+  sources: ReadonlyArray<
+    Pick<
+      MythData["sources"][number],
+      "id" | "title" | "publisher" | "url" | "type"
+    >
+  >;
 };
+
+const SOURCE_PRIORITY = {
+  primary: 0,
+  academic: 1,
+  official: 2,
+  journalistic: 3,
+  background: 4,
+} as const;
+
+function selectTopSources(data: RegistryInput) {
+  const criticalIds = new Set(
+    data.claims
+      .filter(({ significance }) => significance === "critical")
+      .flatMap(({ sourceIds }) => sourceIds),
+  );
+
+  return data.sources
+    .map((source, order) => ({ source, order }))
+    .sort(
+      (a, b) =>
+        Number(criticalIds.has(b.source.id)) - Number(criticalIds.has(a.source.id)) ||
+        SOURCE_PRIORITY[a.source.type] - SOURCE_PRIORITY[b.source.type] ||
+        a.order - b.order,
+    )
+    .slice(0, 2)
+    .map(({ source }) => ({ ...source }));
+}
 
 export function toRegistryRecord(data: RegistryInput): EvidenceRegistryRecord {
   return {
@@ -49,6 +81,7 @@ export function toRegistryRecord(data: RegistryInput): EvidenceRegistryRecord {
         confidence,
       }),
     ),
+    topSources: selectTopSources(data),
     sourceCount: data.sources.length,
   };
 }

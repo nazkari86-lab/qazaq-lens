@@ -1,0 +1,44 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getVisibleMyths } from "../lib/content";
+
+const myths = await getVisibleMyths();
+const pending = myths
+  .filter(({ data }) => data.publicationStatus === "beta")
+  .sort((a, b) => {
+    const cadence = { current: 0, slow: 1, historical: 2 } as const;
+    return cadence[a.data.evidenceCadence] - cadence[b.data.evidenceCadence] || a.data.title.localeCompare(b.data.title);
+  });
+---
+<BaseLayout title="External review" description="A transparent, claim-by-claim external review queue for Qazaq Lens explainers.">
+  <div class="wrap-wide page-hero">
+    <p class="eyebrow">Independent review</p>
+    <h1>Challenge the evidence.</h1>
+    <p class="lead">Every item below is still public beta. A badge changes only after a real external reviewer checks the claims, sources, wording and missing context.</p>
+  </div>
+  <section class="wrap-wide dashboard-stats" aria-label="External review status">
+    <article><strong>{pending.length}</strong><span>awaiting review</span></article>
+    <article><strong>{myths.length - pending.length}</strong><span>independently reviewed</span></article>
+  </section>
+  <section class="wrap-wide section-block review-protocol" aria-labelledby="review-protocol-title">
+    <div class="section-heading-row"><div><p class="eyebrow">Review protocol</p><h2 id="review-protocol-title">What a reviewer checks</h2></div></div>
+    <ol class="review-steps">
+      <li><strong>Claim accuracy.</strong> Can each critical statement be supported as written?</li>
+      <li><strong>Source fit.</strong> Do the cited sources actually support the linked claim?</li>
+      <li><strong>Missing context.</strong> Would a reasonable reader be misled by an omission?</li>
+      <li><strong>Language and scope.</strong> Are uncertainty, disagreement and generalisation handled fairly?</li>
+      <li><strong>Conflict disclosure.</strong> The reviewer states relevant affiliations or conflicts.</li>
+    </ol>
+    <p>A review can approve, request changes or reject an article’s framing. Reviewers may be named or use a stable pseudonym, but expertise and conflicts are recorded. AI output does not qualify as external review.</p>
+  </section>
+  <section class="wrap-wide section-block" aria-labelledby="review-queue-title">
+    <div class="section-heading-row"><div><p class="eyebrow">Open queue</p><h2 id="review-queue-title">Choose an explainer</h2></div><span class="section-count">{pending.length} open</span></div>
+    <div class="search-results">
+      {pending.map(({ data }) => {
+        const subject = encodeURIComponent(`External review: ${data.title}`);
+        const body = encodeURIComponent(`Article: https://qazaqlens.org/myths/${data.slug}/\n\nRelevant expertise:\n\nConflicts or affiliations:\n\nI would like to review:\n`);
+        return <article class="search-result"><p class="eyebrow">{data.evidenceCadence} evidence · {data.claims.length} claims · {data.sources.length} sources</p><h3><a href={`/myths/${data.slug}/`}>{data.title}</a></h3><p>{data.summary}</p><a href={`mailto:nazkari86@gmail.com?subject=${subject}&body=${body}`}>Volunteer to review this explainer</a></article>;
+      })}
+    </div>
+  </section>
+</BaseLayout>

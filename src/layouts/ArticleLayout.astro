@@ -23,7 +23,7 @@ import CiteThis from "../components/CiteThis.astro";
 import SelectionAnnotation from "../components/SelectionAnnotation.astro";
 import type { MythEntry } from "../lib/content";
 
-interface Source { id: string; title: string; publisher: string; author?: string; publishedAt?: string; accessedAt: Date; url: string; archivedUrl?: string; independenceGroup?: string; language: string; type: "primary" | "academic" | "official" | "journalistic" | "background"; }
+interface Source { id: string; title: string; publisher: string; author?: string; publishedAt?: string; accessedAt: Date; url: string; archivedUrl?: string; locator?: string; independenceGroup?: string; language: string; type: "primary" | "academic" | "official" | "journalistic" | "background"; }
 interface Claim { id: string; statement: string; kind: "fact" | "interpretation" | "reported-view" | "disputed"; significance: "critical" | "supporting"; confidence: "high" | "medium" | "low"; sourceIds: string[]; note?: string; }
 interface Change { date: Date; summary: string }
 interface Heading { depth: number; slug: string; text: string }
@@ -188,7 +188,7 @@ const image = new URL(props.ogImage ?? "/og/default.png", site).toString();
         <div class="article-body" data-reveal data-reading-detail="article"><slot /></div>
         <div data-reveal data-reading-detail="evidence"><ClaimLedger claims={props.claims} /></div>
         <div data-reveal data-reading-detail="evidence"><KnowledgeCheck claims={props.claims} /></div>
-        <div data-reveal data-reading-detail="evidence"><SourceList sources={props.sources} /></div>
+        <div data-reveal data-reading-detail="evidence"><SourceList sources={props.sources} claims={props.claims} /></div>
         <LastReviewed publishedAt={props.publishedAt} lastReviewedAt={props.lastReviewedAt} author={props.author} reviewStatus={props.reviewStatus} reviewedBy={props.reviewedBy} readingMinutes={props.readingMinutes} />
         <Changelog entries={props.changelog} />
         <CiteThis title={props.title} slug={props.slug ?? Astro.params.slug ?? ""} publishedAt={props.publishedAt} lastReviewedAt={props.lastReviewedAt} author={props.author} />

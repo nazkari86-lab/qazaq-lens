@@ -1,0 +1,26 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const bookmarklet = `javascript:(()=>{const q=getSelection().toString().trim()||prompt("Claim about Kazakhstan to check:");if(q)open("https://qazaqlens.org/ask/#claim="+encodeURIComponent(q),"_blank","noopener")})()`;
+---
+<BaseLayout title="Tools" description="Check a claim about Kazakhstan where you encounter it with the privacy-conscious Qazaq Lens bookmarklet.">
+  <article class="wrap article-shell">
+    <p class="eyebrow">Use Qazaq Lens anywhere</p>
+    <h1>Check a claim where you find it.</h1>
+    <p class="lead">The bookmarklet sends selected text to Ask through a URL fragment. Fragments are not included in the web request, and Ask removes it from the address bar immediately.</p>
+    <div class="article-body">
+      <h2>Install the bookmarklet</h2>
+      <ol>
+        <li>Show your browser’s bookmarks bar.</li>
+        <li>Drag <a class="btn btn--primary" href={bookmarklet}>Ask Qazaq Lens</a> to it.</li>
+        <li>On any page, select a claim about Kazakhstan and click the bookmark.</li>
+      </ol>
+      <p>If the browser blocks dragging, create a bookmark manually and paste the button’s link into its URL field.</p>
+      <h2>Privacy and limits</h2>
+      <p>The selected text stays in your browser and is matched locally against the published registry. The bookmarklet opens a new tab and does not fetch or scrape the page you were reading. The source page may still appear as an ordinary referrer according to your browser policy; no selected claim is included in that request.</p>
+      <p>Qazaq Lens can match only claims already covered by its evidence library. A missing match is an editorial gap, not a verdict.</p>
+      <h2>No installation</h2>
+      <p><a href="/ask/">Open Ask Qazaq Lens</a> and paste the wording directly.</p>
+    </div>
+  </article>
+</BaseLayout>

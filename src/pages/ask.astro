@@ -14,8 +14,8 @@ const serializedRegistry = JSON.stringify(registry).replace(/</g, "\\u003c");
       <p class="eyebrow">Search the evidence registry</p>
       <h1>Ask Qazaq Lens.</h1>
       <p class="lead">
-        Describe a claim about Kazakhstan. Matching happens in your browser
-        against published evidence; no AI invents a verdict.
+        Paste a claim, question or comment about Kazakhstan. Get the closest
+        published evidence and a concise, source-linked response you can use.
       </p>
       <aside class="ask-verdict-note" aria-label="How results should be interpreted">
         <strong>No automatic verdict.</strong>
@@ -27,7 +27,7 @@ const serializedRegistry = JSON.stringify(registry).replace(/</g, "\\u003c");
       <div>
         <h2 id="ask-lookup-title">Check a claim</h2>
         <form class="ask-form" data-ask-form>
-          <label for="claim-input">Claim or Qazaq Lens article URL</label>
+          <label for="claim-input">Claim, question, comment or Qazaq Lens article URL</label>
           <textarea
             id="claim-input"
             name="claim"
@@ -35,7 +35,7 @@ const serializedRegistry = JSON.stringify(registry).replace(/</g, "\\u003c");
             maxlength="500"
             rows="5"
             required
-            placeholder="Is Kazakhstan part of Russia?"
+            placeholder="Paste the exact wording, for example: Is Kazakhstan part of Russia?"
           ></textarea>
           <button class="btn btn--primary" type="submit">Check the evidence</button>
         </form>
@@ -44,8 +44,9 @@ const serializedRegistry = JSON.stringify(registry).replace(/</g, "\\u003c");
       <aside class="ask-method-note">
         <p class="eyebrow">What is checked</p>
         <p>
-          Your wording is compared with article titles, registered claims,
-          aliases, topics and summaries. Nothing is sent from this form.
+          Your wording is compared locally with article titles, registered claims,
+          multilingual aliases, topics and summaries. Nothing is sent unless you
+          explicitly submit an unmatched topic.
         </p>
       </aside>
     </section>
@@ -218,12 +219,20 @@ const serializedRegistry = JSON.stringify(registry).replace(/</g, "\\u003c");
       appendText(
         article,
         "span",
-        `Verdict: ${verdictLabels[record.verdict]}`,
+        `Published verdict: ${verdictLabels[record.verdict]}`,
         `ask-verdict ask-verdict--${record.verdict}`,
       );
       appendText(article, "h3", record.title);
       appendText(article, "p", `Claim examined: “${record.mythStatement}”`, "claim-result-myth");
       appendText(article, "p", record.summary, "claim-result-summary");
+
+      const scopeNote = appendText(
+        article,
+        "p",
+        "This verdict applies to the published claim above, not automatically to every nuance of your wording.",
+        "claim-result-scope",
+      );
+      scopeNote.setAttribute("role", "note");
 
       const metadata = document.createElement("dl");
       metadata.className = "claim-result-meta";
@@ -250,10 +259,92 @@ const serializedRegistry = JSON.stringify(registry).replace(/</g, "\\u003c");
       }
       article.append(reasonList);
 
+      if (record.topSources.length > 0) {
+        appendText(article, "h4", "Best starting sources", "match-reasons-title");
+        const sourceList = document.createElement("ol");
+        sourceList.className = "ask-source-list";
+        record.topSources.forEach((source) => {
+          const item = document.createElement("li");
+          const sourceLink = document.createElement("a");
+          sourceLink.href = source.url;
+          sourceLink.target = "_blank";
+          sourceLink.rel = "noopener noreferrer";
+          sourceLink.textContent = source.title;
+          sourceLink.addEventListener("click", () => recordImpact("source_open", record.slug));
+          item.append(sourceLink, document.createTextNode(` — ${source.publisher}`));
+          sourceList.append(item);
+        });
+        article.append(sourceList);
+      }
+
+      if (index === 0 && !ambiguous) {
+        const responseBuilder = document.createElement("section");
+        responseBuilder.className = "response-builder";
+        responseBuilder.setAttribute("aria-label", "Ready-to-use evidence response");
+        appendText(responseBuilder, "h4", "Use this response");
+        const reviewLabel = record.publicationStatus === "reviewed"
+          ? "Independently reviewed"
+          : "Public beta; independent review pending";
+        const sourceLines = record.topSources
+          .map((source) => `${source.publisher}: ${source.url}`)
+          .join("\n");
+        const conciseSummary = record.summary.replace(/^(False|Misleading|Partly true|Outdated|Unverified|Disputed)\.\s*/i, "");
+        const reply = `${verdictLabels[record.verdict]} — “${record.mythStatement}”\n\n${conciseSummary}\n\nSources:\n${sourceLines}\n\nLast reviewed ${record.lastReviewedAt}. ${reviewLabel}. Full evidence: ${record.canonicalUrl}`;
+        const preview = document.createElement("textarea");
+        preview.className = "response-builder-preview";
+        preview.readOnly = true;
+        preview.rows = 8;
+        preview.value = reply;
+        preview.setAttribute("aria-label", "Evidence response text");
+        responseBuilder.append(preview);
+
+        const actions = document.createElement("div");
+        actions.className = "button-row response-builder-actions";
+        const feedback = appendText(responseBuilder, "span", "", "share-status");
+        feedback.setAttribute("role", "status");
+        feedback.setAttribute("aria-live", "polite");
+        const makeButton = (label: string, handler: () => void | Promise<void>) => {
+          const button = document.createElement("button");
+          button.className = "btn";
+          button.type = "button";
+          button.textContent = label;
+          button.addEventListener("click", () => void handler());
+          actions.append(button);
+        };
+        makeButton("Copy response", async () => {
+          try {
+            await navigator.clipboard.writeText(reply);
+            feedback.textContent = "Response copied with sources.";
+            recordImpact("reply_copy", record.slug);
+          } catch { feedback.textContent = "Copy failed. Select the response text manually."; }
+        });
+        makeButton("Copy article link", async () => {
+          try {
+            await navigator.clipboard.writeText(record.canonicalUrl);
+            feedback.textContent = "Article link copied.";
+            recordImpact("reply_copy", record.slug);
+          } catch { feedback.textContent = "Copy failed."; }
+        });
+        if (navigator.share) {
+          makeButton("Share", async () => {
+            try {
+              await navigator.share({ title: record.title, text: reply, url: record.canonicalUrl });
+              feedback.textContent = "Shared.";
+              recordImpact("reply_share", record.slug);
+            } catch (error) {
+              if (error instanceof DOMException && error.name === "AbortError") return;
+              feedback.textContent = "Sharing was not available.";
+            }
+          });
+        }
+        responseBuilder.insertBefore(actions, feedback);
+        article.append(responseBuilder);
+      }
+
       const link = document.createElement("a");
       link.className = "claim-result-link";
       link.href = record.canonicalUrl;
-      link.textContent = "Read the canonical article";
+      link.textContent = "Read the full evidence and limitations";
       article.append(link);
       return article;
     };
@@ -357,21 +448,36 @@ const serializedRegistry = JSON.stringify(registry).replace(/</g, "\\u003c");
 
       recordImpact("ask_match", matches[0].record.slug);
 
+      const focusedMatches = matches.filter(
+        ({ score }) => matches[0].score - score <= 0.12,
+      );
+
       showMatches(
-        matches,
-        matches.length === 1
+        focusedMatches,
+        focusedMatches.length === 1
           ? "Found one published evidence match. Review the article before drawing a conclusion."
-          : `Found ${matches.length} published evidence matches. Review them before drawing a conclusion.`,
+          : `Found ${focusedMatches.length} published evidence matches. Review them before drawing a conclusion.`,
       );
     });
 
-    try {
-      const draft = sessionStorage.getItem("qazaq-lens-ask-draft");
-      if (draft && input && form) {
-        sessionStorage.removeItem("qazaq-lens-ask-draft");
-        input.value = draft;
-        form.requestSubmit();
-      }
-    } catch {}
+    let fragmentConsumed = false;
+    const restoreDraft = () => {
+      try {
+        const fragmentDraft = new URLSearchParams(location.hash.slice(1)).get("claim");
+        if (fragmentDraft) history.replaceState(null, "", `${location.pathname}${location.search}`);
+        if (fragmentConsumed) return;
+        const draft = fragmentDraft || sessionStorage.getItem("qazaq-lens-ask-draft");
+        if (draft && input && form) {
+          fragmentConsumed = true;
+          sessionStorage.removeItem("qazaq-lens-ask-draft");
+          input.value = draft.slice(0, 500);
+          form.requestSubmit();
+        }
+      } catch {}
+    };
+    restoreDraft();
+    setTimeout(restoreDraft, 0);
+    window.addEventListener("load", () => setTimeout(restoreDraft, 0), { once: true });
+    window.addEventListener("hashchange", restoreDraft, { once: true });
   </script>
 </BaseLayout>

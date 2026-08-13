@@ -34,6 +34,9 @@ test("registry JSON route returns the versioned records envelope and cache heade
           confidence: "high",
         },
       ],
+      topSources: [
+        { id: "S1", title: "Film credits", publisher: "Studio", url: "https://example.test/film", type: "primary" },
+      ],
       sourceCount: 2,
     },
   ];
@@ -46,7 +49,7 @@ test("registry JSON route returns the versioned records envelope and cache heade
     records: EvidenceRegistryRecord[];
   };
 
-  expect(payload.schemaVersion).toBe(1);
+  expect(payload.schemaVersion).toBe(2);
   expect(Number.isNaN(Date.parse(payload.generatedAt))).toBe(false);
   expect(new Date(payload.generatedAt).toISOString()).toBe(payload.generatedAt);
   expect(payload.records).toEqual(records);

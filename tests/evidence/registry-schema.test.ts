@@ -22,6 +22,9 @@ test("evidence registry records expose metadata without article bodies", () => {
         confidence: "high",
       },
     ],
+    topSources: [
+      { id: "S1", title: "Constitution", publisher: "Adilet", url: "https://example.test/constitution", type: "official" },
+    ],
     sourceCount: 4,
   };
 

@@ -8,11 +8,13 @@ interface Source {
   accessedAt: Date;
   url: string;
   archivedUrl?: string;
+  locator?: string;
   language: string;
   type: "primary" | "academic" | "official" | "journalistic" | "background";
 }
-interface Props { sources: Source[] }
-const { sources } = Astro.props;
+interface Claim { id: string; sourceIds: string[] }
+interface Props { sources: Source[]; claims?: Claim[] }
+const { sources, claims = [] } = Astro.props;
 const labels = { primary: "Primary", academic: "Academic", official: "Official", journalistic: "Journalistic", background: "Background" };
 const fmt = (date: Date) => date.toLocaleDateString("en-GB", { year: "numeric", month: "short", day: "numeric" });
 ---
@@ -37,6 +39,8 @@ const fmt = (date: Date) => date.toLocaleDateString("en-GB", { year: "numeric", 
             {source.author && <span>{source.author} · </span>}<span>{source.publisher}</span>
             {source.publishedAt && <span> · {source.publishedAt}</span>}<span> · accessed {fmt(source.accessedAt)}</span>
           </div>
+          {source.locator && <p class="source-locator"><strong>Locator:</strong> {source.locator}</p>}
+          {claims.some((claim) => claim.sourceIds.includes(source.id)) && <p class="source-locator"><strong>Supports:</strong> {claims.filter((claim) => claim.sourceIds.includes(source.id)).map((claim) => claim.id).join(", ")}</p>}
           {source.archivedUrl && <a class="archive-link" href={source.archivedUrl} target="_blank" rel="noopener noreferrer">Archived copy ↗</a>}
         </div>
       </li>

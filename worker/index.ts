@@ -193,7 +193,7 @@ async function handleClaimSuggestionModeration(request: Request, env: Env) {
   return json({ ok: true, id, status: input.status });
 }
 
-const IMPACT_EVENTS = new Set(["data_download", "card_download", "embed_view", "ask_match", "ask_no_match"]);
+const IMPACT_EVENTS = new Set(["data_download", "card_download", "embed_view", "ask_match", "ask_no_match", "reply_copy", "reply_share", "source_open"]);
 
 async function handleImpactEvent(request: Request, env: Env) {
   if (request.method !== "POST") return json({ message: "Method not allowed." }, 405, { Allow: "POST" });
@@ -225,7 +225,7 @@ async function handleImpactSummary(request: Request, env: Env) {
       env.QAZAQ_LENS_DB.prepare("SELECT article_slug, SUM(count) AS count FROM impact_daily WHERE event_type = 'ask_match' AND article_slug != '' GROUP BY article_slug ORDER BY count DESC LIMIT 8").all(),
       env.QAZAQ_LENS_DB.prepare("SELECT SUM(count) AS count FROM impact_daily WHERE event_type = 'ask_no_match'").first<{ count: number | null }>(),
     ]);
-    const totals: Record<string, number> = { data_download: 0, card_download: 0, embed_view: 0, ask_match: 0, ask_no_match: 0 };
+    const totals: Record<string, number> = { data_download: 0, card_download: 0, embed_view: 0, ask_match: 0, ask_no_match: 0, reply_copy: 0, reply_share: 0, source_open: 0 };
     (events.results ?? []).forEach((row) => { totals[row.event_type] = Number(row.count) || 0; });
     const correctionTotals: Record<string, number> = { accepted: 0, rejected: 0, resolved: 0, open: 0 };
     (corrections.results ?? []).forEach((row) => { if (row.status === "new" || row.status === "reviewing") correctionTotals.open += Number(row.count) || 0; else if (row.status in correctionTotals) correctionTotals[row.status] += Number(row.count) || 0; });
