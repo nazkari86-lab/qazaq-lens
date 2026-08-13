@@ -16,7 +16,7 @@ const apa = `Nurlanuly, D. (${publishYear}). ${title}. Qazaq Lens. Retrieved ${a
 const mla = `Nurlanuly, Dulat. "${title}." Qazaq Lens, ${publishedAt.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}, ${url}. Accessed ${accessDate}.`;
 const chicago = `Nurlanuly, Dulat. "${title}." Qazaq Lens. Last modified ${lastReviewedAt.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}. ${url}.`;
 ---
-<aside class="cite-this">
+<div class="cite-this">
   <p class="eyebrow">Cite this article</p>
   <div class="cite-tabs" role="tablist">
     <button class="cite-tab is-active" role="tab" aria-selected="true" data-cite-tab="apa">APA</button>
@@ -38,7 +38,7 @@ const chicago = `Nurlanuly, Dulat. "${title}." Qazaq Lens. Last modified ${lastR
     </div>
   </div>
   <p class="cite-note">Last verified {accessDate}. If citing for academic use, check this page's sources directly.</p>
-</aside>
+</div>
 <script>
   document.querySelectorAll<HTMLElement>(".cite-this").forEach((block) => {
     block.querySelectorAll<HTMLButtonElement>("[data-cite-tab]").forEach((tab) => {

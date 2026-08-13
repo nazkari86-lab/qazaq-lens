@@ -147,7 +147,7 @@ const sourceCount = myths.reduce((sum,entry)=>sum+entry.data.sources.length,0);
         <p>Maybe a colleague mentioned it's "basically Russia." Maybe you saw a Borat reference used as a fact. Maybe a travel forum described the country as dangerous steppe with no cities. This site gives you sourced context to distinguish the shorthand from what's actually checkable.</p>
         <p>It is not written for Kazakhstanis who already know their own country. It is written for people outside it who want to replace assumptions with evidence.</p>
       </div>
-      <div class="audience-examples">
+      <div class="audience-examples" role="region" aria-label="Example claims and answer" tabindex="0">
         <div class="audience-example"><span class="audience-example-label">Common claim</span><p>"Kazakhstan is part of Russia."</p></div>
         <div class="audience-example"><span class="audience-example-label">Common claim</span><p>"Everyone there lives in yurts."</p></div>
         <div class="audience-example audience-example--answer"><span class="audience-example-label">What you get here</span><p>A short verdict + the evidence behind it, with sources you can open and check.</p></div>
@@ -166,7 +166,7 @@ const sourceCount = myths.reduce((sum,entry)=>sum+entry.data.sources.length,0);
 
   <section class="wrap-wide section-block" data-reveal>
     <div class="section-heading-row"><div><p class="eyebrow">The evidence loop</p><h2>Useful in the moment, inspectable afterwards.</h2></div></div>
-    <div class="principles-grid">
+    <div class="principles-grid" role="region" aria-label="Evidence process" tabindex="0">
       <div class="principle-card"><span class="principle-number">01</span><p class="eyebrow">Check</p><h3>Start with the exact claim.</h3><p>Ask matches your wording against published explainers without sending it to an AI model.</p></div>
       <div class="principle-card"><span class="principle-number">02</span><p class="eyebrow">Inspect</p><h3>Follow the evidence path.</h3><p>Claim IDs, confidence labels, sources and unresolved limitations stay visible.</p></div>
       <div class="principle-card"><span class="principle-number">03</span><p class="eyebrow">Carry</p><h3>Share context, not a slogan.</h3><p>Reusable evidence cards preserve the verdict, review date and canonical source link.</p></div>

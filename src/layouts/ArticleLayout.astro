@@ -177,7 +177,7 @@ const image = new URL(props.ogImage ?? "/og/default.png", site).toString();
     </header>
 
     <div class="article-layout wrap-wide">
-      <aside class="article-sidebar"><TableOfContents headings={props.headings} /></aside>
+      <div class="article-sidebar"><TableOfContents headings={props.headings} /></div>
       <div class="article-main">
         <div data-reveal data-reading-detail="summary"><KeyTakeaways items={props.keyTakeaways} /></div>
         <div data-reveal data-reading-detail="summary"><WhyThisMatters label="Why we checked this claim" text={whyWeChecked[props.slug ?? Astro.params.slug ?? ""] ?? "This topic was selected because it recurs in international discussions and can be tested against traceable evidence."} /></div>

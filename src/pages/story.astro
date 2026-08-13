@@ -344,12 +344,13 @@ const storyData = storyMyths.map(entry => {
 .sw {
   --sw-bg:    #080807;
   --sw-ink:   #f0ede5;
-  --sw-muted: #7e7a73;
+  --sw-muted: #8b8780;
   --sw-line:  rgba(240,237,229,.12);
   --sw-gold:  #c5973e;
-  --sw-red:   #d94f35;
+  --sw-red:   #de5840;
   --sw-amber: #d4823a;
   --sw-accent: #c5973e;
+  --sw-accent-text: color-mix(in srgb, var(--sw-accent) 60%, #fff 40%);
   --sw-tint:   transparent;
   --sw-font-display: Georgia, 'Times New Roman', serif;
   --sw-font-ui:      ui-monospace, 'Menlo', monospace;
@@ -378,7 +379,7 @@ const storyData = storyMyths.map(entry => {
   font-size: .68rem;
   text-transform: uppercase;
   letter-spacing: .12em;
-  color: var(--sw-accent);
+  color: var(--sw-accent-text);
   margin: 0 0 1.8rem;
 }
 .sw-headline {
@@ -408,7 +409,7 @@ const storyData = storyMyths.map(entry => {
   text-transform: uppercase;
   animation: sw-bob 2.4s ease-in-out infinite;
 }
-.sw-resume{display:none;margin-top:1.5rem;border:1px solid color-mix(in srgb,var(--sw-accent) 55%,transparent);background:transparent;color:var(--sw-accent);padding:.7rem 1rem;border-radius:3px;font:700 .65rem var(--sw-font-ui);letter-spacing:.08em;text-transform:uppercase;cursor:pointer}.sw-resume:hover{background:var(--sw-accent);color:var(--sw-bg)}
+.sw-resume{display:none;margin-top:1.5rem;border:1px solid color-mix(in srgb,var(--sw-accent) 55%,transparent);background:transparent;color:var(--sw-accent-text);padding:.7rem 1rem;border-radius:3px;font:700 .65rem var(--sw-font-ui);letter-spacing:.08em;text-transform:uppercase;cursor:pointer}.sw-resume:hover{background:var(--sw-accent);color:var(--sw-bg)}
 @keyframes sw-bob {
   0%,100% { transform: translateY(0) }
   50%      { transform: translateY(6px) }
@@ -424,8 +425,8 @@ const storyData = storyMyths.map(entry => {
   gap: .8rem 1.2rem;
   padding: 4rem;
   pointer-events: none;
-  opacity: .055;
-  filter: blur(1px);
+  opacity: 1;
+  filter: blur(1px) opacity(.055);
 }
 .sw-title-tag {
   font-family: var(--sw-font-display);
@@ -468,8 +469,8 @@ const storyData = storyMyths.map(entry => {
   text-transform: uppercase;
   transition: color .3s ease;
 }
-.sw-chapters{position:fixed;z-index:18;left:1rem;top:90px;display:grid;gap:.35rem;padding:.45rem;border:1px solid var(--sw-line);border-radius:5px;background:#080807b8;backdrop-filter:blur(12px);max-height:calc(100svh - 106px);overflow-y:auto;scrollbar-width:none}.sw-chapters::-webkit-scrollbar{display:none}.sw-chapters-title{padding:.25rem .35rem;color:var(--sw-muted);font: .55rem var(--sw-font-ui);letter-spacing:.1em;text-transform:uppercase}.sw-chapters a{display:flex;align-items:center;gap:.45rem;width:7.5rem;min-height:1.5rem;overflow:hidden;color:var(--sw-muted);text-decoration:none;transition:color .25s}.sw-chapters a span{font: .58rem var(--sw-font-ui);color:var(--sw-accent)}.sw-chapters a b{font: .58rem var(--sw-font-ui);font-weight:400;white-space:nowrap;opacity:1}.sw-chapters a.is-active{color:var(--sw-ink)}.sw-chapters a.is-active::before{content:"";position:absolute;left:.45rem;width:2px;height:1rem;background:var(--sw-accent)}
-.sw-chapters-toggle{display:flex;align-items:center;justify-content:space-between;gap:.8rem;width:100%;border:0;background:transparent;color:var(--sw-muted);padding:.25rem .35rem;font:700 .55rem var(--sw-font-ui);letter-spacing:.1em;text-transform:uppercase;cursor:pointer}.sw-chapters-toggle span{color:var(--sw-accent);font-size:.9rem;line-height:1;transition:transform .2s}.sw-chapters.is-collapsed .sw-chapters-toggle span{transform:rotate(45deg)}.sw-chapters.is-collapsed .sw-chapter-links{display:none}.sw-chapter-links{display:grid;gap:.35rem}
+.sw-chapters{position:fixed;z-index:18;left:1rem;top:90px;display:grid;gap:.35rem;padding:.45rem;border:1px solid var(--sw-line);border-radius:5px;background:#080807b8;backdrop-filter:blur(12px);max-height:calc(100svh - 106px);overflow-y:auto;scrollbar-width:none}.sw-chapters::-webkit-scrollbar{display:none}.sw-chapters-title{padding:.25rem .35rem;color:var(--sw-muted);font: .55rem var(--sw-font-ui);letter-spacing:.1em;text-transform:uppercase}.sw-chapters a{display:flex;align-items:center;gap:.45rem;width:7.5rem;min-height:1.5rem;overflow:hidden;color:var(--sw-muted);text-decoration:none;transition:color .25s}.sw-chapters a span{font: .58rem var(--sw-font-ui);color:var(--sw-accent-text)}.sw-chapters a b{font: .58rem var(--sw-font-ui);font-weight:400;white-space:nowrap;opacity:1}.sw-chapters a.is-active{color:var(--sw-ink)}.sw-chapters a.is-active::before{content:"";position:absolute;left:.45rem;width:2px;height:1rem;background:var(--sw-accent)}
+.sw-chapters-toggle{display:flex;align-items:center;justify-content:space-between;gap:.8rem;width:100%;border:0;background:transparent;color:var(--sw-muted);padding:.25rem .35rem;font:700 .55rem var(--sw-font-ui);letter-spacing:.1em;text-transform:uppercase;cursor:pointer}.sw-chapters-toggle span{color:var(--sw-accent-text);font-size:.9rem;line-height:1;transition:transform .2s}.sw-chapters.is-collapsed .sw-chapters-toggle span{transform:rotate(45deg)}.sw-chapters.is-collapsed .sw-chapter-links{display:none}.sw-chapter-links{display:grid;gap:.35rem}
 @media (max-width: 860px) {
   .sw-shell { grid-template-columns: 1fr; }
 }
@@ -504,7 +505,7 @@ const storyData = storyMyths.map(entry => {
   font-family: var(--sw-font-ui);
   font-size: .65rem;
   letter-spacing: .1em;
-  color: var(--sw-accent);
+  color: var(--sw-accent-text);
   text-transform: uppercase;
 }
 .sw-tag {
@@ -524,8 +525,9 @@ const storyData = storyMyths.map(entry => {
   margin: 0 0 1.5rem;
   padding: 0;
   border: 0;
+  background: transparent;
 }
-.sw-myth-mark { color: var(--sw-accent); }
+.sw-myth-mark { color: var(--sw-accent-text); }
 .sw-rule {
   border: 0;
   border-top: 1px solid var(--sw-line);
@@ -553,7 +555,7 @@ const storyData = storyMyths.map(entry => {
   font-weight: 400;
   font-size: clamp(2rem, 4vw, 3rem);
   letter-spacing: -.04em;
-  color: var(--sw-accent);
+  color: var(--sw-accent-text);
   line-height: 1;
 }
 .sw-stat-label {
@@ -580,19 +582,19 @@ const storyData = storyMyths.map(entry => {
 .sw-verdict--misleading{ background: color-mix(in srgb, var(--sw-amber) 14%, transparent); color: var(--sw-amber); }
 .sw-verdict--partly-true{ background: color-mix(in srgb, #b98a32 14%, transparent); color: #d9ad57; }
 .sw-verdict--outdated,.sw-verdict--unverified{ background: color-mix(in srgb, #d9b768 14%, transparent); color: #d9b768; }
-.sw-verdict--disputed{ background: color-mix(in srgb, var(--sw-accent) 14%, transparent); color: var(--sw-accent); }
+.sw-verdict--disputed{ background: color-mix(in srgb, var(--sw-accent) 14%, transparent); color: var(--sw-accent-text); }
 .sw-link {
   font-family: var(--sw-font-ui);
   font-size: .72rem;
   letter-spacing: .06em;
   text-transform: uppercase;
-  color: var(--sw-accent);
+  color: var(--sw-accent-text);
   text-decoration: none;
   transition: opacity .2s;
   align-self: flex-start;
 }
 .sw-link:hover { opacity: .7; }
-.sw-next{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:.65rem;margin-top:2.2rem;padding-top:1rem;border-top:1px solid var(--sw-line);color:var(--sw-muted);text-decoration:none;max-width:24rem}.sw-next span{font:.58rem var(--sw-font-ui);letter-spacing:.1em;text-transform:uppercase}.sw-next strong{font:italic 1rem var(--sw-font-display);color:var(--sw-ink)}.sw-next i{font-style:normal;color:var(--sw-accent)}.sw-next:hover strong{color:var(--sw-accent)}
+.sw-next{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:.65rem;margin-top:2.2rem;padding-top:1rem;border-top:1px solid var(--sw-line);color:var(--sw-muted);text-decoration:none;max-width:24rem}.sw-next span{font:.58rem var(--sw-font-ui);letter-spacing:.1em;text-transform:uppercase}.sw-next strong{font:italic 1rem var(--sw-font-display);color:var(--sw-ink)}.sw-next i{font-style:normal;color:var(--sw-accent-text)}.sw-next:hover strong{color:var(--sw-accent-text)}
 
 /* ─── PATTERN STEP ───────────────────────────────────────── */
 .sw-step--pattern { min-height: auto; padding: 8rem 0; }
@@ -618,7 +620,7 @@ const storyData = storyMyths.map(entry => {
   font-family: var(--sw-font-ui);
   font-size: .6rem;
   letter-spacing: .1em;
-  color: var(--sw-accent);
+  color: var(--sw-accent-text);
   text-transform: uppercase;
   display: block;
   margin-bottom: .5rem;
@@ -766,7 +768,7 @@ const storyData = storyMyths.map(entry => {
   transition: color .3s;
 }
 .sw-hud-sources { color: rgba(240,237,229,.62); }
-.sw-hud-counter { color: var(--sw-accent); }
+.sw-hud-counter { color: var(--sw-accent-text); }
 .sw-hud-verdict {
   font-family: var(--sw-font-ui);
   font-size: .68rem;
@@ -779,7 +781,7 @@ const storyData = storyMyths.map(entry => {
   .sw-hud-verdict[data-verdict="misleading"] { color: var(--sw-amber); }
   .sw-hud-verdict[data-verdict="partly-true"] { color: #d9ad57; }
   .sw-hud-verdict[data-verdict="outdated"],.sw-hud-verdict[data-verdict="unverified"] { color: #d9b768; }
-  .sw-hud-verdict[data-verdict="disputed"] { color: var(--sw-accent); }
+  .sw-hud-verdict[data-verdict="disputed"] { color: var(--sw-accent-text); }
 .sw-hud--top,.sw-hud--bottom{animation:sw-hud-in .55s ease both}@keyframes sw-hud-in{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
 
 /* ─── ENDING ─────────────────────────────────────────────── */
@@ -838,9 +840,9 @@ const storyData = storyMyths.map(entry => {
   color: var(--sw-muted);
   line-height: 1.7;
   max-width: 60ch;
-  opacity: .6;
+  opacity: 1;
 }
-.sw-quiz{padding:clamp(5rem,10vw,9rem) clamp(1.5rem,6vw,6rem);background:#11100e;border-top:1px solid var(--sw-line)}.sw-quiz-inner{max-width:760px}.sw-quiz h2{font:400 clamp(2.4rem,6vw,5rem)/.98 var(--sw-font-display);letter-spacing:-.045em;margin:.5rem 0 1rem}.sw-quiz-intro{color:var(--sw-muted);font-size:1.05rem}.sw-quiz-question{margin-top:2.8rem}.sw-quiz-count{font:700 .62rem var(--sw-font-ui);letter-spacing:.12em;color:var(--sw-accent)}.sw-quiz-question h3{font:400 clamp(1.4rem,3vw,2.2rem)/1.15 var(--sw-font-display);margin:.75rem 0 1.4rem}.sw-quiz-options{display:grid;gap:.7rem}.sw-quiz-options button{border:1px solid var(--sw-line);background:transparent;color:var(--sw-ink);padding:1rem 1.1rem;text-align:left;border-radius:3px;cursor:pointer;font-size:.95rem;transition:border-color .2s,background .2s,transform .2s}.sw-quiz-options button:hover{border-color:var(--sw-accent);transform:translateX(4px)}.sw-quiz-options button.is-correct{border-color:#68b486;background:#68b48618;color:#9ce0b4}.sw-quiz-options button.is-wrong{border-color:var(--sw-red);background:#d94f3518}.sw-quiz-feedback{min-height:1.7em;margin-top:1rem;color:var(--sw-muted);font:.72rem var(--sw-font-ui)}.sw-quiz-result{display:grid;gap:.6rem;margin-top:2rem;padding:1.5rem;border:1px solid color-mix(in srgb,var(--sw-accent) 50%,transparent);background:color-mix(in srgb,var(--sw-accent) 7%,transparent)}.sw-quiz-result strong{font:400 2.4rem var(--sw-font-display);color:var(--sw-accent)}.sw-quiz-result span{color:var(--sw-muted)}.sw-quiz-result a{color:var(--sw-accent);font:.72rem var(--sw-font-ui);text-transform:uppercase;text-decoration:none;letter-spacing:.08em}
+.sw-quiz{padding:clamp(5rem,10vw,9rem) clamp(1.5rem,6vw,6rem);background:#11100e;border-top:1px solid var(--sw-line)}.sw-quiz-inner{max-width:760px}.sw-quiz h2{font:400 clamp(2.4rem,6vw,5rem)/.98 var(--sw-font-display);letter-spacing:-.045em;margin:.5rem 0 1rem}.sw-quiz-intro{color:var(--sw-muted);font-size:1.05rem}.sw-quiz-question{margin-top:2.8rem}.sw-quiz-count{font:700 .62rem var(--sw-font-ui);letter-spacing:.12em;color:var(--sw-accent-text)}.sw-quiz-question h3{font:400 clamp(1.4rem,3vw,2.2rem)/1.15 var(--sw-font-display);margin:.75rem 0 1.4rem}.sw-quiz-options{display:grid;gap:.7rem}.sw-quiz-options button{border:1px solid var(--sw-line);background:transparent;color:var(--sw-ink);padding:1rem 1.1rem;text-align:left;border-radius:3px;cursor:pointer;font-size:.95rem;transition:border-color .2s,background .2s,transform .2s}.sw-quiz-options button:hover{border-color:var(--sw-accent);transform:translateX(4px)}.sw-quiz-options button.is-correct{border-color:#68b486;background:#68b48618;color:#9ce0b4}.sw-quiz-options button.is-wrong{border-color:var(--sw-red);background:#d94f3518}.sw-quiz-feedback{min-height:1.7em;margin-top:1rem;color:var(--sw-muted);font:.72rem var(--sw-font-ui)}.sw-quiz-result{display:grid;gap:.6rem;margin-top:2rem;padding:1.5rem;border:1px solid color-mix(in srgb,var(--sw-accent) 50%,transparent);background:color-mix(in srgb,var(--sw-accent) 7%,transparent)}.sw-quiz-result strong{font:400 2.4rem var(--sw-font-display);color:var(--sw-accent-text)}.sw-quiz-result span{color:var(--sw-muted)}.sw-quiz-result a{color:var(--sw-accent-text);font:.72rem var(--sw-font-ui);text-transform:uppercase;text-decoration:none;letter-spacing:.08em}
 
 /* ─── MOBILE ─────────────────────────────────────────────── */
 @media (max-width: 860px) {

@@ -1,6 +1,6 @@
 :root {
-  --ink:#17211f; --muted:#5f6e68; --paper:#f3efe4; --surface:#fbf8f0; --surface-2:#e8e1d2;
-  --brand:#1e6274; --brand-2:#2f8795; --gold:#b2812d; --line:#d4ccbc; --danger:#9d3a32; --success:#2f7450;
+  --ink:#17211f; --muted:#43534e; --paper:#f3efe4; --surface:#fbf8f0; --surface-2:#e8e1d2;
+  --brand:#1e6274; --brand-2:#2f8795; --gold:#7a5717; --line:#d4ccbc; --danger:#9d3a32; --success:#2f7450;
   --shadow:0 22px 60px rgba(35,48,44,.11); --shadow-soft:0 10px 28px rgba(35,48,44,.08);
   --font-display:Georgia,"Times New Roman",serif; --font-body:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
   --font-mono:ui-monospace,"SFMono-Regular",Consolas,monospace; --measure:760px; --wide:1180px; --radius:18px; --radius-sm:10px;
